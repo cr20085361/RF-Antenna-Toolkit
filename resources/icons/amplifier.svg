@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- 放大器 (LNA/PA) - 经典的三角形符号 -->
+  <polygon points="20,20 80,50 20,80" fill="none" stroke="#2C7BE5" stroke-width="4" stroke-linejoin="round"/>
+  <!-- 输入线 -->
+  <line x1="10" y1="50" x2="20" y2="50" stroke="#2C7BE5" stroke-width="4" stroke-linecap="round"/>
+  <!-- 输出线 -->
+  <line x1="80" y1="50" x2="90" y2="50" stroke="#2C7BE5" stroke-width="4" stroke-linecap="round"/>
+</svg>

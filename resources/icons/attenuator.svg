@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- 衰减器 (Attenuator) - T 形或者矩形内含电阻波纹 -->
+  <rect x="25" y="35" width="50" height="30" fill="none" stroke="#DD6B20" stroke-width="4" rx="2"/>
+  <path d="M30 50 L 35 40 L 45 60 L 55 40 L 65 60 L 70 50" fill="none" stroke="#DD6B20" stroke-width="3" stroke-linejoin="round"/>
+  <line x1="10" y1="50" x2="25" y2="50" stroke="#DD6B20" stroke-width="4" stroke-linecap="round"/>
+  <line x1="75" y1="50" x2="90" y2="50" stroke="#DD6B20" stroke-width="4" stroke-linecap="round"/>
+</svg>

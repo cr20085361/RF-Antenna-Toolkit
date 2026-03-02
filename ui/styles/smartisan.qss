@@ -1,0 +1,665 @@
+/*
+ * 射频天线工具集 - 锤子风格样式表
+ * RF Antenna Toolkit - Smartisan Style QSS
+ * 
+ * 版本: v1.0.0
+ * 设计理念: 极简主义、精致细节、护眼浅色系
+ */
+
+/* ==================== 全局样式 ==================== */
+QWidget {
+    font-family: "Microsoft YaHei UI", "Segoe UI", sans-serif;
+    font-size: 14px;
+    color: #4A5568;
+    background-color: #F5F6F7;
+}
+
+QMainWindow {
+    background-color: #F5F6F7;
+}
+
+/* ==================== 标题栏区域 ==================== */
+#HeaderWidget {
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #E2E8F0;
+    padding: 12px 20px;
+}
+
+#AppTitle {
+    font-size: 20px;
+    font-weight: bold;
+    color: #1A1A1A;
+    padding: 0;
+    margin: 0;
+}
+
+#AppSubtitle {
+    font-size: 12px;
+    color: #A0AEC0;
+    padding: 0;
+    margin: 0;
+}
+
+/* ==================== 左侧导航栏 ==================== */
+#NavBar {
+    background-color: #FFFFFF;
+    border-right: 1px solid #E2E8F0;
+    padding: 16px 0;
+    min-width: 200px;
+    max-width: 200px;
+}
+
+/* 分类标题 */
+#CategoryTitle {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1A1A1A;
+    padding: 12px 20px 8px 20px;
+    margin: 0;
+}
+
+/* 工具按钮 */
+QPushButton#ToolButton {
+    text-align: left;
+    padding: 10px 20px 10px 36px;
+    border: none;
+    border-radius: 0;
+    background-color: transparent;
+    color: #4A5568;
+    font-size: 14px;
+}
+
+QPushButton#ToolButton:hover {
+    background-color: #F0F4F8;
+    color: #2C7BE5;
+}
+
+QPushButton#ToolButton:checked {
+    background-color: #EBF4FF;
+    color: #2C7BE5;
+    font-weight: 500;
+    border-left: 3px solid #2C7BE5;
+    padding-left: 33px;
+}
+
+/* 分隔线 */
+#NavSeparator {
+    background-color: #E2E8F0;
+    margin: 12px 20px;
+    max-height: 1px;
+}
+
+/* ==================== 右侧工作区 ==================== */
+#WorkArea {
+    background-color: #F5F6F7;
+    padding: 24px;
+}
+
+/* 工具卡片 */
+#ToolCard {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 24px;
+}
+
+#ToolCardTitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1A1A1A;
+    padding: 0;
+    margin: 0 0 16px 0;
+}
+
+/* ==================== 输入控件 ==================== */
+QLabel {
+    color: #4A5568;
+    font-size: 14px;
+    padding: 0;
+}
+
+QLabel#InputLabel {
+    font-size: 13px;
+    font-weight: 500;
+    color: #1A1A1A;
+    margin-bottom: 4px;
+}
+
+QLabel#UnitLabel {
+    font-size: 13px;
+    color: #A0AEC0;
+}
+
+/* 错误提示标签 */
+QLabel#ErrorLabel {
+    font-size: 13px;
+    color: #C53030;
+    background-color: #FED7D7;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #FC8181;
+}
+
+/* 警告提示标签 */
+QLabel#WarningLabel {
+    font-size: 13px;
+    color: #C05621;
+    background-color: #FEEBC8;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #F6AD55;
+}
+
+/* 成功提示标签 */
+QLabel#SuccessLabel {
+    font-size: 13px;
+    color: #276749;
+    background-color: #C6F6D5;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #68D391;
+}
+
+QLineEdit, QSpinBox, QDoubleSpinBox {
+    padding: 10px 14px;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    background-color: #FFFFFF;
+    color: #1A1A1A;
+    font-size: 14px;
+    selection-background-color: #2C7BE5;
+}
+
+QLineEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus {
+    border-color: #2C7BE5;
+    outline: none;
+}
+
+QLineEdit:hover, QSpinBox:hover, QDoubleSpinBox:hover {
+    border-color: #CBD5E0;
+}
+
+/* 下拉框 */
+QComboBox {
+    padding: 10px 14px;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    background-color: #FFFFFF;
+    color: #1A1A1A;
+    font-size: 14px;
+    min-width: 120px;
+}
+
+QComboBox:hover {
+    border-color: #CBD5E0;
+}
+
+QComboBox:focus {
+    border-color: #2C7BE5;
+}
+
+QComboBox::drop-down {
+    border: none;
+    width: 30px;
+}
+
+QComboBox::down-arrow {
+    image: none;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid #A0AEC0;
+    margin-right: 10px;
+}
+
+QComboBox QAbstractItemView {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 4px;
+    selection-background-color: #EBF4FF;
+    selection-color: #2C7BE5;
+}
+
+/* ==================== 单选按钮 (锤子风格) ==================== */
+/* 
+ * 设计理念: 选中状态明确、优雅的视觉反馈
+ * - 选中时: 蓝色圆点 + 蓝色文字 + 浅蓝背景
+ * - 未选中时: 灰色空心圆 + 灰色文字
+ */
+QRadioButton {
+    spacing: 10px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    color: #718096;
+    font-size: 14px;
+}
+
+QRadioButton:hover {
+    background-color: #F0F4F8;
+    color: #4A5568;
+}
+
+QRadioButton:checked {
+    background-color: #EBF4FF;
+    color: #2C7BE5;
+    font-weight: 500;
+}
+
+/* 单选按钮圆点 - 未选中 */
+QRadioButton::indicator {
+    width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    border: 2px solid #CBD5E0;
+    background-color: #FFFFFF;
+}
+
+QRadioButton::indicator:hover {
+    border-color: #A0AEC0;
+}
+
+/* 单选按钮圆点 - 选中 */
+QRadioButton::indicator:checked {
+    border: 2px solid #2C7BE5;
+    background-color: #2C7BE5;
+}
+
+/* 选中时内部白色小圆点效果 */
+QRadioButton::indicator:checked {
+    border: 5px solid #2C7BE5;
+    background-color: #FFFFFF;
+}
+
+/* ==================== 按钮 ==================== */
+QPushButton {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+QPushButton#PrimaryButton {
+    background-color: #2C7BE5;
+    color: #FFFFFF;
+}
+
+QPushButton#PrimaryButton:hover {
+    background-color: #1A68D1;
+}
+
+QPushButton#PrimaryButton:pressed {
+    background-color: #1559B8;
+}
+
+QPushButton#SecondaryButton {
+    background-color: #EBF4FF;
+    color: #2C7BE5;
+    border: 1px solid #2C7BE5;
+}
+
+QPushButton#SecondaryButton:hover {
+    background-color: #D6E8FF;
+}
+
+/* ==================== 结果显示区 ==================== */
+#ResultPanel {
+    background-color: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 16px;
+}
+
+#ResultTitle {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1A1A1A;
+    margin-bottom: 12px;
+}
+
+#ResultValue {
+    font-size: 24px;
+    font-weight: bold;
+    color: #2C7BE5;
+}
+
+#ResultUnit {
+    font-size: 14px;
+    color: #A0AEC0;
+    margin-left: 4px;
+}
+
+#ResultDescription {
+    font-size: 12px;
+    color: #718096;
+    margin-top: 4px;
+}
+
+/* ==================== 知识科普区 - 四维度板块 ==================== */
+
+/* 知识区域容器 */
+#KnowledgeContainer {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+#KnowledgeSectionTitle {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1A1A1A;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+/* 知识板块通用样式 */
+.KnowledgePanel {
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 12px;
+}
+
+/* 1. 直观理解 - 物理本质 (蓝色调) */
+#IntuitionPanel {
+    background-color: #EBF8FF;
+    border: 1px solid #90CDF4;
+    border-left: 4px solid #3182CE;
+}
+
+#IntuitionPanel #KnowledgeIcon {
+    color: #2B6CB0;
+    font-size: 20px;
+}
+
+#IntuitionPanel #KnowledgeTitle {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2C5282;
+    margin-bottom: 8px;
+}
+
+#IntuitionPanel #KnowledgeContent {
+    font-size: 13px;
+    color: #2A4365;
+    line-height: 1.7;
+}
+
+/* 2. 数学计算模型 (绿色调) */
+#MathModelPanel {
+    background-color: #F0FFF4;
+    border: 1px solid #9AE6B4;
+    border-left: 4px solid #38A169;
+}
+
+#MathModelPanel #KnowledgeIcon {
+    color: #276749;
+    font-size: 20px;
+}
+
+#MathModelPanel #KnowledgeTitle {
+    font-size: 14px;
+    font-weight: 600;
+    color: #276749;
+    margin-bottom: 8px;
+}
+
+#MathModelPanel #KnowledgeContent {
+    font-size: 13px;
+    color: #22543D;
+    line-height: 1.7;
+}
+
+#MathModelPanel #FormulaText {
+    font-family: "Cambria Math", "Times New Roman", serif;
+    font-size: 15px;
+    font-style: italic;
+    color: #1A202C;
+    background-color: #FFFFFF;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin: 8px 0;
+    border: 1px solid #C6F6D5;
+}
+
+/* 3. 工程边界 - 适用范围与避坑 (橙色调) */
+#EngineeringPanel {
+    background-color: #FFFAF0;
+    border: 1px solid #FBD38D;
+    border-left: 4px solid #DD6B20;
+}
+
+#EngineeringPanel #KnowledgeIcon {
+    color: #C05621;
+    font-size: 20px;
+}
+
+#EngineeringPanel #KnowledgeTitle {
+    font-size: 14px;
+    font-weight: 600;
+    color: #C05621;
+    margin-bottom: 8px;
+}
+
+#EngineeringPanel #KnowledgeContent {
+    font-size: 13px;
+    color: #744210;
+    line-height: 1.7;
+}
+
+#EngineeringPanel #WarningItem {
+    background-color: #FED7D7;
+    color: #C53030;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin: 4px 0;
+    font-size: 12px;
+}
+
+#EngineeringPanel #TipItem {
+    background-color: #C6F6D5;
+    color: #276749;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin: 4px 0;
+    font-size: 12px;
+}
+
+/* 4. 发现历史 - 趣味内容 (紫色调) */
+#HistoryPanel {
+    background-color: #FAF5FF;
+    border: 1px solid #D6BCFA;
+    border-left: 4px solid #805AD5;
+}
+
+#HistoryPanel #KnowledgeIcon {
+    color: #6B46C1;
+    font-size: 20px;
+}
+
+#HistoryPanel #KnowledgeTitle {
+    font-size: 14px;
+    font-weight: 600;
+    color: #553C9A;
+    margin-bottom: 8px;
+}
+
+#HistoryPanel #KnowledgeContent {
+    font-size: 13px;
+    color: #44337A;
+    line-height: 1.7;
+    font-style: italic;
+}
+
+/* 知识板块内的小标题 */
+#KnowledgeSubtitle {
+    font-size: 13px;
+    font-weight: 600;
+    color: #4A5568;
+    margin-top: 12px;
+    margin-bottom: 6px;
+}
+
+/* 知识板块折叠按钮 */
+QPushButton#KnowledgeToggle {
+    background-color: transparent;
+    border: none;
+    color: #718096;
+    font-size: 12px;
+    padding: 4px 8px;
+}
+
+QPushButton#KnowledgeToggle:hover {
+    color: #2C7BE5;
+}
+
+/* ==================== 图表区域 ==================== */
+#ChartContainer {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 16px;
+}
+
+/* ==================== 分组框 ==================== */
+QGroupBox {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1A1A1A;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    margin-top: 12px;
+    padding-top: 20px;
+    background-color: #FFFFFF;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    left: 16px;
+    padding: 0 8px;
+    background-color: #FFFFFF;
+}
+
+/* ==================== 滚动条 ==================== */
+QScrollBar:vertical {
+    background-color: #F5F6F7;
+    width: 8px;
+    border-radius: 4px;
+    margin: 0;
+}
+
+QScrollBar::handle:vertical {
+    background-color: #CBD5E0;
+    border-radius: 4px;
+    min-height: 30px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background-color: #A0AEC0;
+}
+
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:vertical {
+    height: 0;
+}
+
+QScrollBar:horizontal {
+    background-color: #F5F6F7;
+    height: 8px;
+    border-radius: 4px;
+    margin: 0;
+}
+
+QScrollBar::handle:horizontal {
+    background-color: #CBD5E0;
+    border-radius: 4px;
+    min-width: 30px;
+}
+
+QScrollBar::handle:horizontal:hover {
+    background-color: #A0AEC0;
+}
+
+QScrollBar::add-line:horizontal,
+QScrollBar::sub-line:horizontal {
+    width: 0;
+}
+
+/* ==================== 表格选中样式优化 ==================== */
+QTableWidget {
+    selection-background-color: #E3F2FD; /* 浅蓝背景 */
+    selection-color: #1A1A1A;            /* 深色文字 */
+}
+
+QTableWidget::item:selected {
+    background-color: #E3F2FD;
+    color: #1A1A1A;
+    border-left: 3px solid #0070F3;      /* 左侧高亮条 */
+}
+
+/* 确保表格项悬停时也清晰 */
+QTableWidget::item:hover {
+    background-color: #F7FAFC;
+    color: #2D3748;
+}
+
+/* ==================== 工具提示 ==================== */
+QToolTip {
+    background-color: #1A1A1A;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 12px;
+}
+
+/* ==================== 欢迎页面 ==================== */
+#WelcomePage {
+    background-color: #F5F6F7;
+}
+
+#WelcomeTitle {
+    font-size: 28px;
+    font-weight: bold;
+    color: #1A1A1A;
+}
+
+#WelcomeSubtitle {
+    font-size: 16px;
+    color: #718096;
+    margin-top: 8px;
+}
+
+#ToolGridCard {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 20px;
+    min-width: 180px;
+    min-height: 120px;
+}
+
+#ToolGridCard:hover {
+    border-color: #2C7BE5;
+    background-color: #FAFCFF;
+}
+
+#ToolGridIcon {
+    font-size: 32px;
+}
+
+#ToolGridName {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1A1A1A;
+    margin-top: 12px;
+}
+
+#ToolGridDesc {
+    font-size: 12px;
+    color: #718096;
+    margin-top: 4px;
+}

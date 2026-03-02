@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- 功分器 (Splitter) - 1分2的树枝状 -->
+  <line x1="10" y1="50" x2="40" y2="50" stroke="#3182CE" stroke-width="4" stroke-linecap="round"/>
+  <!-- 汇集点 -->
+  <circle cx="40" cy="50" r="4" fill="#3182CE"/>
+  <!-- 垂直线 -->
+  <line x1="40" y1="30" x2="40" y2="70" stroke="#3182CE" stroke-width="4" stroke-linecap="round"/>
+  <!-- 分支 1 -->
+  <line x1="40" y1="30" x2="80" y2="30" stroke="#3182CE" stroke-width="4" stroke-linecap="round"/>
+  <!-- 分支 2 -->
+  <line x1="40" y1="70" x2="80" y2="70" stroke="#3182CE" stroke-width="4" stroke-linecap="round"/>
+</svg>

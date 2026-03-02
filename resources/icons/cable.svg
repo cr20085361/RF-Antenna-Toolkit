@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- 线缆 (Cable) - 同轴波纹线 -->
+  <path d="M10 50 Q 25 20, 50 50 T 90 50" fill="none" stroke="#718096" stroke-width="6" stroke-linecap="round"/>
+  <path d="M10 50 Q 25 20, 50 50 T 90 50" fill="none" stroke="#FFFFFF" stroke-dasharray="4,6" stroke-width="2" stroke-linecap="round"/>
+</svg>

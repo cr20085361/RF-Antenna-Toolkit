@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- 滤波器 (Filter) - 波浪线加上下虚线代表带通带宽 -->
+  <!-- 外框 -->
+  <rect x="25" y="25" width="50" height="50" fill="none" stroke="#38A169" stroke-width="4" rx="4"/>
+  <!-- 正弦波 -->
+  <path d="M30 50 Q 40 35, 50 50 T 70 50" fill="none" stroke="#38A169" stroke-width="4" stroke-linecap="round"/>
+  <!-- 阻断虚线 -->
+  <line x1="26" y1="50" x2="10" y2="50" stroke="#38A169" stroke-width="4" stroke-linecap="round"/>
+  <line x1="74" y1="50" x2="90" y2="50" stroke="#38A169" stroke-width="4" stroke-linecap="round"/>
+</svg>
