@@ -8,6 +8,7 @@ RF Antenna Toolkit - Line-of-Sight Calculator Tool
 """
 
 from typing import Dict, Any, Optional
+from pathlib import Path
 
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QGridLayout,
@@ -295,7 +296,6 @@ class LOSTool(ToolBase):
         self._diagram_label.setStyleSheet("QLabel { background-color: white; border: 1px solid #E0E0E0; border-radius: 8px; padding: 10px; }")
         
         # 加载默认图片（地球曲率视距）
-        from pathlib import Path
         diagram_path = Path(self.get_asset_path("assets/diagrams/horizon_distance.png"))
         if diagram_path.exists():
             pixmap = QPixmap(str(diagram_path))
@@ -313,8 +313,6 @@ class LOSTool(ToolBase):
     
     def _update_diagram(self, mode_id: int):
         """根据计算模式更新示意图"""
-        from pathlib import Path
-        
         # 根据模式选择对应的示意图
         diagram_files = {
             0: "horizon_distance.png",  # 地球曲率视距

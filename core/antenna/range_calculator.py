@@ -9,7 +9,7 @@ RF Antenna Toolkit - Range Calculator Module
 
 import math
 from dataclasses import dataclass
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 
 @dataclass
@@ -107,7 +107,7 @@ class RangeCalculator:
             link_margin_db=link_margin_db
         )
 
-    def calculate_pr_at_distance(self, params: RangeParams, dist_km_array: list[float]) -> list[float]:
+    def calculate_pr_at_distance(self, params: RangeParams, dist_km_array: List[float]) -> List[float]:
         """
         批量计算不同距离下的接收功率，用于绘制曲线。
         """

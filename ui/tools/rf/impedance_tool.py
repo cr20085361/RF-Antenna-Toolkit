@@ -146,16 +146,37 @@ class ImpedanceTool(ToolBase):
         return combo
     
     def _get_er_value(self, combo: QComboBox) -> float:
-        """从介电常数下拉框获取值 (支持预设和自定义)"""
+        """从介电常数下拉框获取值 (支持预设和自定义)
+        
+        v1.3 修复: 当用户直接在可编辑下拉框中手动输入数值时，
+        currentData() 仍返回旧选中项的预设值而非 None，
+        导致自定义输入被忽略。
+        
+        修复方式: 先比较当前显示文本与选中项文本是否一致。
+        若不一致，说明用户已手动修改了文本，应直接解析文本数值。
+        """
+        current_text = combo.currentText().strip()
+        current_index = combo.currentIndex()
+        item_text = combo.itemText(current_index) if current_index >= 0 else ""
+        
+        # 如果用户手动编辑了文本（与当前选中项的原始文本不同），
+        # 直接尝试将文本解析为数值
+        if current_text != item_text:
+            try:
+                return float(current_text)
+            except ValueError:
+                raise ValueError(f"无效的介电常数: {current_text}")
+        
+        # 文本与选中项一致，使用预设的 data
         data = combo.currentData()
         if data is not None:
             return float(data)
-        # 自定义: 从文本中提取数值
-        text = combo.currentText().strip()
+        
+        # "自定义"选项: 从文本中提取数值
         try:
-            return float(text)
+            return float(current_text)
         except ValueError:
-            raise ValueError(f"无效的介电常数: {text}")
+            raise ValueError(f"无效的介电常数: {current_text}")
     
     def _on_unit_changed(self, param_key: str, input_widget: 'QLineEdit', combo: 'QComboBox'):
         """单位切换时自动转换输入值

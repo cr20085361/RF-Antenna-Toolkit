@@ -1,8 +1,22 @@
+# -*- coding: utf-8 -*-
+"""
+射频天线工具集 - 系统灵敏度计算模块
+RF Antenna Toolkit - System Sensitivity Calculator
+
+版本: v1.0.0
+功能:
+- 计算天线系数 (Antenna Factor)
+- 计算系统灵敏度 (最小场强)
+- 计算接收机灵敏度 (dBm)
+- dBuV/m 与 uV/m 单位转换
+"""
 
 import math
 
+
 class SystemSensitivity:
     """系统灵敏度计算逻辑"""
+
     
     @staticmethod
     def calculate_antenna_factor(freq_mhz: float, gain_dbi: float) -> float:

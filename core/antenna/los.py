@@ -12,6 +12,8 @@ from dataclasses import dataclass
 from typing import Optional, Tuple
 from enum import Enum
 
+from ..constants import SPEED_OF_LIGHT
+
 
 # 物理常数
 EARTH_RADIUS_KM = 6371.0  # 地球平均半径 (km)
@@ -244,9 +246,8 @@ class LOSCalculator:
         if distance_km <= 0:
             raise ValueError("距离必须为正值")
         
-        # 波长 (m)
-        c = 299792458  # 光速 m/s
-        wavelength_m = c / (frequency_mhz * 1e6)
+        # 波长 (m) - 使用统一常量
+        wavelength_m = SPEED_OF_LIGHT / (frequency_mhz * 1e6)
         
         # 链路中点的菲涅尔区半径 (最大值)
         distance_m = distance_km * 1000

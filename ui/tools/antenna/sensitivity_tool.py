@@ -407,17 +407,10 @@ class SensitivityTool(ToolBase):
             x, y = zip(*self._chart_data)
             self._ax.plot(x, y, 'o-', color='#C53030', linewidth=2, markersize=6)
             
-            # 标记最优值
-            if unit == "uV/m":
-                # uV/m 越小越好
-                best_val = min(y)
-                best_idx = y.index(best_val)
-                anno_text = f"Best: {best_val:.2f}\n{unit}"
-            else:
-                # dBuV/m 越小越好
-                best_val = min(y)
-                best_idx = y.index(best_val)
-                anno_text = f"Best: {best_val:.2f}\n{unit}"
+            # 标记最优值 (无论 dBuV/m 还是 uV/m，越小越好)
+            best_val = min(y)
+            best_idx = y.index(best_val)
+            anno_text = f"Best: {best_val:.2f}\n{unit}"
             
             self._ax.annotate(anno_text, 
                               xy=(x[best_idx], y[best_idx]), 

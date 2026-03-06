@@ -12,6 +12,8 @@ from dataclasses import dataclass
 from typing import Optional, Tuple
 from enum import Enum
 
+from ..constants import SPEED_OF_LIGHT
+
 
 class GainUnit(Enum):
     """增益单位枚举"""
@@ -140,9 +142,8 @@ class GainCalculator:
         if efficiency <= 0 or efficiency > 1:
             raise ValueError("口径效率必须在 (0, 1] 范围内")
         
-        # 计算波长
-        c = 299792458  # 光速 m/s
-        wavelength = c / frequency_hz
+        # 计算波长 (使用统一常量)
+        wavelength = SPEED_OF_LIGHT / frequency_hz
         
         # 计算增益
         gain_linear = efficiency * (4 * math.pi * aperture_area_m2) / (wavelength ** 2)

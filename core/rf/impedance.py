@@ -19,6 +19,8 @@ from dataclasses import dataclass
 from typing import Optional
 from scipy.special import ellipk  # 完全椭圆积分第一类
 
+from ..constants import SPEED_OF_LIGHT, VACUUM_PERMITTIVITY, VACUUM_PERMEABILITY
+
 
 # ==================== 结果数据类 ====================
 
@@ -89,10 +91,10 @@ class ImpedanceCalculator:
     3. 共面波导微带线 (CPWG)
     """
     
-    # 物理常数
-    C0 = 299792458  # 光速 (m/s)
-    EPS0 = 8.854e-12  # 真空介电常数 (F/m)
-    MU0 = 4 * math.pi * 1e-7  # 真空磁导率 (H/m)
+    # 物理常数 (引用统一常量定义)
+    C0 = SPEED_OF_LIGHT         # 光速 (m/s)
+    EPS0 = VACUUM_PERMITTIVITY  # 真空介电常数 (F/m)
+    MU0 = VACUUM_PERMEABILITY   # 真空磁导率 (H/m)
     
     def __init__(self):
         pass
@@ -539,25 +541,3 @@ class ImpedanceCalculator:
         
         return (S_low + S_high) / 2
 
-
-# ==================== 测试代码 ====================
-
-if __name__ == "__main__":
-    calc = ImpedanceCalculator()
-    
-    # 测试同轴线 (50Ω 标准同轴)
-    print("=== 同轴线测试 ===")
-    result = calc.calculate_coaxial(0.91, 2.98, 2.25)  # RG-58 参数
-    print(f"阻抗: {result.impedance:.2f} Ω")
-    
-    # 测试微带线 (FR4 50Ω)
-    print("\n=== 微带线测试 ===")
-    result = calc.calculate_microstrip(1.1, 0.6, 4.3, 35)
-    print(f"阻抗: {result.impedance:.2f} Ω")
-    print(f"有效介电常数: {result.effective_er:.3f}")
-    
-    # 测试 CPWG
-    print("\n=== CPWG 测试 ===")
-    result = calc.calculate_cpwg(0.5, 0.2, 0.6, 4.3)
-    print(f"阻抗: {result.impedance:.2f} Ω")
-    print(f"有效介电常数: {result.effective_er:.3f}")

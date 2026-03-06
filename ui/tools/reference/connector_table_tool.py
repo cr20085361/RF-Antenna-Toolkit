@@ -85,159 +85,171 @@ class ConnectorTableTool(ToolBase):
         self._init_data()
         super().__init__(parent)
 
+    # ==================== 降额因子表 (来自 Southwest Microwave 官方文档) ====================
+    # 温度降额因子: {温度°C: 降额系数}
+    TEMP_DERATING = {0: 1.20, 40: 1.00, 80: 0.80, 120: 0.60, 160: 0.40, 200: 0.20, 240: 0.05}
+    # 海拔降额因子: {海拔(千英尺): 降额系数}
+    ALT_DERATING_KFT = {0: 1.00, 20: 0.80, 30: 0.70, 40: 0.60, 50: 0.50, 60: 0.40, 70: 0.30}
+
     def _init_data(self):
         """
         初始化连接器数据
-        数据说明:
-        - 功率容量为室温 (25°C)、海平面、标准空气条件下的典型值
-        - 实际功率容量随频率升高而降低 (P ∝ 1/√f)
-        - 峰值功率取决于电压击穿，与脉冲宽度相关
-        - 数据综合自 MIL-STD-348 和主流厂商规格书
+        
+        数据来源与校准说明:
+        - 平均功率容量 (CW): 基于 Southwest Microwave 官方 Power Handling Graph
+          (对数坐标图，40°C / 海平面 / VSWR 1.0 条件)
+        - 峰值功率: 基于电压击穿计算，与频率基本无关
+        - 最高频率: 连接器支持的最高工作频率 (非截止频率)
+        - 功率容量随频率升高而降低: P(f) = P_ref × √(f_ref / f)
+        
+        ⚠️ 注意: 功率值因供应商而异 (设计/材料/制造差异)，
+              本表取行业领先厂商代表值，实际选型请查阅对应厂商规格书。
         """
         C = "#F0F7FF"  # 统一浅色背景
 
         self.connector_data: List[ConnectorInfo] = [
             # ==================== 大功率连接器 ====================
             ConnectorInfo(
-                "7/16 DIN", "50", "7.5 GHz", "500 W", "20 kW",
+                "7/16 DIN", "50", "7.5 GHz", "2500 W (@1GHz)", "20 kW",
                 "≤1.15", "螺纹", "16/7 mm",
                 "基站天线、大功率射频系统", C
             ),
             ConnectorInfo(
-                "LC", "50", "6 GHz", "1500 W", "30 kW",
+                "LC", "50", "6 GHz", "5000 W (@1GHz)", "30 kW",
                 "≤1.20", "卡口", "—",
                 "高功率雷达、广播发射", C
             ),
             ConnectorInfo(
-                "SC", "50", "11 GHz", "600 W", "15 kW",
+                "SC", "50", "11 GHz", "2000 W (@1GHz)", "15 kW",
                 "≤1.20", "螺纹", "—",
                 "大功率微波系统", C
             ),
             ConnectorInfo(
-                "HN", "50", "4 GHz", "1500 W", "35 kW",
+                "HN", "50", "4 GHz", "5000 W (@1GHz)", "35 kW",
                 "≤1.30", "螺纹", "—",
                 "高压大功率射频", C
             ),
 
             # ==================== 通用连接器 ====================
             ConnectorInfo(
-                "N 型", "50", "18 GHz", "300 W (@1GHz)", "5 kW",
+                "N 型", "50", "18 GHz", "1900 W (@1GHz)", "5 kW",
                 "≤1.15", "螺纹", "外Ø 1/4″",
                 "测试仪器、基站馈线、实验室", C
             ),
             ConnectorInfo(
-                "N 型 (75Ω)", "75", "11 GHz", "200 W (@1GHz)", "3 kW",
+                "N 型 (75Ω)", "75", "11 GHz", "1000 W (@1GHz)", "3 kW",
                 "≤1.15", "螺纹", "外Ø 1/4″",
                 "有线电视、视频传输", C
             ),
             ConnectorInfo(
-                "TNC", "50", "18 GHz", "200 W (@1GHz)", "1.5 kW",
+                "TNC", "50", "18 GHz", "950 W (@1GHz)", "1.5 kW",
                 "≤1.15", "螺纹", "外Ø 1/4″",
                 "振动环境、军用、航空航天", C
             ),
             ConnectorInfo(
-                "BNC", "50", "4 GHz", "80 W (@1GHz)", "500 W",
+                "BNC", "50", "4 GHz", "350 W (@1GHz)", "500 W",
                 "≤1.30", "卡口", "外Ø 1/4″",
                 "示波器、低频测试、视频", C
             ),
             ConnectorInfo(
-                "BNC (75Ω)", "75", "2 GHz", "50 W (@1GHz)", "200 W",
+                "BNC (75Ω)", "75", "2 GHz", "200 W (@1GHz)", "200 W",
                 "≤1.30", "卡口", "外Ø 1/4″",
                 "视频监控、广播设备", C
             ),
 
             # ==================== 精密连接器 (毫米波) ====================
             ConnectorInfo(
-                "SMA", "50", "18 GHz", "100 W (@1GHz)", "1.5 kW",
+                "SMA", "50", "27 GHz", "600 W (@1GHz)", "1.5 kW",
                 "≤1.15", "螺纹", "外Ø 1/4″ (6.35)",
                 "最广泛使用的射频连接器", C
             ),
             ConnectorInfo(
-                "SMB", "50", "4 GHz", "50 W (@1GHz)", "250 W",
+                "SMB", "50", "4 GHz", "200 W (@1GHz)", "250 W",
                 "≤1.30", "推入式", "外Ø 3.5mm",
                 "PCB 板端、GPS 模块", C
             ),
             ConnectorInfo(
-                "SMC", "50", "10 GHz", "50 W (@1GHz)", "250 W",
+                "SMC", "50", "10 GHz", "200 W (@1GHz)", "250 W",
                 "≤1.30", "螺纹", "外Ø 3.5mm",
                 "紧凑型微波组件", C
             ),
             ConnectorInfo(
-                "SMP/SMPM", "50", "40 GHz", "50 W (@1GHz)", "200 W",
+                "SMP/SMPM", "50", "40 GHz", "200 W (@1GHz)", "200 W",
                 "≤1.25", "推入式", "外Ø 2.5mm",
                 "高密度板间连接、5G 模组", C
             ),
             ConnectorInfo(
-                "SSMA", "50", "40 GHz", "30 W (@1GHz)", "200 W",
+                "SSMA", "50", "36 GHz", "320 W (@1GHz)", "500 W",
                 "≤1.20", "螺纹", "外Ø 4.0mm",
                 "小型化微波组件", C
             ),
 
             # ==================== 3.5mm/2.92mm/2.4mm/1.85mm/1.0mm 系列 ====================
+            # (数据基于 Southwest Microwave 官方 Power Handling Graph 校准)
             ConnectorInfo(
-                "3.5mm (APC-3.5)", "50", "34 GHz", "100 W (@1GHz)", "1 kW",
+                "3.5mm (APC-3.5)", "50", "33 GHz", "250 W (@1GHz)", "1 kW",
                 "≤1.15", "螺纹", "外Ø 3.5mm",
                 "精密测量、与 SMA 兼容", C
             ),
             ConnectorInfo(
-                "2.92mm (K)", "50", "40 GHz", "50 W (@1GHz)", "500 W",
+                "2.92mm (K)", "50", "40 GHz", "140 W (@1GHz)", "500 W",
                 "≤1.15", "螺纹", "外Ø 2.92mm",
                 "毫米波测试、与 SMA/3.5mm 兼容", C
             ),
             ConnectorInfo(
-                "2.4mm", "50", "50 GHz", "30 W (@1GHz)", "400 W",
+                "2.4mm", "50", "50 GHz", "80 W (@1GHz)", "400 W",
                 "≤1.20", "螺纹", "外Ø 2.4mm",
                 "50 GHz 精密测量", C
             ),
             ConnectorInfo(
-                "1.85mm (V)", "50", "67 GHz", "10 W (@1GHz)", "200 W",
+                "1.85mm (V)", "50", "67 GHz", "44 W (@1GHz)", "200 W",
                 "≤1.25", "螺纹", "外Ø 1.85mm",
                 "V 频段测试、与 2.4mm 兼容", C
             ),
             ConnectorInfo(
-                "1.35mm", "50", "90 GHz", "5 W (@1GHz)", "100 W",
+                "1.35mm", "50", "90 GHz", "25 W (@1GHz)", "100 W",
                 "≤1.30", "螺纹", "外Ø 1.35mm",
                 "E/W 频段精密测量", C
             ),
             ConnectorInfo(
-                "1.0mm (W)", "50", "110 GHz", "2 W (@1GHz)", "50 W",
+                "1.0mm (W)", "50", "110 GHz", "16 W (@1GHz)", "50 W",
                 "≤1.35", "螺纹", "外Ø 1.0mm",
                 "W 频段毫米波、110 GHz 测试", C
             ),
             ConnectorInfo(
-                "0.8mm", "50", "145 GHz", "1 W (@1GHz)", "20 W",
+                "0.8mm", "50", "145 GHz", "10 W (@1GHz)", "20 W",
                 "≤1.40", "螺纹", "外Ø 0.8mm",
                 "亚毫米波前沿研究", C
             ),
 
             # ==================== 特殊应用 ====================
             ConnectorInfo(
-                "F 型", "75", "3 GHz", "20 W", "200 W",
+                "F 型", "75", "3 GHz", "100 W (@1GHz)", "200 W",
                 "≤1.30", "螺纹", "外Ø 9.5mm",
                 "有线电视、卫星电视机顶盒", C
             ),
             ConnectorInfo(
-                "MCX", "50", "6 GHz", "30 W (@1GHz)", "150 W",
+                "MCX", "50", "6 GHz", "150 W (@1GHz)", "150 W",
                 "≤1.30", "推入式", "外Ø 3.6mm",
                 "GPS、WiFi 模块板端", C
             ),
             ConnectorInfo(
-                "MMCX", "50", "6 GHz", "20 W (@1GHz)", "100 W",
+                "MMCX", "50", "6 GHz", "100 W (@1GHz)", "100 W",
                 "≤1.30", "推入式", "外Ø 2.8mm",
                 "超小型 GPS/蓝牙模组", C
             ),
             ConnectorInfo(
-                "QMA", "50", "18 GHz", "200 W (@1GHz)", "2 kW",
+                "QMA", "50", "18 GHz", "900 W (@1GHz)", "2 kW",
                 "≤1.15", "推入锁定", "外Ø 1/4″",
                 "基站快速安装、替代 SMA", C
             ),
             ConnectorInfo(
-                "NEX10", "50", "12 GHz", "300 W", "5 kW",
+                "NEX10", "50", "12 GHz", "1500 W (@1GHz)", "5 kW",
                 "≤1.15", "推入锁定", "外Ø 10mm",
                 "5G 小基站、新一代替代 4.3-10", C
             ),
             ConnectorInfo(
-                "4.3-10", "50", "12 GHz", "500 W (@1GHz)", "10 kW",
+                "4.3-10", "50", "12 GHz", "2500 W (@1GHz)", "10 kW",
                 "≤1.12", "推入锁定", "外Ø 10mm",
                 "5G 基站天线、低 PIM 场景", C
             ),
@@ -282,12 +294,13 @@ class ConnectorTableTool(ToolBase):
         # 说明
         info = QLabel(
             "数据说明:\n"
-            "• 功率容量为 25°C/海平面典型值\n"
-            "• 实际功率随频率升高而降低\n"
-            "  (P ∝ 1/√f，高频需降额)\n"
-            "• 峰值功率取决于电压击穿\n"
-            "• 综合自 MIL-STD-348 和\n"
-            "  主流厂商 (Amphenol 等) 规格"
+            "• CW 功率基于 Southwest Microwave\n"
+            "  官方 Power Handling Graph 校准\n"
+            "• 条件: 40°C / 海平面 / VSWR 1.0\n"
+            "• 功率随频率升高而降低\n"
+            "  P(f) = P_ref × √(f_ref / f)\n"
+            "• 实际功率因供应商而异\n"
+            "• 点选表格行查看降额曲线"
         )
         info.setWordWrap(True)
         info.setStyleSheet("color: #666; font-size: 11px; margin-top: 10px;")
@@ -306,7 +319,7 @@ class ConnectorTableTool(ToolBase):
         self._table.setColumnCount(8)
         self._table.setHorizontalHeaderLabels([
             "连接器", "阻抗\n(Ω)", "最高频率",
-            "平均功率", "峰值功率", "VSWR",
+            "CW额定功率", "峰值功率", "VSWR",
             "连接方式", "典型应用"
         ])
 
@@ -344,6 +357,9 @@ class ConnectorTableTool(ToolBase):
         self._canvas = FigureCanvasQTAgg(self._fig)
         chart_layout.addWidget(self._canvas)
         
+        # 绘制初始占位提示
+        self._draw_placeholder()
+        
         splitter.addWidget(self._chart_container)
         splitter.setStretchFactor(0, 6) # 表格占 60%
         splitter.setStretchFactor(1, 4) # 图表占 40%
@@ -351,6 +367,30 @@ class ConnectorTableTool(ToolBase):
         layout.addWidget(splitter)
         
         return panel
+
+    def _draw_placeholder(self):
+        """绘制图表占位提示 (初次打开时显示)"""
+        self._fig.clear()
+        ax = self._fig.add_subplot(111)
+        ax.set_xlim(0, 1)
+        ax.set_ylim(0, 1)
+        ax.axis('off')
+        
+        # 主提示文字
+        ax.text(0.5, 0.55, "📊 点击上方表格中的连接器",
+                ha='center', va='center', fontsize=13,
+                color='#718096', fontweight='bold',
+                fontfamily=['Microsoft YaHei UI', 'sans-serif'])
+        ax.text(0.5, 0.42, "查看 CW 功率容量 vs 频率降额曲线",
+                ha='center', va='center', fontsize=12,
+                color='#A0AEC0',
+                fontfamily=['Microsoft YaHei UI', 'sans-serif'])
+        ax.text(0.5, 0.30, "P(f) = P_ref × √(f_ref / f)",
+                ha='center', va='center', fontsize=11,
+                color='#CBD5E0', fontstyle='italic')
+        
+        self._fig.tight_layout()
+        self._canvas.draw()
 
     def _on_selection_changed(self):
         """表格选中行变化"""
@@ -613,24 +653,28 @@ class ConnectorTableTool(ToolBase):
     def get_engineering_content(self) -> Optional[str]:
         """连接器选型工程指南"""
         return """
-        <b>🏗️ 射频连接器选型指南</b><br><br>
+        <b>🏗️ 射频连接器选型指南</b><br>
+        <span style="color: #E53E3E; font-size: 12px;">
+        数据基于 Southwest Microwave 官方文档</span><br><br>
 
         <b>1. 频率优先:</b><br>
         • 连接器最高频率必须覆盖系统工作频带<br>
-        • 余量建议 ≥20% (如系统 10 GHz，选 ≥12 GHz)<br>
-        • 频率越高，可选连接器越少越贵<br><br>
+        • 余量建议 ≥20% (如系统 10 GHz，选 ≥12 GHz)<br><br>
 
-        <b>2. 功率降额:</b><br>
-        • 功率容量随频率升高而降低: P(f) ≈ P₀ / √(f/f₀)<br>
-        • 高海拔需降额 (气压降低→击穿电压降低)<br>
-        • 高温需降额 (每升高 40°C 约降额 10-20%)<br>
-        • 建议实际使用功率 ≤ 额定功率的 50%<br><br>
+        <b>2. 功率降额 (三个维度):</b><br>
+        • <b>频率降额:</b> P(f) = P<sub>ref</sub> × √(f<sub>ref</sub>/f)<br>
+        • <b>温度降额 (基准 40°C):</b><br>
+        &nbsp;&nbsp;0°C → ×1.20 | 80°C → ×0.80<br>
+        &nbsp;&nbsp;120°C → ×0.60 | 160°C → ×0.40<br>
+        • <b>海拔降额 (基准海平面):</b><br>
+        &nbsp;&nbsp;6000m → ×0.80 | 12000m → ×0.60<br>
+        &nbsp;&nbsp;18000m → ×0.40 | 21000m → ×0.30<br>
+        • <b>组合降额:</b> P = P(f) × DF<sub>temp</sub> × DF<sub>alt</sub><br><br>
 
         <b>3. 互配兼容:</b><br>
         • SMA ↔ 3.5mm ↔ 2.92mm 机械兼容 (可直连)<br>
         • 2.4mm ↔ 1.85mm 机械兼容<br>
-        • N 型 50Ω 和 75Ω 物理可插但阻抗不匹配!<br>
-        • BNC 50Ω 和 75Ω 亦然，需特别注意<br><br>
+        • N 型 50Ω 和 75Ω 物理可插但阻抗不匹配!<br><br>
 
         <b>4. 可靠性:</b><br>
         • 螺纹连接 > 卡口 > 推入式 (振动环境)<br>

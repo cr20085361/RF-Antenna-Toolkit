@@ -20,7 +20,7 @@ QMainWindow {
 
 /* ==================== 标题栏区域 ==================== */
 #HeaderWidget {
-    background-color: #FFFFFF;
+    background-color: #F5F6F7;
     border-bottom: 1px solid #E2E8F0;
     padding: 12px 20px;
 }

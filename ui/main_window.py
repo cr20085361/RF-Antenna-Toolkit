@@ -35,6 +35,7 @@ from ui.tools.rf.link_budget_tool import LinkBudgetTool
 from ui.tools.reference.band_table_tool import BandTableTool
 from ui.tools.reference.waveguide_table_tool import WaveguideTableTool
 from ui.tools.reference.connector_table_tool import ConnectorTableTool
+from ui.tools.reference.eseries_table_tool import ESeriesTableTool
 
 
 class MainWindow(QMainWindow):
@@ -138,6 +139,23 @@ class MainWindow(QMainWindow):
         
         layout.addLayout(title_layout)
         layout.addStretch()
+        
+        # 右侧: 公司/开发者信息
+        info_layout = QVBoxLayout()
+        info_layout.setSpacing(1)
+        info_layout.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+        
+        company_label = QLabel("成都市安泰纳科技有限公司")
+        company_label.setStyleSheet("font-size: 12px; color: #718096; font-weight: 500;")
+        company_label.setAlignment(Qt.AlignmentFlag.AlignRight)
+        info_layout.addWidget(company_label)
+        
+        dev_label = QLabel("Developer: CR | 625313077@qq.com")
+        dev_label.setStyleSheet("font-size: 11px; color: #A0AEC0;")
+        dev_label.setAlignment(Qt.AlignmentFlag.AlignRight)
+        info_layout.addWidget(dev_label)
+        
+        layout.addLayout(info_layout)
         
         return header
     
@@ -339,11 +357,12 @@ class MainWindow(QMainWindow):
         
         # 射频连接器参考表
         self._register_tool(
-            "connector_table",
-            ConnectorTableTool,
-            "连接器选型",
-            "🔌",
-            "射频连接器频率范围与功率容量速查"
+            "connector_table", ConnectorTableTool, "连接器选型", "🔌",
+            "射频连接器频率范围及功率查阅"
+        )
+        self._register_tool(
+            "eseries_table", ESeriesTableTool, "标称值速查", "🏷️",
+            "IEC 60063 元件标准阻值/容差速查"
         )
     
     def _register_tool(
