@@ -34,8 +34,10 @@
 ### 3. 📖 工程师参考手册 (Reference Tables)
 内置免断网日常高频查询：
 *   **IEEE/ITU 频段字典**：标准命名频段界限说明。
-*   **微波同轴连接器指南**：涵盖常用型号（SMA, 2.92mm, 3.5mm, N等）的耐压、截止频率上限一览。
+*   **微波同轴连接器指南**：涵盖常用型号（SMA, 2.92mm, 3.5mm, N等）的耐压、截止频率上限一览，并自带考虑海拔与温度的最恶劣实战**降额功率基准运算**。
 *   **常用波导管 (Waveguides) 手册**：国际 EIA WG标准（WR系列）与国标管径对比、截至频率查表。
+*   **标称值速查 (E-Series RLC)**：遵循 IEC 60063 规范，囊括 E6 至 E192 系列全精度级别的标准电阻、电容、电感值正反向双维度检索台。
+*   **🌐 精品在线工具推荐**：打破本地局限，现代化网格卡片式收录村田(Murata) SimSurfing、ADI 等业界顶级半导体原厂的在线微波/电源仿真系统，自带全屏系统浏览器唤醒。
 
 ---
 
@@ -71,14 +73,17 @@
    python main.py
    ```
 
-### 独立执行文件打包 (Windows)
-我们提供了一键编译脚本，使用 `PyInstaller` 将所有依赖及静态资源 (UI 库、图表) 封装打包成独立的 `.exe` 程序，免去发版目标机的 Python 依赖要求。
+### 独立执行文件打包 (Windows Desktop App)
+本项目完美兼顾了纯净的 Python 开发调试生态，并通过 `PyInstaller` 搭载专属的暗蓝矢量天线图标 (`app.ico`) 与启动缓冲画面 (`splash.png`)，实现了**一次编译，脱离环境全局可运行**的设计准则。
 
 ```bash
-# 执行打包脚本
-python build_exe.py
+# 激活独立虚拟环境，避免全量库污染
+.\.venv\Scripts\activate
+
+# 执行强制打包流程 (参考 .agents/workflows/build_exe.md 指南)
+python -m PyInstaller -y RFAntennaToolkit.spec
 ```
-打包成功后，单体可执行文件将于根目录下的 `Output` 文件夹中生成。
+编译成功后，完整的免安装绿色版或标准分发版本体存放于根目录下的 `dist/RFAntennaToolkit/` 目录中。
 
 ---
 
