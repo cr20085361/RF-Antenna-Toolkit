@@ -36,6 +36,7 @@ from ui.tools.reference.band_table_tool import BandTableTool
 from ui.tools.reference.waveguide_table_tool import WaveguideTableTool
 from ui.tools.reference.connector_table_tool import ConnectorTableTool
 from ui.tools.reference.eseries_table_tool import ESeriesTableTool
+from ui.tools.reference.online_tools_page import OnlineToolsPage
 
 
 class MainWindow(QMainWindow):
@@ -363,6 +364,10 @@ class MainWindow(QMainWindow):
         self._register_tool(
             "eseries_table", ESeriesTableTool, "标称值速查", "🏷️",
             "IEC 60063 元件标准阻值/容差速查"
+        )
+        self._register_tool(
+            "online_tools", OnlineToolsPage, "精品在线工具", "🌐",
+            "大厂射频在线仿真与匹配计算神器库"
         )
     
     def _register_tool(
