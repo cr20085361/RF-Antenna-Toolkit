@@ -8,6 +8,7 @@ RF Antenna Toolkit - Main Window
 """
 
 import os
+import sys
 from typing import Dict, Optional, Type
 
 from PyQt6.QtWidgets import (
@@ -37,6 +38,14 @@ from ui.tools.reference.waveguide_table_tool import WaveguideTableTool
 from ui.tools.reference.connector_table_tool import ConnectorTableTool
 from ui.tools.reference.eseries_table_tool import ESeriesTableTool
 from ui.tools.reference.online_tools_page import OnlineToolsPage
+
+
+def resource_path(relative_path):
+    """ 获取资源的绝对路径，兼容开发环境和 PyInstaller 打包后的环境 """
+    if hasattr(sys, '_MEIPASS'):
+        # PyInstaller 打包后的临时目录
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
 
 
 class MainWindow(QMainWindow):
@@ -406,13 +415,12 @@ class MainWindow(QMainWindow):
     
     def _load_stylesheet(self):
         """加载样式表"""
-        # 获取样式表路径
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        qss_path = os.path.join(current_dir, "styles", "smartisan.qss")
+        # 使用 resource_path 获取样式表路径
+        qss_path = resource_path(os.path.join("ui", "styles", "smartisan.qss"))
         
         try:
             with open(qss_path, "r", encoding="utf-8") as f:
                 stylesheet = f.read()
                 self.setStyleSheet(stylesheet)
         except Exception as e:
-            print(f"加载样式表失败: {e}")
+            print(f"加载样式表失败: {e} (路径: {qss_path})")
