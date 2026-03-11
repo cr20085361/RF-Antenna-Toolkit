@@ -27,6 +27,7 @@ from ui.tools.antenna.los_tool import LOSTool
 from ui.tools.antenna.sensitivity_tool import SensitivityTool
 from ui.tools.antenna.phased_array_tool import PhasedArrayTool
 from ui.tools.antenna.range_tool import RangeTool
+from ui.tools.antenna.farfield_tool import FarFieldTool
 from ui.tools.rf.vswr_tool import VSWRTool
 from ui.tools.rf.cascade_tool import CascadeTool
 from ui.tools.rf.impedance_tool import ImpedanceTool
@@ -282,6 +283,15 @@ class MainWindow(QMainWindow):
             "收发距离计算",
             "📏",
             "基于 Friis 方程计算最远通信距离"
+        )
+
+        # 远场距离计算
+        self._register_tool(
+            "farfield",
+            FarFieldTool,
+            "远场计算器",
+            "🎯",
+            "天线远场测试距离计算 (IEEE 149)"
         )
         
         # ==================== 射频工具 ====================
