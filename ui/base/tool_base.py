@@ -15,6 +15,8 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt, pyqtSignal
 
+from core.i18n import translator, tr
+
 
 class ToolBase(QWidget):
     """
@@ -39,6 +41,10 @@ class ToolBase(QWidget):
     tool_category: str = "other"             # 分类: antenna / rf
     tool_description: str = "工具描述"        # 简短描述
     
+    # 国际化支持
+    i18n_title_key: str = ""
+    i18n_desc_key: str = ""
+    
     def __init__(self, parent: Optional[QWidget] = None):
         """初始化工具基类"""
         super().__init__(parent)
@@ -48,6 +54,9 @@ class ToolBase(QWidget):
         
         # 构建界面
         self._setup_ui()
+        
+        # 注册国际化回调
+        translator.language_changed.connect(self.retranslate_ui)
     
     def _setup_ui(self):
         """构建工具界面"""
@@ -70,15 +79,17 @@ class ToolBase(QWidget):
         scroll_layout.setSpacing(20)
         
         # 工具标题
-        title_label = QLabel(f"{self.tool_icon} {self.tool_name}")
-        title_label.setObjectName("ToolCardTitle")
-        scroll_layout.addWidget(title_label)
+        title_text = tr(self.i18n_title_key, self.tool_name) if self.i18n_title_key else self.tool_name
+        self._title_label = QLabel(f"{self.tool_icon} {title_text}")
+        self._title_label.setObjectName("ToolCardTitle")
+        scroll_layout.addWidget(self._title_label)
         
         # 工具描述
-        desc_label = QLabel(self.tool_description)
-        desc_label.setObjectName("ResultDescription")
-        desc_label.setWordWrap(True)
-        scroll_layout.addWidget(desc_label)
+        desc_text = tr(self.i18n_desc_key, self.tool_description) if self.i18n_desc_key else self.tool_description
+        self._desc_label = QLabel(desc_text)
+        self._desc_label.setObjectName("ResultDescription")
+        self._desc_label.setWordWrap(True)
+        scroll_layout.addWidget(self._desc_label)
         
         # 分隔线
         separator = QFrame()
@@ -155,6 +166,49 @@ class ToolBase(QWidget):
         """
         raise NotImplementedError("子类必须实现 calculate 方法")
     
+    def retranslate_ui(self, lang: str = ""):
+        """
+        语言切换时刷新 UI 文本 (基类默认实现)
+        
+        子类可重写以刷新各自特有的控件文字。
+        重写时请先调用 super().retranslate_ui(lang)。
+        """
+        # 刷新工具标题
+        if hasattr(self, '_title_label'):
+            title_text = tr(self.i18n_title_key, self.tool_name) if self.i18n_title_key else self.tool_name
+            self._title_label.setText(f"{self.tool_icon} {title_text}")
+        
+        # 刷新工具描述
+        if hasattr(self, '_desc_label'):
+            desc_text = tr(self.i18n_desc_key, self.tool_description) if self.i18n_desc_key else self.tool_description
+            self._desc_label.setText(desc_text)
+        
+        # 刷新知识面板内容
+        if hasattr(self, '_knowledge_tabs'):
+            content_getters = [
+                ('intuition', self.get_intuition_content),
+                ('math', self.get_math_model_content),
+                ('engineering', self.get_engineering_content),
+                ('history', self.get_history_content),
+            ]
+            tab_labels = {
+                'intuition': tr("toolbase.intuition_title"),
+                'math': tr("toolbase.math_title"),
+                'engineering': tr("toolbase.engineering_title"),
+                'history': tr("toolbase.history_title"),
+            }
+            for i, (key, getter) in enumerate(content_getters):
+                content = getter()
+                if content and i < self._knowledge_tabs.count():
+                    # 更新 tab 标题
+                    self._knowledge_tabs.setTabText(i, tab_labels.get(key, key))
+                    # 更新 tab 内容
+                    widget = self._knowledge_tabs.widget(i)
+                    if widget:
+                        lbl = widget.findChild(QLabel)
+                        if lbl:
+                            lbl.setText(content)
+    
     # ==================== 知识科普方法 (子类可重写) ====================
     
     def create_knowledge_section(self) -> Optional[QWidget]:
@@ -180,6 +234,9 @@ class ToolBase(QWidget):
         if not any([intuition, math_model, engineering, history]):
             return None
         
+        # 存储知识面板的标签引用用于热翻译刷新
+        self._knowledge_labels = {}
+        
         # 创建知识容器
         container = QWidget()
         container.setObjectName("KnowledgeContainer")
@@ -188,47 +245,51 @@ class ToolBase(QWidget):
         layout.setSpacing(12)
         
         # 区域标题
-        title = QLabel("📚 深入理解")
-        title.setObjectName("KnowledgeSectionTitle")
-        layout.addWidget(title)
+        self._knowledge_section_title = QLabel(tr("toolbase.knowledge_title", "📚 深入理解"))
+        self._knowledge_section_title.setObjectName("KnowledgeSectionTitle")
+        layout.addWidget(self._knowledge_section_title)
         
         # 1. 直观理解板块
-        if intuition:
+        if intuition is not None:
             intuition_panel = self._create_knowledge_panel(
                 panel_id="IntuitionPanel",
                 icon="🎯",
-                title="直观理解 · 物理本质",
-                content=intuition
+                title=tr("toolbase.intuition_title", "直观理解 · 物理本质"),
+                content=intuition,
+                key="intuition"
             )
             layout.addWidget(intuition_panel)
         
         # 2. 数学模型板块
-        if math_model:
+        if math_model is not None:
             math_panel = self._create_knowledge_panel(
                 panel_id="MathModelPanel",
                 icon="📐",
-                title="数学模型 · 精确计算",
-                content=math_model
+                title=tr("toolbase.math_title", "数学模型 · 精确计算"),
+                content=math_model,
+                key="math_model"
             )
             layout.addWidget(math_panel)
         
         # 3. 工程边界板块
-        if engineering:
+        if engineering is not None:
             eng_panel = self._create_knowledge_panel(
                 panel_id="EngineeringPanel",
                 icon="⚙️",
-                title="工程边界 · 适用范围与避坑",
-                content=engineering
+                title=tr("toolbase.engineering_title", "工程边界 · 适用范围与避坑"),
+                content=engineering,
+                key="engineering"
             )
             layout.addWidget(eng_panel)
         
         # 4. 发现历史板块 (可选)
-        if history:
+        if history is not None:
             history_panel = self._create_knowledge_panel(
                 panel_id="HistoryPanel",
                 icon="📜",
-                title="发现历史 · 趣味故事",
-                content=history
+                title=tr("toolbase.history_title", "发现历史 · 趣味故事"),
+                content=history,
+                key="history"
             )
             layout.addWidget(history_panel)
         
@@ -239,7 +300,8 @@ class ToolBase(QWidget):
         panel_id: str, 
         icon: str, 
         title: str, 
-        content: str
+        content: str,
+        key: str = ""
     ) -> QWidget:
         """创建单个知识板块"""
         panel = QWidget()
@@ -269,6 +331,12 @@ class ToolBase(QWidget):
         content_label.setTextFormat(Qt.TextFormat.RichText)
         layout.addWidget(content_label)
         
+        if key:
+            self._knowledge_labels[key] = {
+                'title': title_label,
+                'content': content_label
+            }
+            
         return panel
     
     # ==================== 知识内容方法 (子类重写以提供内容) ====================
@@ -310,13 +378,44 @@ class ToolBase(QWidget):
         return None
     
     def create_visualization(self) -> Optional[QWidget]:
-        """
-        创建可视化图表
-        
-        返回:
-            包含图表的QWidget，返回None则不显示
-        """
+        """创建可视化图表 (子类可重写)"""
         return None
+
+    def retranslate_ui(self, lang: str):
+        """
+        重新翻译 UI (国际化刷新接口)
+        子类重写此时须先调用 super().retranslate_ui(lang)
+        以确保标题、描述文字得到更新。
+        """
+        if self.i18n_title_key:
+            self._title_label.setText(f"{self.tool_icon} {tr(self.i18n_title_key, self.tool_name)}")
+        if self.i18n_desc_key:
+            self._desc_label.setText(tr(self.i18n_desc_key, self.tool_description))
+            
+        # 刷新知识面板的内容
+        if hasattr(self, '_knowledge_section_title'):
+            self._knowledge_section_title.setText(tr("toolbase.knowledge_title", "📚 深入理解"))
+            
+        if hasattr(self, '_knowledge_labels'):
+            if 'intuition' in self._knowledge_labels:
+                self._knowledge_labels['intuition']['title'].setText(tr("toolbase.intuition_title", "直观理解 · 物理本质"))
+                content = self.get_intuition_content()
+                if content: self._knowledge_labels['intuition']['content'].setText(content)
+                
+            if 'math_model' in self._knowledge_labels:
+                self._knowledge_labels['math_model']['title'].setText(tr("toolbase.math_title", "数学模型 · 精确计算"))
+                content = self.get_math_model_content()
+                if content: self._knowledge_labels['math_model']['content'].setText(content)
+                
+            if 'engineering' in self._knowledge_labels:
+                self._knowledge_labels['engineering']['title'].setText(tr("toolbase.engineering_title", "工程边界 · 适用范围与避坑"))
+                content = self.get_engineering_content()
+                if content: self._knowledge_labels['engineering']['content'].setText(content)
+                
+            if 'history' in self._knowledge_labels:
+                self._knowledge_labels['history']['title'].setText(tr("toolbase.history_title", "发现历史 · 趣味故事"))
+                content = self.get_history_content()
+                if content: self._knowledge_labels['history']['content'].setText(content)
     
     def update_result(self, result: Dict[str, Any]):
         """

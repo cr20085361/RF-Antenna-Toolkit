@@ -27,6 +27,7 @@ import matplotlib.pyplot as plt
 
 from ui.base.tool_base import ToolBase
 # 确保资源路径正确
+from core.i18n import tr
 from core.antenna.sensitivity import SystemSensitivity
 
 
@@ -55,6 +56,7 @@ class SensitivityTool(ToolBase):
         # 存储绘图数据
         self._chart_data: List[tuple] = []
         
+        self._static_labels = []
         super().__init__()
         
         # 初始化默认数据 (必须在 setup_ui 之后)
@@ -421,43 +423,13 @@ class SensitivityTool(ToolBase):
     # ==================== 四维度知识内容 ====================
 
     def get_intuition_content(self) -> Optional[str]:
-        return """
-        <b>👂 直观理解：</b><br><br>
-        想象你在一个嘈杂的房间里（环境噪声）试图听清一个人的耳语（信号）。<br>
-        <ul>
-            <li><b>接收机灵敏度 (Rx Sensitivity):</b> 你的耳朵能听到的最小声音。它取决于你的听力好坏（噪声系数 NF）和你要听的频率范围（带宽 BW）。带宽越宽，进来的噪声越多，越难听清。</li>
-            <li><b>天线增益 (Gain):</b> 就像把手放在耳朵后面形成一个杯状，收集更多方向的声音。增益越高，收集的信号越强。</li>
-            <li><b>系统灵敏度 (场强):</b> 原地那个说话的人，至少要发出多大的声音（场强），经过天线收集、线缆传输后，才能刚好被你的耳朵听到。我们关注的是这个空中的场强值。</li>
-        </ul>
-        """
+        return tr("sens.intuition_content")
 
     def get_math_model_content(self) -> Optional[str]:
-        return """
-        <b>📐 核心公式：</b><br><br>
-        
-        <b>1. 接收机灵敏度:</b><br>
-        <span style="font-family: monospace;">S (dBm) = -174 + 10log(BW) + NF + SNR</span><br>
-        • -174: 热噪声基底 (dBm/Hz)<br>
-        • BW: 带宽 (Hz)<br><br>
-        
-        <b>2. 天线系数 (AF):</b><br>
-        <span style="font-family: monospace;">AF (dB/m) = 20log(f_MHz) - G(dBi) - 29.77</span><br>
-        • 描述场强与端口电压的关系<br><br>
-        
-        <b>3. 系统灵敏度 (场强):</b><br>
-        <span style="font-family: monospace;">E (dBuV/m) = S(dBm) + Loss + AF + 107</span><br>
-        • 将功率灵敏度还原为空间场强
-        """
+        return tr("sens.math_content")
 
     def get_engineering_content(self) -> Optional[str]:
-        return """
-        <b>⚠️ 工程注意事项：</b>
-        <ul>
-            <li><b>极限灵敏度:</b> 受限于热噪声 (-174dBm/Hz)。在常温下无法突破此物理极限。</li>
-            <li><b>环境底噪:</b> 实际工程中，城市环境噪声通常远高于热噪声（可能高达 -100dBm）。此时降低接收机 NF 收益有限，改善天线增益或方向性更为有效。</li>
-            <li><b>单位换算:</b> 0 dBuV = 1 uV。 120 dBuV = 1 V。常用的参考点是 0dBm (50Ω) ≈ 107 dBuV。</li>
-        </ul>
-        """
+        return tr("sens.engineering_content")
 
     def get_history_content(self) -> Optional[str]:
         return """
@@ -467,3 +439,17 @@ class SensitivityTool(ToolBase):
             <li><b>Claude Shannon (1948):</b> 提出了香农极限，定义了在给定带宽和信噪比下的最大信息传输速率，间接给出了灵敏度的理论边界。</li>
         </ul>
         """
+
+    def retranslate_ui(self, lang: str = ""):
+        super().retranslate_ui(lang)
+        if not hasattr(self, '_static_labels'):
+            return
+        for widget, category, key, attr in self._static_labels:
+            if attr == "text":
+                widget.setText(tr(f"{category}.{key}"))
+            elif attr == "title":
+                widget.setTitle(tr(f"{category}.{key}"))
+            elif attr == "placeholder":
+                widget.setPlaceholderText(tr(f"{category}.{key}"))
+            elif attr == "text_colon":
+                widget.setText(tr(f"{category}.{key}") + ":")

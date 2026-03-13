@@ -18,6 +18,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QDoubleValidator, QPainter, QColor, QPen, QBrush, QFont
 
+from core.i18n import tr
 from ui.base.tool_base import ToolBase
 from core.rf.vswr import VSWRCalculator, VSWRResult
 
@@ -133,6 +134,8 @@ class VSWRTool(ToolBase):
     tool_icon = "📊"
     tool_category = "rf"
     tool_description = "根据驻波比(VSWR)计算反射系数、回波损耗、失配损耗等指标"
+    i18n_title_key = "vswr.tool_name"
+    i18n_desc_key = "vswr.tool_desc"
     
     def __init__(self, parent: Optional[QWidget] = None):
         """初始化驻波计算工具"""

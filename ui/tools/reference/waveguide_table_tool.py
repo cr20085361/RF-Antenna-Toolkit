@@ -18,6 +18,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QColor
 
+from core.i18n import tr
 from ui.base.tool_base import ToolBase
 
 
@@ -60,6 +61,8 @@ class WaveguideTableTool(ToolBase):
     tool_icon = "🔧"
     tool_category = "reference"
     tool_description = "标准矩形波导结构尺寸与法兰型号速查 (EIA/IEC/MIL)"
+    i18n_title_key = "waveguide.tool_name"
+    i18n_desc_key = "waveguide.tool_desc"
 
     # ========== 回调方法 ==========
 

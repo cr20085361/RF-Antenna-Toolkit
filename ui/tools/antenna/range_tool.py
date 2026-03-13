@@ -22,6 +22,7 @@ from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
 from ui.base.tool_base import ToolBase
+from core.i18n import tr
 from core.antenna.range_calculator import RangeCalculator, RangeParams, RangeResult
 
 
@@ -41,6 +42,7 @@ class RangeTool(ToolBase):
         self._calculator = RangeCalculator()
         self._result_labels: Dict[str, QLabel] = {}
         
+        self._static_labels = []
         super().__init__(parent)
         
         # 初始化默认值并计算一次
@@ -393,3 +395,17 @@ class RangeTool(ToolBase):
         <p>1946 年，贝尔实验室的工程师 <b>Harald T. Friis</b> 发表了划时代的论文《A Note on a Simple Transmission Formula》。</p>
         <p>在此之前，无线电工程师们被迫使用极其繁琐和容易出错的电磁场积分来计算收发天线之间的能量耦合。Friis 敏锐地引入了“有效接收面积 (Effective Area)”这一优雅的宏观物理量，把微观复杂的 Maxwell 方程组化繁为简，彻底颠覆并奠定了现代无线电链路预算的基础，让无线通信进入了可以被快速、精准量化的工程时代。</p>
         """
+
+    def retranslate_ui(self, lang: str = ""):
+        super().retranslate_ui(lang)
+        if not hasattr(self, '_static_labels'):
+            return
+        for widget, category, key, attr in self._static_labels:
+            if attr == "text":
+                widget.setText(tr(f"{category}.{key}"))
+            elif attr == "title":
+                widget.setTitle(tr(f"{category}.{key}"))
+            elif attr == "placeholder":
+                widget.setPlaceholderText(tr(f"{category}.{key}"))
+            elif attr == "text_colon":
+                widget.setText(tr(f"{category}.{key}") + ":")

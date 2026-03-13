@@ -23,6 +23,7 @@ from core.antenna.farfield import (
     FarFieldCalculator, FarFieldResult, ApertureShape
 )
 import os
+from core.i18n import translator, tr
 
 
 class FarFieldTool(ToolBase):
@@ -42,6 +43,9 @@ class FarFieldTool(ToolBase):
     tool_icon = "🎯"
     tool_category = "antenna"
     tool_description = "计算天线远场测试距离 (IEEE 149 / 3GPP 38.810)"
+    
+    i18n_title_key = "nav.tool_farfield"
+    i18n_desc_key = "nav.desc_farfield"
 
     def __init__(self, parent: Optional[QWidget] = None):
         """初始化远场计算工具"""
@@ -59,16 +63,16 @@ class FarFieldTool(ToolBase):
         layout.setSpacing(16)
 
         # ==================== 频率输入 ====================
-        freq_group = QGroupBox("测试频率")
-        freq_layout = QGridLayout(freq_group)
+        self._freq_group = QGroupBox(tr("farfield.title_freq", "测试频率"))
+        freq_layout = QGridLayout(self._freq_group)
         freq_layout.setSpacing(12)
 
-        freq_label = QLabel("频率:")
-        freq_label.setObjectName("InputLabel")
-        freq_layout.addWidget(freq_label, 0, 0)
+        self._freq_label = QLabel(tr("farfield.label_freq", "频率:"))
+        self._freq_label.setObjectName("InputLabel")
+        freq_layout.addWidget(self._freq_label, 0, 0)
 
         self._freq_input = QLineEdit()
-        self._freq_input.setPlaceholderText("输入测试频率")
+        self._freq_input.setPlaceholderText(tr("farfield.placeholder_freq", "输入测试频率"))
         self._freq_input.setValidator(QDoubleValidator(0.001, 1e6, 6))
         self._freq_input.setText("10")
         freq_layout.addWidget(self._freq_input, 0, 1)
@@ -78,27 +82,27 @@ class FarFieldTool(ToolBase):
         self._freq_unit.setCurrentText("GHz")
         freq_layout.addWidget(self._freq_unit, 0, 2)
 
-        layout.addWidget(freq_group)
+        layout.addWidget(self._freq_group)
 
         # ==================== 口径输入 ====================
-        aperture_group = QGroupBox("天线口径 (最大物理尺寸)")
-        aperture_layout = QVBoxLayout(aperture_group)
+        self._aperture_group = QGroupBox(tr("farfield.title_aperture", "天线口径 (最大物理尺寸)"))
+        aperture_layout = QVBoxLayout(self._aperture_group)
         aperture_layout.setSpacing(12)
 
         # 口径输入模式选择
         mode_layout = QHBoxLayout()
         self._aperture_mode_group = QButtonGroup(self)
 
-        self._radio_direct = QRadioButton("直接输入 D")
+        self._radio_direct = QRadioButton(tr("farfield.radio_direct", "直接输入 D"))
         self._radio_direct.setChecked(True)
         self._aperture_mode_group.addButton(self._radio_direct, 0)
         mode_layout.addWidget(self._radio_direct)
 
-        self._radio_rect = QRadioButton("矩形 (长×宽)")
+        self._radio_rect = QRadioButton(tr("farfield.radio_rect", "矩形 (长×宽)"))
         self._aperture_mode_group.addButton(self._radio_rect, 1)
         mode_layout.addWidget(self._radio_rect)
 
-        self._radio_circular = QRadioButton("圆形 (直径)")
+        self._radio_circular = QRadioButton(tr("farfield.radio_circ", "圆形 (直径)"))
         self._aperture_mode_group.addButton(self._radio_circular, 2)
         mode_layout.addWidget(self._radio_circular)
 
@@ -109,42 +113,42 @@ class FarFieldTool(ToolBase):
         self._aperture_grid.setSpacing(12)
 
         # 直接输入 D
-        self._d_label = QLabel("口径 D:")
+        self._d_label = QLabel(tr("farfield.label_d", "口径 D:"))
         self._d_label.setObjectName("InputLabel")
         self._aperture_grid.addWidget(self._d_label, 0, 0)
 
         self._d_input = QLineEdit()
-        self._d_input.setPlaceholderText("天线最大物理尺寸")
+        self._d_input.setPlaceholderText(tr("farfield.place_d", "天线最大物理尺寸"))
         self._d_input.setValidator(QDoubleValidator(0.001, 1e6, 4))
         self._d_input.setText("300")
         self._aperture_grid.addWidget(self._d_input, 0, 1)
 
         # 矩形长
-        self._length_label = QLabel("长 L:")
+        self._length_label = QLabel(tr("farfield.lbl_len", "长 L:"))
         self._length_label.setObjectName("InputLabel")
         self._aperture_grid.addWidget(self._length_label, 1, 0)
 
         self._length_input = QLineEdit()
-        self._length_input.setPlaceholderText("矩形长边")
+        self._length_input.setPlaceholderText(tr("farfield.place_len", "矩形长边"))
         self._length_input.setValidator(QDoubleValidator(0.001, 1e6, 4))
         self._length_input.setText("200")
         self._aperture_grid.addWidget(self._length_input, 1, 1)
 
         # 矩形宽
-        self._width_label = QLabel("宽 W:")
+        self._width_label = QLabel(tr("farfield.lbl_wid", "宽 W:"))
         self._width_label.setObjectName("InputLabel")
         self._aperture_grid.addWidget(self._width_label, 2, 0)
 
         self._width_input = QLineEdit()
-        self._width_input.setPlaceholderText("矩形短边")
+        self._width_input.setPlaceholderText(tr("farfield.place_wid", "矩形短边"))
         self._width_input.setValidator(QDoubleValidator(0.001, 1e6, 4))
         self._width_input.setText("200")
         self._aperture_grid.addWidget(self._width_input, 2, 1)
 
         # 口径尺寸单位 (共用)
-        unit_label = QLabel("尺寸单位:")
-        unit_label.setObjectName("InputLabel")
-        self._aperture_grid.addWidget(unit_label, 0, 2)
+        self._unit_label = QLabel(tr("farfield.lbl_unit", "尺寸单位:"))
+        self._unit_label.setObjectName("InputLabel")
+        self._aperture_grid.addWidget(self._unit_label, 0, 2)
 
         self._aperture_unit = QComboBox()
         self._aperture_unit.addItems(["mm", "cm", "m"])
@@ -157,19 +161,19 @@ class FarFieldTool(ToolBase):
         self._aperture_mode_group.idClicked.connect(self._on_aperture_mode_changed)
         self._on_aperture_mode_changed(0)
 
-        layout.addWidget(aperture_group)
+        layout.addWidget(self._aperture_group)
 
         # ==================== 相控阵扫描角 (可选) ====================
-        scan_group = QGroupBox("相控阵波束扫描 (可选)")
-        scan_layout = QGridLayout(scan_group)
+        self._scan_group = QGroupBox(tr("farfield.title_scan", "相控阵波束扫描 (可选)"))
+        scan_layout = QGridLayout(self._scan_group)
         scan_layout.setSpacing(12)
 
-        scan_label = QLabel("扫描角 θ:")
-        scan_label.setObjectName("InputLabel")
-        scan_layout.addWidget(scan_label, 0, 0)
+        self._scan_label = QLabel(tr("farfield.lbl_scan", "扫描角 θ:"))
+        self._scan_label.setObjectName("InputLabel")
+        scan_layout.addWidget(self._scan_label, 0, 0)
 
         self._scan_angle_input = QLineEdit()
-        self._scan_angle_input.setPlaceholderText("默认 0 (法线方向)")
+        self._scan_angle_input.setPlaceholderText(tr("farfield.place_scan", "默认 0 (法线方向)"))
         self._scan_angle_input.setValidator(QDoubleValidator(0, 89.9, 2))
         self._scan_angle_input.setText("0")
         scan_layout.addWidget(self._scan_angle_input, 0, 1)
@@ -177,23 +181,23 @@ class FarFieldTool(ToolBase):
         scan_unit_label = QLabel("°")
         scan_layout.addWidget(scan_unit_label, 0, 2)
 
-        layout.addWidget(scan_group)
+        layout.addWidget(self._scan_group)
 
         # ==================== 计算按钮 ====================
-        calc_button = QPushButton("🎯 计算远场距离")
-        calc_button.setObjectName("PrimaryButton")
-        calc_button.setCursor(Qt.CursorShape.PointingHandCursor)
-        calc_button.clicked.connect(self._do_calculate)
-        layout.addWidget(calc_button)
+        self._calc_button = QPushButton(tr("farfield.btn_calc", "🎯 计算远场距离"))
+        self._calc_button.setObjectName("PrimaryButton")
+        self._calc_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        self._calc_button.clicked.connect(self._do_calculate)
+        layout.addWidget(self._calc_button)
 
         # ==================== 三分区示意图 ====================
-        diagram_card = QWidget()
-        diagram_card.setObjectName("ResultPanel")
-        diagram_layout = QVBoxLayout(diagram_card)
+        self._diagram_card = QWidget()
+        self._diagram_card.setObjectName("ResultPanel")
+        diagram_layout = QVBoxLayout(self._diagram_card)
 
-        diagram_title = QLabel("📊 天线场区三分区示意 (IEEE 149)")
-        diagram_title.setObjectName("ResultTitle")
-        diagram_layout.addWidget(diagram_title)
+        self._diagram_title = QLabel(tr("farfield.title_diagram", "📊 天线场区三分区示意 (IEEE 149)"))
+        self._diagram_title.setObjectName("ResultTitle")
+        diagram_layout.addWidget(self._diagram_title)
 
         self._diagram_label = QLabel()
         self._diagram_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -216,7 +220,7 @@ class FarFieldTool(ToolBase):
                 "color: #718096; font-size: 13px; padding: 20px;")
 
         diagram_layout.addWidget(self._diagram_label)
-        layout.addWidget(diagram_card)
+        layout.addWidget(self._diagram_card)
 
         layout.addStretch()
 
@@ -238,9 +242,56 @@ class FarFieldTool(ToolBase):
         self._width_input.setVisible(is_rect)
 
         if mode_id == 2:
-            self._d_label.setText("直径 D:")
+            self._d_label.setText(tr("farfield.label_d_circle", "直径 D:"))
         else:
-            self._d_label.setText("口径 D:")
+            self._d_label.setText(tr("farfield.label_d", "口径 D:"))
+            
+    def retranslate_ui(self, lang: str):
+        """重新翻译远场计算器页面控件"""
+        super().retranslate_ui(lang)
+        
+        self._freq_group.setTitle(tr("farfield.title_freq", "测试频率"))
+        self._freq_label.setText(tr("farfield.label_freq", "频率:"))
+        self._freq_input.setPlaceholderText(tr("farfield.placeholder_freq", "输入测试频率"))
+        
+        # 刷新口径输入部分
+        self._aperture_group.setTitle(tr("farfield.title_aperture", "天线口径 (最大物理尺寸)"))
+        self._radio_direct.setText(tr("farfield.radio_direct", "直接输入 D"))
+        self._radio_rect.setText(tr("farfield.radio_rect", "矩形 (长×宽)"))
+        self._radio_circular.setText(tr("farfield.radio_circ", "圆形 (直径)"))
+        self._d_input.setPlaceholderText(tr("farfield.place_d", "天线最大物理尺寸"))
+        self._length_label.setText(tr("farfield.lbl_len", "长 L:"))
+        self._length_input.setPlaceholderText(tr("farfield.place_len", "矩形长边"))
+        self._width_label.setText(tr("farfield.lbl_wid", "宽 W:"))
+        self._width_input.setPlaceholderText(tr("farfield.place_wid", "矩形短边"))
+        self._unit_label.setText(tr("farfield.lbl_unit", "尺寸单位:"))
+        
+        # 扫描角
+        self._scan_group.setTitle(tr("farfield.title_scan", "相控阵波束扫描 (可选)"))
+        self._scan_label.setText(tr("farfield.lbl_scan", "扫描角 θ:"))
+        self._scan_angle_input.setPlaceholderText(tr("farfield.place_scan", "默认 0 (法线方向)"))
+        
+        self._calc_button.setText(tr("farfield.btn_calc", "🎯 计算远场距离"))
+        self._diagram_title.setText(tr("farfield.title_diagram", "📊 天线场区三分区示意 (IEEE 149)"))
+        
+        # 将当前模式的标签进行刷新
+        self._on_aperture_mode_changed(self._aperture_mode_group.checkedId())
+        
+        # 错误提示、结果卡片等若是空的不刷新，等计算完自动应用最新的 tr()
+        # 错误提示、结果卡片等若是空的不刷新，等计算完自动应用最新的 tr()
+        if not self._error_label.isHidden():
+            # Error is dynamically generated, ignore auto translation for error label
+            pass
+            
+        # 刷新所有结果面板注册过的静态文本标签
+        if hasattr(self, '_static_labels'):
+            for lbl, key, dflt in self._static_labels:
+                lbl.setText(tr(key, dflt))
+                
+        # 刷新远场距离卡片的标题和描述 (由于不在_static_labels中，需要特殊处理，但它们可以重构进去)
+        if hasattr(self, '_far_field_card_title') and hasattr(self, '_far_field_card_desc'):
+            self._far_field_card_title.setText(tr("farfield.result_boundary", "🎯 远场距离 (Far-Field Boundary)"))
+            self._far_field_card_desc.setText(tr("farfield.result_desc_boundary", "满足所有判据的最短合法远场测量距离"))
 
     # ==================== 结果面板 ====================
 
@@ -250,6 +301,12 @@ class FarFieldTool(ToolBase):
         layout = QVBoxLayout(panel)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(12)
+        
+        self._static_labels = []
+        def _lbl(key: str, default: str) -> QLabel:
+            lbl = QLabel(tr(key, default))
+            self._static_labels.append((lbl, key, default))
+            return lbl
 
         # 错误提示区域
         self._error_label = QLabel("")
@@ -259,9 +316,9 @@ class FarFieldTool(ToolBase):
         layout.addWidget(self._error_label)
 
         # ---- 核心结果: 远场距离 ----
-        far_field_card = self._create_result_card(
-            "far_field", "🎯 远场距离 (Far-Field Boundary)",
-            "满足所有判据的最短合法远场测量距离"
+        far_field_card, self._far_field_card_title, self._far_field_card_desc = self._create_result_card_with_refs(
+            "far_field", "farfield.result_boundary", "🎯 远场距离 (Far-Field Boundary)",
+            "farfield.result_desc_boundary", "满足所有判据的最短合法远场测量距离"
         )
         layout.addWidget(far_field_card)
 
@@ -270,26 +327,26 @@ class FarFieldTool(ToolBase):
         size_card.setObjectName("ResultPanel")
         size_layout = QVBoxLayout(size_card)
 
-        size_title = QLabel("📐 天线电尺寸评估")
+        size_title = _lbl("farfield.result_eval", "📐 天线电尺寸评估")
         size_title.setObjectName("ResultTitle")
         size_layout.addWidget(size_title)
 
         size_grid = QGridLayout()
         size_grid.setSpacing(8)
 
-        size_grid.addWidget(QLabel("D/λ 比值:"), 0, 0)
+        size_grid.addWidget(_lbl("farfield.lbl_ratio", "D/λ 比值:"), 0, 0)
         self._result_labels["d_over_lambda"] = QLabel("--")
         self._result_labels["d_over_lambda"].setStyleSheet(
             "font-weight: bold; font-size: 15px; color: #3182CE;")
         size_grid.addWidget(self._result_labels["d_over_lambda"], 0, 1)
 
-        size_grid.addWidget(QLabel("电尺寸分类:"), 1, 0)
+        size_grid.addWidget(_lbl("farfield.lbl_size_class", "电尺寸分类:"), 1, 0)
         self._result_labels["electrical_size"] = QLabel("--")
         self._result_labels["electrical_size"].setStyleSheet(
             "font-weight: bold; font-size: 14px;")
         size_grid.addWidget(self._result_labels["electrical_size"], 1, 1)
 
-        size_grid.addWidget(QLabel("主导判据:"), 2, 0)
+        size_grid.addWidget(_lbl("farfield.lbl_dominant", "主导判据:"), 2, 0)
         self._result_labels["dominant"] = QLabel("--")
         self._result_labels["dominant"].setStyleSheet(
             "font-weight: bold; font-size: 14px; color: #D69E2E;")
@@ -303,22 +360,22 @@ class FarFieldTool(ToolBase):
         zone_card.setObjectName("ResultPanel")
         zone_layout = QVBoxLayout(zone_card)
 
-        zone_title = QLabel("📊 三分区边界 (IEEE 149)")
+        zone_title = _lbl("farfield.result_zones", "📊 三分区边界 (IEEE 149)")
         zone_title.setObjectName("ResultTitle")
         zone_layout.addWidget(zone_title)
 
         zone_grid = QGridLayout()
         zone_grid.setSpacing(8)
 
-        zone_grid.addWidget(QLabel("反应性近场 R_nf:"), 0, 0)
+        zone_grid.addWidget(_lbl("farfield.lbl_rnf", "反应性近场 R_nf:"), 0, 0)
         self._result_labels["reactive_nf"] = QLabel("--")
         zone_grid.addWidget(self._result_labels["reactive_nf"], 0, 1)
 
-        zone_grid.addWidget(QLabel("辐射近场/菲涅尔区:"), 1, 0)
+        zone_grid.addWidget(_lbl("farfield.lbl_radnf", "辐射近场/菲涅尔区:"), 1, 0)
         self._result_labels["radiative_nf"] = QLabel("--")
         zone_grid.addWidget(self._result_labels["radiative_nf"], 1, 1)
 
-        zone_grid.addWidget(QLabel("远场/夫琅禾费区:"), 2, 0)
+        zone_grid.addWidget(_lbl("farfield.lbl_ffz", "远场/夫琅禾费区:"), 2, 0)
         self._result_labels["far_field_zone"] = QLabel("--")
         self._result_labels["far_field_zone"].setStyleSheet(
             "font-weight: bold; color: #38A169;")
@@ -332,26 +389,26 @@ class FarFieldTool(ToolBase):
         criteria_card.setObjectName("ResultPanel")
         criteria_layout = QVBoxLayout(criteria_card)
 
-        criteria_title = QLabel("🧮 各判据分项计算")
+        criteria_title = _lbl("farfield.result_criteria", "🧮 各判据分项计算")
         criteria_title.setObjectName("ResultTitle")
         criteria_layout.addWidget(criteria_title)
 
         criteria_grid = QGridLayout()
         criteria_grid.setSpacing(8)
 
-        criteria_grid.addWidget(QLabel("相位判据 (2D²/λ):"), 0, 0)
+        criteria_grid.addWidget(_lbl("farfield.lbl_crit_phase", "相位判据 (2D²/λ):"), 0, 0)
         self._result_labels["phase"] = QLabel("--")
         criteria_grid.addWidget(self._result_labels["phase"], 0, 1)
 
-        criteria_grid.addWidget(QLabel("场衰减判据 (5λ):"), 1, 0)
+        criteria_grid.addWidget(_lbl("farfield.lbl_crit_5l", "场衰减判据 (5λ):"), 1, 0)
         self._result_labels["lambda5"] = QLabel("--")
         criteria_grid.addWidget(self._result_labels["lambda5"], 1, 1)
 
-        criteria_grid.addWidget(QLabel("保守场衰减 (10λ):"), 2, 0)
+        criteria_grid.addWidget(_lbl("farfield.lbl_crit_10l", "保守场衰减 (10λ):"), 2, 0)
         self._result_labels["lambda10"] = QLabel("--")
         criteria_grid.addWidget(self._result_labels["lambda10"], 2, 1)
 
-        criteria_grid.addWidget(QLabel("最小距离 (5D):"), 3, 0)
+        criteria_grid.addWidget(_lbl("farfield.lbl_crit_5d", "最小距离 (5D):"), 3, 0)
         self._result_labels["d5"] = QLabel("--")
         criteria_grid.addWidget(self._result_labels["d5"], 3, 1)
 
@@ -363,22 +420,22 @@ class FarFieldTool(ToolBase):
         echo_card.setObjectName("ResultPanel")
         echo_layout = QVBoxLayout(echo_card)
 
-        echo_title = QLabel("📋 输入参数回显")
+        echo_title = _lbl("farfield.result_input", "📋 输入参数回显")
         echo_title.setObjectName("ResultTitle")
         echo_layout.addWidget(echo_title)
 
         echo_grid = QGridLayout()
         echo_grid.setSpacing(8)
 
-        echo_grid.addWidget(QLabel("波长 λ:"), 0, 0)
+        echo_grid.addWidget(_lbl("farfield.lbl_echo_wl", "波长 λ:"), 0, 0)
         self._result_labels["wavelength"] = QLabel("--")
         echo_grid.addWidget(self._result_labels["wavelength"], 0, 1)
 
-        echo_grid.addWidget(QLabel("口径 D:"), 1, 0)
+        echo_grid.addWidget(_lbl("farfield.lbl_echo_d", "口径 D:"), 1, 0)
         self._result_labels["aperture_d"] = QLabel("--")
         echo_grid.addWidget(self._result_labels["aperture_d"], 1, 1)
 
-        echo_grid.addWidget(QLabel("有效口径 D_eff:"), 2, 0)
+        echo_grid.addWidget(_lbl("farfield.lbl_echo_deff", "有效口径 D_eff:"), 2, 0)
         self._result_labels["effective_d"] = QLabel("--")
         echo_grid.addWidget(self._result_labels["effective_d"], 2, 1)
 
@@ -390,7 +447,7 @@ class FarFieldTool(ToolBase):
         rec_card.setObjectName("ResultPanel")
         rec_layout = QVBoxLayout(rec_card)
 
-        rec_title = QLabel("💡 测量建议")
+        rec_title = _lbl("farfield.result_advice", "💡 测量建议")
         rec_title.setObjectName("ResultTitle")
         rec_layout.addWidget(rec_title)
 
@@ -404,33 +461,34 @@ class FarFieldTool(ToolBase):
         layout.addStretch()
         return panel
 
-    def _create_result_card(
-        self, key: str, title: str, description: str
-    ) -> QWidget:
-        """创建结果卡片"""
+        return card
+        
+    def _create_result_card_with_refs(
+        self, key: str, title_key: str, default_title: str, 
+        desc_key: str, default_desc: str
+    ):
         card = QWidget()
         card.setObjectName("ResultPanel")
         card_layout = QVBoxLayout(card)
         card_layout.setContentsMargins(16, 16, 16, 16)
         card_layout.setSpacing(8)
 
-        title_label = QLabel(title)
+        title_label = QLabel(tr(title_key, default_title))
         title_label.setObjectName("ResultTitle")
         card_layout.addWidget(title_label)
 
         value_label = QLabel("--")
         value_label.setObjectName("ResultValue")
-        value_label.setStyleSheet(
-            "font-size: 28px; font-weight: bold; color: #2B6CB0;")
+        value_label.setStyleSheet("font-size: 28px; font-weight: bold; color: #2B6CB0;")
         self._result_labels[key] = value_label
         card_layout.addWidget(value_label)
 
-        desc_label = QLabel(description)
+        desc_label = QLabel(tr(desc_key, default_desc))
         desc_label.setObjectName("ResultDescription")
         desc_label.setWordWrap(True)
         card_layout.addWidget(desc_label)
 
-        return card
+        return card, title_label, desc_label
 
     # ==================== 计算逻辑 ====================
 
@@ -561,132 +619,16 @@ class FarFieldTool(ToolBase):
 
     def get_intuition_content(self) -> Optional[str]:
         """直观理解 - 物理本质"""
-        return """
-        <b>🎯 什么是远场？——从生活场景理解三分区</b><br><br>
-
-        想象你站在一个正在演奏的<b>大鼓</b>旁边：<br><br>
-
-        <span style="background-color: #FED7E2; padding: 6px 10px;
-        border-radius: 6px; display: inline-block; margin: 4px 0;">
-        <b>🔴 第一区：反应性近场</b> — 就像贴着鼓面
-        </span><br>
-        • 你能<b>感到气流推着你的皮肤</b>，空气在来回震荡。<br>
-        • 电磁波在此区像"呼吸"——能量在天线周围<b>来回涌动</b>，
-        并不真正向外传播。<br>
-        • 电场和磁场<b>不同步</b>、方向杂乱，像搅动的水面。<br>
-        • <b>类比</b>：水龙头刚出水口处——水柱扭曲混沌。<br><br>
-
-        <span style="background-color: #FEFCBF; padding: 6px 10px;
-        border-radius: 6px; display: inline-block; margin: 4px 0;">
-        <b>🟡 第二区：辐射近场 (菲涅尔区)</b> — 走远了几步
-        </span><br>
-        • 你能<b>清楚听到鼓声</b>了，但方向感还不太对——
-        走两步声音大小就变化很大。<br>
-        • 电磁波已经开始向外"飞行"，但波前仍然是<b>弯曲的球面</b>，
-        各处场强还不均匀。<br>
-        • 在这里测天线方向图，结果会<b>随距离变化</b>，不可靠。<br>
-        • <b>类比</b>：手电筒近处照墙——光斑中心亮、边缘暗且范围随距离快速变化。<br><br>
-
-        <span style="background-color: #C6F6D5; padding: 6px 10px;
-        border-radius: 6px; display: inline-block; margin: 4px 0;">
-        <b>🟢 第三区：远场 (夫琅禾费区)</b> — 站得足够远了
-        </span><br>
-        • 鼓声变成了平稳的"<b>声波</b>"——哪个方向响就是哪个方向响，
-        不再受距离影响。<br>
-        • 电磁波在局部可看作<b>平面波</b>：电场、磁场垂直且同步振荡，
-        能量只沿径向传播。<br>
-        • 天线的方向图、增益在此区<b>稳定不变</b>，是"真正的辐射特性"。<br>
-        • <b>类比</b>：远处看太阳光——光线几乎所有都是平行射来的。<br><br>
-
-        <b>🔑 一句话总结：</b><br>
-        <i>远场就是电磁波"长大成人"、行为稳定的区域。
-        只有在这里测得的数据才能代表天线的真实实力。</i>
-        """
+        return tr("farfield.intuition_content", "由于字典遗漏未能成功加载此科普内容，正在显示后备数据。")
 
     def get_math_model_content(self) -> Optional[str]:
         """数学模型 - 精确公式"""
-        return """
-        <b>📐 三分区边界公式</b><br><br>
-
-        <b>反应性近场外边界 (Reactive Near-field):</b><br>
-        <span style="font-family: 'Cambria Math', serif; font-size: 15px;">
-        R<sub>rn</sub> = 0.62 √(D³/λ)
-        </span><br><br>
-
-        <b>远场内边界 (Fraunhofer Region):</b><br>
-        <span style="font-family: 'Cambria Math', serif; font-size: 15px;">
-        R<sub>ff</sub> = max(2D²/λ,  5λ,  5D)
-        </span><br><br>
-
-        <b>各判据物理含义:</b><br>
-        • <b>2D²/λ</b> — 相位判据:  口径面上各点到观测点的
-        最大路径差 < λ/16 (≈ 22.5° 相位偏差)<br>
-        • <b>5λ</b>  — 场衰减判据:  确保辐射场 (1/r) 远大于
-        反应场 (1/r²), 部分标准取 10λ<br>
-        • <b>5D</b>  — 最小绝对距离, 确保 AUT 口径的张角
-        对方向图测量误差可忽略<br><br>
-
-        <b>相控阵口径修正:</b><br>
-        <span style="font-family: 'Cambria Math', serif; font-size: 15px;">
-        D<sub>eff</sub> = D × cos(θ)
-        </span><br>
-        θ 为波束偏转角，扫描后投影口径缩小，远场距离随之降低。
-        """
+        return tr("farfield.math_content", "由于字典遗漏未能成功加载此科普内容，正在显示后备数据。")
 
     def get_engineering_content(self) -> Optional[str]:
         """工程边界 - 适用范围与避坑"""
-        return """
-        <b>✅ 行业标准参考:</b><br>
-        <table style="margin: 8px 0;">
-        <tr><td>IEEE 149-2019</td><td>天线标准测量规程 (通用)</td></tr>
-        <tr><td>3GPP TS 38.810</td><td>5G NR OTA 测量方法论</td></tr>
-        <tr><td>CTIA Test Plan</td><td>移动终端 OTA 测试规范</td></tr>
-        </table><br>
-
-        <b>⚠️ 典型天线远场距离速查:</b><br>
-        <table style="margin: 8px 0;">
-        <tr><td>λ/4 单极子 @2.4GHz</td><td>≈ 0.63m (5λ主导)</td></tr>
-        <tr><td>300mm 反射面 @10GHz</td><td>≈ 6.0m (2D²/λ主导)</td></tr>
-        <tr><td>5G AAS 200×200mm @28GHz</td><td>≈ 14.9m (2D²/λ主导)</td></tr>
-        </table><br>
-
-        <span style="background-color: #FED7D7; padding: 4px 8px;
-        border-radius: 4px; color: #C53030;">
-        ❌ 常见误区
-        </span><br>
-        • 对小天线仍套用 2D²/λ，得到过短的远场距离<br>
-        • 忽略相控阵扫描角对有效口径的缩减<br>
-        • 将近场数据直接当作远场方向图使用<br><br>
-
-        <span style="background-color: #C6F6D5; padding: 4px 8px;
-        border-radius: 4px; color: #276749;">
-        💡 不满足远场距离的替代方案
-        </span><br>
-        • 紧缩场 (CATR) 天线测量系统<br>
-        • 近场-远场变换 (NF→FF Transformation)<br>
-        • 球面近场扫描 (SNF) 测量
-        """
+        return tr("farfield.engineering_content", "由于字典遗漏未能成功加载此科普内容，正在显示后备数据。")
 
     def get_history_content(self) -> Optional[str]:
         """发现历史 - 趣味故事"""
-        return """
-        <b>📜 从光学到微波——远场的跨界源流</b><br><br>
-
-        <b>1818年</b> - 奥古斯丁·<b>菲涅尔</b>提出波动光学理论，
-        首次系统地区分了近场（菲涅尔衍射）和远场（夫琅禾费衍射），
-        解释了不同距离范围内衍射图样的差异。<br><br>
-
-        <b>1823年</b> - 约瑟夫·<b>夫琅禾费</b>实验验证了远距离
-        平行光条件下的衍射规律，远场区从此以他命名。<br><br>
-
-        <b>1940年代</b> - 雷达技术的爆发式发展催生了对大型天线
-        辐射方向图的精确测量需求。工程师们将光学中的远场判据
-        2D²/λ 移植到了天线测量领域。<br><br>
-
-        <b>2019年</b> - IEEE 149 标准最新修订版正式收编了对 5G
-        大规模相控阵 (Massive MIMO) 的 OTA 远场测量指导，
-        标志着远场理论进入了大阵面时代。<br><br>
-
-        <i>💭 有趣的是：你在做天线远场测量时用到的 "2D²/λ" 公式，
-        竟然来自 200 年前光学家对星光衍射的研究！</i>
-        """
+        return tr("farfield.history_content", "由于字典遗漏未能成功加载此科普内容，正在显示后备数据。")

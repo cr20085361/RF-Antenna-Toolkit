@@ -17,6 +17,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QDoubleValidator
 
+from core.i18n import tr
 from ui.base.tool_base import ToolBase
 from core.rf.cascade import CascadeCalculator, CascadeResult
 
@@ -42,6 +43,8 @@ class CascadeTool(ToolBase):
     tool_icon = "🔗"
     tool_category = "rf"
     tool_description = "计算多组件级联后的驻波范围"
+    i18n_title_key = "cascade.tool_name"
+    i18n_desc_key = "cascade.tool_desc"
     
     # 最大支持级联数
     MAX_STAGES = 4

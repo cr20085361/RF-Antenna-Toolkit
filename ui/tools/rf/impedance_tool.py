@@ -24,6 +24,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QDoubleValidator, QPixmap
 
 from ui.base.tool_base import ToolBase
+from core.i18n import tr
 from core.rf.impedance import ImpedanceCalculator, COMMON_MATERIALS
 
 
@@ -44,6 +45,7 @@ class ImpedanceTool(ToolBase):
     
     def __init__(self):
         # 注意：必须在 super().__init__() 之前初始化，因为基类会调用 create_input_panel()
+        self._static_labels = []
         self.calculator = ImpedanceCalculator()
         self._current_mode = 0  # 0=同轴线, 1=微带线, 2=CPWG
         # mm/mil 转换系数: 1 mil = 0.0254 mm
@@ -76,7 +78,13 @@ class ImpedanceTool(ToolBase):
             下一行号
         """
         # 标签
-        layout.addWidget(QLabel(label), row, 0)
+        lbl_wid = QLabel(label)
+        layout.addWidget(lbl_wid, row, 0)
+        if "coax_d" == param_key or "coax_D" == param_key or "coax_Z" == param_key or \
+           "ms_W" == param_key or "ms_H" == param_key or "ms_T" == param_key or "ms_Z" == param_key or \
+           "cpwg_W" == param_key or "cpwg_S" == param_key or "cpwg_H" == param_key or "cpwg_T" == param_key or "cpwg_Z" == param_key:
+            # This is handled dynamically via specific mapping
+            self._static_labels.append((lbl_wid, "impedance", param_key.lower().replace("ms_z", "lbl_z0").replace("coax_z", "lbl_z0").replace("cpwg_z", "lbl_z0"), "text"))
         # 输入框 - 设置最小宽度确保数值完整显示
         input_widget.setMinimumWidth(100)
         layout.addWidget(input_widget, row, 1)
@@ -112,7 +120,8 @@ class ImpedanceTool(ToolBase):
         
         # "计算"按钮
         if has_calc_btn:
-            calc_btn = QPushButton("计算")
+            calc_btn = QPushButton(tr("impedance.lbl_calc"))
+            self._static_labels.append((calc_btn, "impedance", "lbl_calc", "text"))
             calc_btn.setFixedWidth(50)
             calc_btn.setCursor(Qt.CursorShape.PointingHandCursor)
             calc_btn.setStyleSheet("""
@@ -226,21 +235,25 @@ class ImpedanceTool(ToolBase):
         layout.setSpacing(16)
         
         # ===== 结构模式选择 =====
-        mode_group = QGroupBox("结构模式")
+        mode_group = QGroupBox(tr("impedance.group_mode"))
+        self._static_labels.append((mode_group, "impedance", "group_mode", "title"))
         mode_layout = QVBoxLayout(mode_group)
         
         self._mode_button_group = QButtonGroup()
         
-        coaxial_radio = QRadioButton("同轴线 (Coaxial)")
+        coaxial_radio = QRadioButton(tr("impedance.radio_coax"))
+        self._static_labels.append((coaxial_radio, "impedance", "radio_coax", "text"))
         coaxial_radio.setChecked(True)
         self._mode_button_group.addButton(coaxial_radio, 0)
         mode_layout.addWidget(coaxial_radio)
         
-        microstrip_radio = QRadioButton("单微带线 (Microstrip)")
+        microstrip_radio = QRadioButton(tr("impedance.radio_ms"))
+        self._static_labels.append((microstrip_radio, "impedance", "radio_ms", "text"))
         self._mode_button_group.addButton(microstrip_radio, 1)
         mode_layout.addWidget(microstrip_radio)
         
-        cpwg_radio = QRadioButton("共面波导 (CPWG)")
+        cpwg_radio = QRadioButton(tr("impedance.radio_cpwg"))
+        self._static_labels.append((cpwg_radio, "impedance", "radio_cpwg", "text"))
         self._mode_button_group.addButton(cpwg_radio, 2)
         mode_layout.addWidget(cpwg_radio)
         
@@ -286,7 +299,9 @@ class ImpedanceTool(ToolBase):
                                       self._coax_outer_input, "coax_D")
         
         # 介电常数 (v1.2: 支持自定义输入)
-        layout.addWidget(QLabel("介电常数 εᵣ:"), row, 0)
+        lbl_er = QLabel(tr("impedance.lbl_er"))
+        self._static_labels.append((lbl_er, "impedance", "lbl_er", "text"))
+        layout.addWidget(lbl_er, row, 0)
         self._coax_er_combo = self._create_er_combo()
         # 同轴线默认选择聚乙烯
         for i in range(self._coax_er_combo.count()):
@@ -349,7 +364,9 @@ class ImpedanceTool(ToolBase):
                                       has_calc_btn=False, unit_type='thickness')
         
         # 介电常数 (v1.2: 支持自定义输入)
-        layout.addWidget(QLabel("介电常数 εᵣ:"), row, 0)
+        lbl_er = QLabel(tr("impedance.lbl_er"))
+        self._static_labels.append((lbl_er, "impedance", "lbl_er", "text"))
+        layout.addWidget(lbl_er, row, 0)
         self._ms_er_combo = self._create_er_combo(0)  # 默认 FR4
         layout.addWidget(self._ms_er_combo, row, 1, 1, 2)
         row += 1
@@ -415,7 +432,9 @@ class ImpedanceTool(ToolBase):
                                       has_calc_btn=False, unit_type='thickness')
         
         # 介电常数 (v1.2: 支持自定义输入)
-        layout.addWidget(QLabel("介电常数 εᵣ:"), row, 0)
+        lbl_er = QLabel(tr("impedance.lbl_er"))
+        self._static_labels.append((lbl_er, "impedance", "lbl_er", "text"))
+        layout.addWidget(lbl_er, row, 0)
         self._cpwg_er_combo = self._create_er_combo(0)  # 默认 FR4
         layout.addWidget(self._cpwg_er_combo, row, 1, 1, 2)
         row += 1
@@ -490,7 +509,8 @@ class ImpedanceTool(ToolBase):
         detail_card.setObjectName("ResultPanel")
         detail_layout = QVBoxLayout(detail_card)
         
-        detail_title = QLabel("📊 详细参数")
+        detail_title = QLabel(tr("impedance.title_detail"))
+        self._static_labels.append((detail_title, "impedance", "title_detail", "text"))
         detail_title.setObjectName("ResultTitle")
         detail_layout.addWidget(detail_title)
         
@@ -500,14 +520,15 @@ class ImpedanceTool(ToolBase):
         # 详细参数标签
         self._detail_labels = {}
         detail_items = [
-            ("effective_er", "有效介电常数 εₑ"),
-            ("velocity", "速度因子"),
-            ("capacitance", "单位长度电容"),
-            ("ratio", "尺寸比例"),
+            ("effective_er", tr("impedance.detail_er"), "detail_er"),
+            ("velocity", tr("impedance.detail_vel"), "detail_vel"),
+            ("capacitance", tr("impedance.detail_cap"), "detail_cap"),
+            ("ratio", tr("impedance.detail_ratio"), "detail_ratio"),
         ]
         
-        for i, (key, label) in enumerate(detail_items):
+        for i, (key, label, tr_key) in enumerate(detail_items):
             name_label = QLabel(f"{label}:")
+            self._static_labels.append((name_label, "impedance", tr_key, "text_colon"))
             name_label.setStyleSheet("color: #4A5568;")
             detail_grid.addWidget(name_label, i, 0)
             
@@ -525,7 +546,8 @@ class ImpedanceTool(ToolBase):
         diagram_card.setObjectName("ResultPanel")
         diagram_layout = QVBoxLayout(diagram_card)
         
-        diagram_title = QLabel("📐 截面示意图")
+        diagram_title = QLabel(tr("impedance.title_diagram"))
+        self._static_labels.append((diagram_title, "impedance", "title_diagram", "text"))
         diagram_title.setObjectName("ResultTitle")
         diagram_layout.addWidget(diagram_title)
         
@@ -607,9 +629,9 @@ class ImpedanceTool(ToolBase):
         if param_key == "coax_Z":
             # 正向计算：d, D, εr → Z₀
             if inner <= 0 or outer <= 0:
-                raise ValueError("请输入有效的尺寸")
+                raise ValueError(tr("impedance.err_dim"))
             if outer <= inner:
-                raise ValueError("外径必须大于内径")
+                raise ValueError(tr("impedance", "err_d_D"))
             result = self.calculator.calculate_coaxial(inner, outer, er)
             self._coax_z_input.setText(f"{result.impedance:.2f}")
             self._show_result(result, "coaxial")
@@ -618,7 +640,7 @@ class ImpedanceTool(ToolBase):
             # 反算内径 d: Z₀, D, εr → d
             target_z = float(self._coax_z_input.text() or 0)
             if target_z <= 0 or outer <= 0:
-                raise ValueError("请输入有效的阻抗和外径")
+                raise ValueError(tr("impedance", "err_z_D"))
             # d = D / exp(Z₀ × √εr / 60)
             import math
             d = outer / math.exp(target_z * math.sqrt(er) / 60)
@@ -631,7 +653,7 @@ class ImpedanceTool(ToolBase):
             # 反算外径 D: Z₀, d, εr → D
             target_z = float(self._coax_z_input.text() or 0)
             if target_z <= 0 or inner <= 0:
-                raise ValueError("请输入有效的阻抗和内径")
+                raise ValueError(tr("impedance.err_z_d"))
             D = self.calculator.solve_coaxial_outer(target_z, inner, er)
             self._set_mm_value(self._coax_outer_input, "coax_D", D)
             result = self.calculator.calculate_coaxial(inner, D, er)
@@ -647,7 +669,7 @@ class ImpedanceTool(ToolBase):
         if param_key == "ms_Z":
             # 正向计算：W, H, T, εr → Z₀
             if width <= 0 or height <= 0:
-                raise ValueError("请输入有效的尺寸")
+                raise ValueError(tr("impedance.err_dim"))
             result = self.calculator.calculate_microstrip(width, height, er, thickness)
             self._ms_z_input.setText(f"{result.impedance:.2f}")
             self._show_result(result, "microstrip")
@@ -656,7 +678,7 @@ class ImpedanceTool(ToolBase):
             # 反算线宽 W: Z₀, H, T, εr → W
             target_z = float(self._ms_z_input.text() or 0)
             if target_z <= 0 or height <= 0:
-                raise ValueError("请输入有效的阻抗和介质厚度")
+                raise ValueError(tr("impedance", "err_z_H"))
             W = self.calculator.solve_microstrip_width(target_z, height, er, thickness)
             self._set_mm_value(self._ms_width_input, "ms_W", W)
             result = self.calculator.calculate_microstrip(W, height, er, thickness)
@@ -666,7 +688,7 @@ class ImpedanceTool(ToolBase):
             # 反算介质厚度 H: Z₀, W, T, εr → H (二分法)
             target_z = float(self._ms_z_input.text() or 0)
             if target_z <= 0 or width <= 0:
-                raise ValueError("请输入有效的阻抗和线宽")
+                raise ValueError(tr("impedance", "err_z_W"))
             H = self._bisect_solve(
                 lambda h: self.calculator.calculate_microstrip(width, h, er, thickness).impedance,
                 target_z, 0.01, 10.0, increasing=True
@@ -686,7 +708,7 @@ class ImpedanceTool(ToolBase):
         if param_key == "cpwg_Z":
             # 正向计算：W, S, H, T, εr → Z₀
             if center <= 0 or gap <= 0 or height <= 0:
-                raise ValueError("请输入有效的尺寸")
+                raise ValueError(tr("impedance.err_dim"))
             result = self.calculator.calculate_cpwg(center, gap, height, er, thickness)
             self._cpwg_z_input.setText(f"{result.impedance:.2f}")
             self._show_result(result, "cpwg")
@@ -695,7 +717,7 @@ class ImpedanceTool(ToolBase):
             # 反算中心线宽 W: Z₀, S, H, T, εr → W (二分法)
             target_z = float(self._cpwg_z_input.text() or 0)
             if target_z <= 0 or gap <= 0 or height <= 0:
-                raise ValueError("请输入有效的阻抗和尺寸")
+                raise ValueError(tr("impedance.err_z_dim"))
             W = self._bisect_solve(
                 lambda w: self.calculator.calculate_cpwg(w, gap, height, er, thickness).impedance,
                 target_z, 0.01, 20.0, increasing=False
@@ -708,7 +730,7 @@ class ImpedanceTool(ToolBase):
             # 反算间隙 S: Z₀, W, H, T, εr → S
             target_z = float(self._cpwg_z_input.text() or 0)
             if target_z <= 0 or center <= 0 or height <= 0:
-                raise ValueError("请输入有效的阻抗和尺寸")
+                raise ValueError(tr("impedance.err_z_dim"))
             S = self.calculator.solve_cpwg_gap(target_z, center, height, er, thickness)
             self._set_mm_value(self._cpwg_gap_input, "cpwg_S", S)
             result = self.calculator.calculate_cpwg(center, S, height, er, thickness)
@@ -718,7 +740,7 @@ class ImpedanceTool(ToolBase):
             # 反算介质厚度 H: Z₀, W, S, T, εr → H (二分法)
             target_z = float(self._cpwg_z_input.text() or 0)
             if target_z <= 0 or center <= 0 or gap <= 0:
-                raise ValueError("请输入有效的阻抗和尺寸")
+                raise ValueError(tr("impedance.err_z_dim"))
             H = self._bisect_solve(
                 lambda h: self.calculator.calculate_cpwg(center, gap, h, er, thickness).impedance,
                 target_z, 0.01, 10.0, increasing=False
@@ -773,19 +795,19 @@ class ImpedanceTool(ToolBase):
         if solved:
             param_name, param_value = solved
             self._impedance_label.setText(f"{param_name} = {param_value:.4f} mm")
-            self._quality_label.setText(f"✅ 验证阻抗: {result.impedance:.2f} Ω")
+            self._quality_label.setText(f"{tr("impedance.eval_veri")}{result.impedance:.2f} Ω")
             self._quality_label.setStyleSheet("QLabel { font-size: 14px; color: #38A169; }")
         else:
             self._impedance_label.setText(f"{result.impedance:.2f} Ω")
             # 阻抗评估
             if 45 <= result.impedance <= 55:
-                self._quality_label.setText("✅ 接近 50Ω 标准阻抗")
+                self._quality_label.setText(tr("impedance.eval_50"))
                 self._quality_label.setStyleSheet("QLabel { font-size: 14px; color: #38A169; }")
             elif 70 <= result.impedance <= 80:
-                self._quality_label.setText("✅ 接近 75Ω 标准阻抗")
+                self._quality_label.setText(tr("impedance.eval_75"))
                 self._quality_label.setStyleSheet("QLabel { font-size: 14px; color: #38A169; }")
             else:
-                self._quality_label.setText("ℹ️ 非标准阻抗值")
+                self._quality_label.setText(tr("impedance.eval_non"))
                 self._quality_label.setStyleSheet("QLabel { font-size: 14px; color: #4A5568; }")
         
         # 更新详细参数
@@ -808,154 +830,40 @@ class ImpedanceTool(ToolBase):
     # ==================== 四维度知识内容 ====================
     
     def get_intuition_content(self) -> Optional[str]:
-        return """
-        <b>📡 什么是特性阻抗？</b><br><br>
-        
-        特性阻抗 Z₀ 是传输线的固有属性，描述信号在传输线中传播时的电压/电流比。<br><br>
-        
-        <b>🎯 为什么重要？</b><br>
-        • 阻抗匹配：源/负载阻抗与传输线阻抗不匹配会导致信号反射<br>
-        • 50Ω 和 75Ω 是常用标准阻抗<br>
-        • 高频信号对阻抗匹配更敏感<br><br>
-        
-        <b>💡 常见应用：</b><br>
-        • 50Ω：射频系统、仪器设备<br>
-        • 75Ω：视频信号、有线电视
-        """
+        return tr("impedance.intuition_content")
     
     def get_math_model_content(self) -> Optional[str]:
-        """数学模型 - 精确计算公式 (v1.2 更新)"""
-        return """
-        <b>📐 阻抗计算公式 (v1.2)</b><br><br>
-        
-        <div style="background-color: #EBF5FF; padding: 10px; border-radius: 6px; margin: 8px 0;">
-        <b>1️⃣ 同轴线</b><br>
-        <span style="font-family: 'Cambria Math', serif; font-size: 13px;">
-        Z₀ = (60 / √εᵣ) × ln(D/d)
-        </span><br>
-        • D = 外导体内径, d = 内导体外径<br>
-        • 速度因子: v_f = 1 / √εᵣ
-        </div>
-        
-        <div style="background-color: #F0FDF4; padding: 10px; border-radius: 6px; margin: 8px 0;">
-        <b>2️⃣ 微带线 (Hammerstad-Jensen 1980)</b><br>
-        <span style="font-family: serif; font-size: 12px;">
-        窄线 (u≤1): Z₀ = (60/√εₑ) × ln(8/u + u/4)<br>
-        宽线 (u>1): Z₀ = (120π/√εₑ) / (u + 1.393 + 0.667×ln(u + 1.444))
-        </span><br><br>
-        <b>有效介电常数:</b><br>
-        <span style="font-family: serif; font-size: 12px;">
-        εₑ = (εᵣ+1)/2 + (εᵣ-1)/2 × F₁ − (εᵣ-1)×T/(4.6H)
-        </span><br>
-        • u = W_eff/H (有效宽厚比)<br>
-        • F₁ = (1+12/u)⁻⁰·⁵ + 0.04(1−u)² 当u≤1<br>
-        • F₁ = (1+12/u)⁻⁰·⁵ 当u>1<br>
-        <b>Wheeler 等效宽度:</b><br>
-        <span style="font-family: serif; font-size: 11px;">
-        W_eff = W + (T/π)×ln(4e/√((T/H)²+(T/(πW+1.1πT))²))
-        </span>
-        </div>
-        
-        <div style="background-color: #FEF3C7; padding: 10px; border-radius: 6px; margin: 8px 0;">
-        <b>3️⃣ CBCPW (Ghione-Naldi 1984 + Gevorgian 1995)</b><br>
-        <span style="font-family: serif; font-size: 13px;">
-        Z₀ = 60π / [√εₑ × (q₁ + q₃)]
-        </span><br><br>
-        <b>电容比法有效介电常数:</b><br>
-        <span style="font-family: serif; font-size: 12px;">
-        εₑ = (q₁ + εᵣ×q₃) / (q₁ + q₃)
-        </span><br>
-        • q₁ = K(k)/K(k') — 空气层贡献<br>
-        • q₃ = K(k₃)/K(k₃') — 接地层贡献<br>
-        • k = W/(W+2S), k₃ = tanh(πW/4H)/tanh(π(W+2S)/4H)<br>
-        • K(x) = 完全椭圆积分第一类<br>
-        <b>Gevorgian 厚度修正:</b><br>
-        <span style="font-family: serif; font-size: 11px;">
-        Δ = (1.25T/π)×(1+ln(2S/T))<br>
-        W_eff = W + Δ, S_eff = S − Δ
-        </span>
-        </div>
-        """
+        return tr("impedance.math_content")
     
     def get_engineering_content(self) -> Optional[str]:
-        return """
-        <b>✅ 50Ω 微带线参考尺寸 (FR4 εᵣ=4.3):</b><br>
-        <table style="margin: 8px 0;">
-        <tr><td>H = 0.4mm</td><td>→ W ≈ 0.76mm</td></tr>
-        <tr><td>H = 0.6mm</td><td>→ W ≈ 1.14mm</td></tr>
-        <tr><td>H = 0.8mm</td><td>→ W ≈ 1.52mm</td></tr>
-        <tr><td>H = 1.0mm</td><td>→ W ≈ 1.90mm</td></tr>
-        </table>
-        
-        <b>⚠️ 设计注意事项:</b><br>
-        • 铜箔厚度会略微影响阻抗（1oz ≈ 35μm）<br>
-        • 高频时需考虑介质损耗（Df）<br>
-        • CPWG 比微带线抗干扰性更好
-        """
+        return tr("impedance.engineering_content")
     
     def get_boundary_content(self) -> Optional[str]:
-        """公式适用范围 (v1.2 更新)"""
-        return """
-        <b>⚠️ 公式适用范围:</b><br><br>
-        
-        <b>微带线 (Hammerstad-Jensen 1980):</b><br>
-        • 适用: 0.05 ≤ W/H ≤ 20<br>
-        • 频率 < 30 GHz (准静态近似)<br>
-        • 含铜箔厚度修正 (Wheeler + Schneider)<br>
-        • 与 SI9000 吻合度: ~0.1%<br><br>
-        
-        <b>CBCPW (Ghione-Naldi 1984):</b><br>
-        • 适用: 底部有接地层的共面波导<br>
-        • W/(W+2S) 在 0.2~0.8 范围精度最高<br>
-        • 含 Gevorgian 铜箔厚度修正<br>
-        • 使用 tanh 接地层修正 (非 sinh)<br>
-        • 与 SI9000 吻合度: ~2%<br><br>
-        
-        <b>精度说明:</b><br>
-        v1.2 公式经过与 SI9000 对照验证。<br>
-        如需更高精度，建议使用全波仿真 (HFSS 等)。
-        """
+        return tr("impedance.boundary_content")
     
     def get_history_content(self) -> Optional[str]:
-        """发现历史 - 趣味故事"""
-        return """
-        <b>📜 传输线理论简史</b><br><br>
+        return tr("impedance.history_content")
+
+    def retranslate_ui(self, lang: str = ""):
+        super().retranslate_ui(lang)
+        if not hasattr(self, '_static_labels'):
+            return
+        for widget, category, key, attr in self._static_labels:
+            if attr == "text":
+                widget.setText(tr(f"{category}.{key}"))
+            elif attr == "title":
+                widget.setTitle(tr(f"{category}.{key}"))
+            elif attr == "placeholder":
+                widget.setPlaceholderText(tr(f"{category}.{key}"))
+            elif attr == "text_colon":
+                widget.setText(f"{tr(f"{category}.{key}")}:")
+                
+        # combobox custom edit
+        idx0 = self._coax_er_combo.findData(None)
+        if idx0 >= 0: self._coax_er_combo.setItemText(idx0, tr("impedance.lbl_custom"))
         
-        <div style="background-color: #F5F0FF; padding: 10px; border-radius: 6px; margin: 6px 0;">
-        <b>🔬 1855 — 开尔文困境</b><br>
-        威廉·汤姆森 (后来的开尔文勋爵) 在分析跨大西洋海底电报线缆时，
-        首次建立了传输线的数学模型。当时的电报信号穿越 3000 多公里的海底，
-        到达时已严重畸变 — 他的分析揭示了阻抗匹配的重要性。
-        </div>
+        idx1 = self._ms_er_combo.findData(None)
+        if idx1 >= 0: self._ms_er_combo.setItemText(idx1, tr("impedance.lbl_custom"))
         
-        <div style="background-color: #FFF5F0; padding: 10px; border-radius: 6px; margin: 6px 0;">
-        <b>⚡ 1886 — 赫兹的验证</b><br>
-        赫兹用一对平行导线传输电磁波，实验验证了麦克斯韦方程。
-        他观察到驻波现象，这正是阻抗不匹配的直接表现。
-        这个实验可以说是最早的传输线阻抗测量。
-        </div>
-        
-        <div style="background-color: #F0F8FF; padding: 10px; border-radius: 6px; margin: 6px 0;">
-        <b>📡 为什么是 50Ω？</b><br>
-        同轴线的功率容量在 30Ω 时最大，而衰减在 77Ω 时最小。
-        50Ω 是两者的几何平均值 (√30×77 ≈ 48Ω)，
-        成为射频系统的"黄金标准"。75Ω 则因为最小衰减，
-        成为有线电视/视频的标准。
-        </div>
-        
-        <div style="background-color: #FFFFF0; padding: 10px; border-radius: 6px; margin: 6px 0;">
-        <b>🏗️ 微带线革命 (1950s)</b><br>
-        微带线由 ITT 实验室于 1950 年代发明，彻底改变了微波电路设计。
-        之前的波导和同轴结构笨重且昂贵，微带线使得用 PCB 就能制作
-        微波电路成为可能。Hammerstad 和 Jensen 在 1980 年的精确公式
-        至今仍是 SI9000 等商业工具的理论基础。
-        </div>
-        
-        <div style="background-color: #F0FFF0; padding: 10px; border-radius: 6px; margin: 6px 0;">
-        <b>🌊 共面波导 (1969)</b><br>
-        C.P. Wen 在 1969 年首次提出共面波导结构 (CPW)。
-        因为信号线和接地在同一面，大大简化了 MMIC (单片微波集成电路)
-        的制造工艺。Ghione 和 Naldi 在 1984 年给出的精确解析公式
-        使用完全椭圆积分，至今仍是工程计算的标准方法。
-        </div>
-        """
+        idx2 = self._cpwg_er_combo.findData(None)
+        if idx2 >= 0: self._cpwg_er_combo.setItemText(idx2, tr("impedance.lbl_custom"))

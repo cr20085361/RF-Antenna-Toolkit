@@ -17,6 +17,8 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, pyqtSignal, QSize
 from PyQt6.QtGui import QIcon, QPixmap, QPainter, QFont
 
+from core.i18n import translator, tr
+
 
 class NavBar(QWidget):
     """
@@ -69,8 +71,14 @@ class NavBar(QWidget):
         self._button_group = QButtonGroup(self)
         self._button_group.setExclusive(True)
         
+        # 用于承载国际化记忆 (id/key, widget, args...) 
+        self._i18n_categories = []
+        self._i18n_tools = []
+        
         # 构建界面
         self._setup_ui()
+        
+        translator.language_changed.connect(self.retranslate_ui)
     
     def _setup_ui(self):
         """构建导航栏界面"""
@@ -96,13 +104,14 @@ class NavBar(QWidget):
         scroll_area.setWidget(self._content)
         main_layout.addWidget(scroll_area)
     
-    def add_category(self, title: str, icon: str = ""):
+    def add_category(self, title: str, icon: str = "", i18n_key: str = ""):
         """
         添加分类标题
         
         参数:
-            title: 分类标题
+            title: 分类标题默认文字
             icon: 图标 (emoji)
+            i18n_key: 国际化词典key (如 "nav.menu_antenna")
         """
         # 如果不是第一个分类，添加分隔线
         if self._content_layout.count() > 1:
@@ -115,31 +124,38 @@ class NavBar(QWidget):
             )
         
         # 分类标题
-        category_label = QLabel(f"{icon} {title}" if icon else title)
+        final_title = tr(i18n_key, title) if i18n_key else title
+        category_label = QLabel(f"{icon} {final_title}" if icon else final_title)
         category_label.setObjectName("CategoryTitle")
         self._content_layout.insertWidget(
             self._content_layout.count() - 1,
             category_label
         )
+        
+        # 缓存供切换语言时使用
+        self._i18n_categories.append((category_label, icon, i18n_key, title))
     
     def add_tool(
         self,
         tool_id: str,
         name: str,
         icon: str = "",
-        tooltip: str = ""
+        tooltip: str = "",
+        i18n_key: str = ""
     ):
         """
         添加工具按钮
         
         参数:
             tool_id: 工具唯一标识
-            name: 工具名称
+            name: 工具名称默认值
             icon: 图标 (emoji)
             tooltip: 提示文字
+            i18n_key: 国际化词条名称 key
         """
         # 创建按钮
-        button = QPushButton(name)
+        final_name = tr(i18n_key, name) if i18n_key else name
+        button = QPushButton(final_name)
         
         # 设置图标 (使用 Emoji 生成固定宽度的图标)
         if icon:
@@ -158,13 +174,27 @@ class NavBar(QWidget):
         
         # 添加到按钮组
         self._button_group.addButton(button)
-        self._tool_buttons[tool_id] = button
         
         # 添加到布局
         self._content_layout.insertWidget(
             self._content_layout.count() - 1,
             button
         )
+        
+        # 缓存数据
+        self._tool_buttons[tool_id] = button
+        self._i18n_tools.append((button, icon, i18n_key, name, tooltip))
+        
+    def retranslate_ui(self, lang: str):
+        """重新拉取所有已注册导航栏文字的翻译"""
+        for label, icon, i18n_key, default_title in self._i18n_categories:
+            if i18n_key:
+                new_text = tr(i18n_key, default_title)
+                label.setText(f"{icon} {new_text}" if icon else new_text)
+                
+        for btn, icon, i18n_key, default_name, tooltip in self._i18n_tools:
+            if i18n_key:
+                btn.setText(tr(i18n_key, default_name))
     
     def _on_tool_clicked(self, tool_id: str):
         """工具按钮点击事件"""

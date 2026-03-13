@@ -21,6 +21,7 @@ from PyQt6.QtGui import (
     QBrush, QFont, QPainterPath
 )
 
+from core.i18n import tr
 from ui.base.tool_base import ToolBase
 from core.rf.attenuator import (
     AttenuatorCalculator, AttenuatorResult,
@@ -278,6 +279,8 @@ class AttenuatorTool(ToolBase):
     tool_icon = "📉"
     tool_category = "rf"
     tool_description = "T 型/π 型衰减器电阻值计算，支持标准阻值系列匹配"
+    i18n_title_key = "attenuator.tool_name"
+    i18n_desc_key = "attenuator.tool_desc"
 
     def __init__(self, parent: Optional[QWidget] = None):
         """初始化"""

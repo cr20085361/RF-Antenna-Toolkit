@@ -21,6 +21,7 @@ import matplotlib as mpl
 mpl.rcParams['font.sans-serif'] = ['Microsoft YaHei', 'SimHei', 'Arial Unicode MS']
 mpl.rcParams['axes.unicode_minus'] = False
 
+from core.i18n import tr
 from ui.base.tool_base import ToolBase
 from core.antenna.phased_array_calculator import PhasedArrayCalculator, PhasedArrayParams
 
@@ -31,6 +32,8 @@ class PhasedArrayTool(ToolBase):
     tool_icon = "🎯"
     tool_category = "antenna"
     tool_description = "评估计算二维相控阵天线性能，波束扫描及指标可视化。"
+    i18n_title_key = "phasedarray.tool_name"
+    i18n_desc_key = "phasedarray.tool_desc"
     
     def __init__(self):
         self.calculator = PhasedArrayCalculator()

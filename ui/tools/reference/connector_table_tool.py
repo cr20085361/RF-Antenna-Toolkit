@@ -18,6 +18,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QColor
 
+from core.i18n import tr
 from ui.base.tool_base import ToolBase
 
 # Matplotlib
@@ -65,6 +66,8 @@ class ConnectorTableTool(ToolBase):
     tool_icon = "🔌"
     tool_category = "reference"
     tool_description = "射频连接器频率范围、功率容量与关键参数速查"
+    i18n_title_key = "connector.tool_name"
+    i18n_desc_key = "connector.tool_desc"
 
     # ========== 回调方法 ==========
 

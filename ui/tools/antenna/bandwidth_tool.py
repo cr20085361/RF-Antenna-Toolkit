@@ -17,6 +17,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QDoubleValidator
 
+from core.i18n import tr
 from ui.base.tool_base import ToolBase
 from core.antenna.bandwidth import BandwidthCalculator, BandwidthResult
 
@@ -35,6 +36,8 @@ class BandwidthTool(ToolBase):
     tool_icon = "📶"
     tool_category = "antenna"
     tool_description = "根据工作频率计算各种带宽定义指标"
+    i18n_title_key = "bandwidth.tool_name"
+    i18n_desc_key = "bandwidth.tool_desc"
     
     def __init__(self, parent: Optional[QWidget] = None):
         """初始化带宽计算工具"""

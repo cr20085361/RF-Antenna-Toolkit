@@ -19,6 +19,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QDoubleValidator
 
 from ui.base.tool_base import ToolBase
+from core.i18n import tr
 from core.antenna.gain import GainCalculator, GainResult
 
 
@@ -47,6 +48,7 @@ class GainTool(ToolBase):
         self._result_labels: Dict[str, QLabel] = {}
         
         # 调用父类初始化
+        self._static_labels = []
         super().__init__(parent)
     
     def create_input_panel(self) -> QWidget:
@@ -229,7 +231,8 @@ class GainTool(ToolBase):
         layout.addWidget(method_group)
         
         # ==================== 计算按钮 ====================
-        calc_button = QPushButton("📡 计算增益")
+        calc_button = QPushButton(tr("gain.btn_calc"))
+        self._static_labels.append((calc_button, "gain", "btn_calc", "text"))
         calc_button.setObjectName("PrimaryButton")
         calc_button.setCursor(Qt.CursorShape.PointingHandCursor)
         calc_button.clicked.connect(self._do_calculate)
@@ -670,3 +673,20 @@ class GainTool(ToolBase):
         
         <i>💭 天线增益是无源的，就像放大镜聚焦阳光——不创造能量，只是重新分配！</i>
         """
+
+    def retranslate_ui(self, lang: str = ""):
+        super().retranslate_ui(lang)
+        if not hasattr(self, '_static_labels'):
+            return
+        for widget, category, key, attr in self._static_labels:
+            if attr == "text":
+                widget.setText(tr(f"{category}.{key}"))
+            elif attr == "title":
+                widget.setTitle(tr(f"{category}.{key}"))
+            elif attr == "placeholder":
+                widget.setPlaceholderText(tr(f"{category}.{key}"))
+            elif attr == "text_colon":
+                widget.setText(tr(f"{category}.{key}") + ":")
+        if hasattr(self, '_aperture_shape'):
+            self._aperture_shape.setItemText(0, tr("gain.radio_circ"))
+            self._aperture_shape.setItemText(1, tr("gain.radio_rect"))

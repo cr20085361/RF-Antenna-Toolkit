@@ -239,6 +239,7 @@ class LadderSchematicWidget(QWidget):
              pass
 
 
+from core.i18n import tr
 from ui.base.tool_base import ToolBase
 from core.rf.matching import (
     MatchingCalculator, MatchingElement,
@@ -466,6 +467,8 @@ class MatchingTool(ToolBase):
     tool_icon = "🔧"
     tool_category = "rf"
     tool_description = "阻抗匹配网络设计与实时调谐"
+    i18n_title_key = "matching.tool_name"
+    i18n_desc_key = "matching.tool_desc"
 
     def __init__(self, parent=None):
         self._calculator = MatchingCalculator()

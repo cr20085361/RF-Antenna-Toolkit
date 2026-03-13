@@ -14,6 +14,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QColor, QFont
 
+from core.i18n import tr
 from ui.base.tool_base import ToolBase
 
 
@@ -360,54 +361,13 @@ class ESeriesTableTool(ToolBase):
                 self._table.scrollToItem(item)
 
     def get_intuition_content(self) -> Optional[str]:
-        return """
-        <b>为什么阻值不是 1, 2, 3...等差排布？</b><br>
-        1952年，国际电工委员会(IEC)制定了 <b>IEC 60063</b> 标准，定义了被动元器件（电阻、电容、电感）的优先数值系列（即 E 系列）。<br><br>
-        其核心哲学是：<b>容差是百分比，因此数值梯度也必须是百分比（基于对数刻度排列）</b>。<br>
-        如果一个 100Ω 的电阻误差是 ±10%（范围 90~110），那么下一个阻值就应该设计成 120Ω（误差10%是 108~132）。
-        这样它们两者在生产线上的误差边界（110 和 108）完美对接。无论工厂造出什么具体阻值的元件，都能归入其中一档，实现 100% 良品率可用。
-        """
+        return tr("eseries.intuition_content")
 
     def get_math_model_content(self) -> Optional[str]:
-        return """
-        E 系列基于公比为 <b>10的N次方根</b> 的几何级数 (等比数列)：
-        <br><br>
-        <div style="background:#F7FAFC; padding:10px; border-radius:4px; text-align:center;">
-        <b>V<sub>i</sub> = 10<sup>(i / N)</sup></b>
-        </div>
-        <br>
-        <li>其中 <span style="color:#2B6CB0"><b>N</b></span> 代表系列名称中的数字 (如 E24 中 N=24)</li>
-        <li><span style="color:#2B6CB0"><b>i</b></span> 取值为 [0, 1, 2 ... N-1]</li>
-        <li>结果会被四舍五入到规定的有效数字（E24及以下2位，E48及以上3位）</li><br>
-        
-        <b>相邻差值率 (公比步进):</b>
-        • E12: 10^(1/12) ≈ 1.21 (相邻阻值相差约20%)<br>
-        • E24: 10^(1/24) ≈ 1.10 (相邻阻值相差约10%)<br>
-        • E96: 10^(1/96) ≈ 1.024 (相邻阻值相差约2.4%)
-        """
+        return tr("eseries.math_content")
 
     def get_engineering_content(self) -> Optional[str]:
-        return """
-        <b>工程师避坑指南 (实战选型建议)：</b><br><br>
-        
-        <b>1. 电阻 (Resistors)</b><br>
-        • <b>设计首选</b>: 绝大部分数字电路下拉/上拉，应仅使用 <b>E12</b> 或 <b>E24</b> 常见值（如1K, 4.7K, 10K）。<br>
-        • <b>分压器/运放反馈</b>: 优先尝试 E24 的组合。若精度不够，**允许使用 E96 (1%)**。<br>
-        • <b>成本与交货期</b>: 不要随意选用冷僻的 E96 值，这可能导致 BOM 采购成本暴增并面临长交期。<br><br>
-        
-        <b>2. 电容 (Capacitors)</b><br>
-        • <b>高度收敛</b>: 电容的制造误差极大(尤其是MLCC和电解)，实际上连 E12 都没填满。一般仅在 <b>E6</b> 范围内选型 (1.0, 1.5, 2.2, 3.3, 4.7, 6.8)。<br>
-        • <span style="color:#E53E3E">避坑</span>: 从不使用 3.9uF，直接用 4.7uF 替代。<br><br>
-
-        <b>3. 电感 (Inductors)</b><br>
-        • <b>受限选择</b>: 常见于开关电源设计。同样高度收敛在 <b>E6 ~ E12</b> 之间。<br>
-        • 例如电源 IC 手册计算出需要 3.8uH，你买不到 3.8uH，你应该去查 E12 表并选用 3.3uH 或 4.7uH 的标准品并重新核验纹波电流。
-        """
+        return tr("eseries.engineering_content")
 
     def get_history_content(self) -> Optional[str]:
-        return """
-        <b>轶事：</b><br>
-        很多工程师好奇，为什么 E24 中 2.7 之后是 3.0，3.3 而不是严格按照数学算出来的 3.16？<br>
-        当时(1950年代)制定标准时，考虑到那些已经在行业内约定俗成广泛使用了多年的阻值（比如 3.3uF、4.7K等），
-        委员会在纯数学模型 10^(i/24) 之外进行了<b>人工微调</b>，这是一种科学向工程妥协的经典案例，也造就了今天背诵熟稔的这些独特数字美感。
-        """
+        return tr("eseries.history_content")

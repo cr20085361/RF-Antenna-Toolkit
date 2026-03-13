@@ -21,6 +21,7 @@ import os
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QColor, QFont
 
+from core.i18n import tr
 from ui.base.tool_base import ToolBase
 from core.rf.link_budget_calculator import LinkBudgetCalculator, StageParams, StageResult
 
@@ -317,6 +318,8 @@ class LinkBudgetTool(ToolBase):
     tool_icon = "🔗"
     tool_category = "rf"
     tool_description = "计算射频链路级联增益、NF、P1dB"
+    i18n_title_key = "linkbudget.tool_name"
+    i18n_desc_key = "linkbudget.tool_desc"
     
     def __init__(self):
         self._calculator = LinkBudgetCalculator()
@@ -533,20 +536,7 @@ class LinkBudgetTool(ToolBase):
     # ==================== 知识内容 ====================
     
     def get_intuition_content(self) -> Optional[str]:
-        return """
-        <b>🔗 链路预算直观理解：</b><br>
-        就像接力赛跑，每一棒（级）都会影响最终成绩。<br>
-        <ul>
-            <li><b>第一级最关键:</b> 第一级的噪声系数直接决定了整个系统的底噪，后续级的噪声会被第一级的增益“压”下去（Friis公式）。</li>
-            <li><b>短板效应:</b> 只要链路中有一级线性度主要差（P1dB低），整个系统的线性度就会被它拉低。</li>
-        </ul>
-        """
+        return tr("linkbudget.intuition_content")
         
     def get_math_model_content(self) -> Optional[str]:
-        return """
-        <b>📐 核心公式 (Friis Formula):</b><br>
-        F_total = F1 + (F2-1)/G1 + (F3-1)/(G1G2) + ...<br>
-        <br>
-        <b>线性度 (IIP3/P1dB):</b><br>
-        1/IIP_total ≈ 1/IIP1 + G1/IIP2 + G1G2/IIP3 + ...
-        """
+        return tr("linkbudget.math_content")

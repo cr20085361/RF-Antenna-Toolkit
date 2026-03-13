@@ -18,6 +18,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QColor, QBrush
 
+from core.i18n import tr
 from ui.base.tool_base import ToolBase
 
 
@@ -42,6 +43,8 @@ class BandTableTool(ToolBase):
     tool_icon = "📶"
     tool_category = "reference"
     tool_description = "主流无线电频段分类标准速查 (IEEE/ITU/NATO/China)"
+    i18n_title_key = "bandtable.tool_name"
+    i18n_desc_key = "bandtable.tool_desc"
     
     def on_standard_changed(self, index: int):
         """标准切换回调"""
@@ -298,36 +301,10 @@ class BandTableTool(ToolBase):
         return None
 
     def get_engineering_content(self) -> Optional[str]:
-        return """
-        <b>🏗️ 频段划分的工程意义</b><br><br>
-        
-        <b>频段越高，波长越短：</b><br>
-        • 天线尺寸越小 (便于集成)<br>
-        • 空间传输损耗越大 (传播距离变短)<br>
-        • 可用带宽越宽 (数据传输率更高)<br>
-        • 绕射能力越差 (受遮挡影响大)<br><br>
-        
-        <b>不同频段的典型组件：</b><br>
-        • HF/VHF: 集中参数元件 (电感、电容)<br>
-        • UHF/L/S: 微带线、同轴线元件<br>
-        • C/X/Ku: 波导、微带电路混合<br>
-        • mmWave: 介质波导、基片集成波导 (SIW)
-        """
+        return tr("bandtable.engineering_content")
 
     def get_history_content(self) -> Optional[str]:
-        return """
-        <b>📜 频段命名简史</b><br><br>
-        
-        <b>二战起源 (IEEE 标准):</b><br>
-        L, S, C, X, K 等字母代号源于二战时期的雷达保密代号。
-        • <b>L (Long)</b>: 长波 (1-2 GHz)<br>
-        • <b>S (Short)</b>: 短波 (2-4 GHz)<br>
-        • <b>C (Compromise)</b>: L和S的折中 (4-8 GHz)<br>
-        • <b>X (Cross)</b>: 十字瞄准/火控 (8-12 GHz)<br>
-        • <b>K (Kurz)</b>: 德语"短" (18-27 GHz)<br>
-        由于 K 频段中心 (22GHz) 存在水蒸气吸收峰，
-        后来分出了 <b>Ku (K-under)</b> 和 <b>Ka (K-above)</b>。
-        """
+        return tr("bandtable.history_content")
 
     def get_boundary_content(self) -> Optional[str]:
         return None
