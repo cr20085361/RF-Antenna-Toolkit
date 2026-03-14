@@ -56,10 +56,12 @@ class GainTool(ToolBase):
         panel = QWidget()
         layout = QVBoxLayout(panel)
         layout.setContentsMargins(0, 0, 0, 0)
+        layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(16)
         
         # ==================== 计算方法选择 ====================
         method_group = QGroupBox(tr("gain.calc_method", "计算方法"))
+        self._static_labels.append((method_group, "gain", "calc_method", "title"))
         method_layout = QVBoxLayout(method_group)
         method_layout.setSpacing(12)
         
@@ -67,6 +69,7 @@ class GainTool(ToolBase):
         
         # 方法1: 波束宽度法 (最常用)
         beamwidth_radio = QRadioButton(tr("gain.method_beamwidth", "波束宽度法 (3dB波束角)"))
+        self._static_labels.append((beamwidth_radio, "gain", "method_beamwidth", "text"))
         beamwidth_radio.setChecked(True)
         self._method_group.addButton(beamwidth_radio, 0)
         method_layout.addWidget(beamwidth_radio)
@@ -74,24 +77,32 @@ class GainTool(ToolBase):
         # 波束宽度输入
         beamwidth_layout = QGridLayout()
         
-        beamwidth_layout.addWidget(QLabel(tr("gain.theta_e", "E面 θ_E:")), 0, 0)
+        lbl_theta_e = QLabel(tr("gain.theta_e", "E面 θ_E:"))
+        self._static_labels.append((lbl_theta_e, "gain", "theta_e", "text"))
+        beamwidth_layout.addWidget(lbl_theta_e, 0, 0)
         self._theta_e_input = QLineEdit()
         self._theta_e_input.setPlaceholderText(tr("gain.placeholder_theta", "E面波束角"))
+        self._static_labels.append((self._theta_e_input, "gain", "placeholder_theta", "placeholder"))
         self._theta_e_input.setValidator(QDoubleValidator(0.1, 180, 2))
         self._theta_e_input.setText("30")
         beamwidth_layout.addWidget(self._theta_e_input, 0, 1)
         beamwidth_layout.addWidget(QLabel("°"), 0, 2)
         
-        beamwidth_layout.addWidget(QLabel(tr("gain.theta_h", "H面 θ_H:")), 1, 0)
+        lbl_theta_h = QLabel(tr("gain.theta_h", "H面 θ_H:"))
+        self._static_labels.append((lbl_theta_h, "gain", "theta_h", "text"))
+        beamwidth_layout.addWidget(lbl_theta_h, 1, 0)
         self._theta_h_input = QLineEdit()
         self._theta_h_input.setPlaceholderText(tr("gain.placeholder_theta_h", "H面波束角"))
+        self._static_labels.append((self._theta_h_input, "gain", "placeholder_theta_h", "placeholder"))
         self._theta_h_input.setValidator(QDoubleValidator(0.1, 180, 2))
         self._theta_h_input.setText("30")
         beamwidth_layout.addWidget(self._theta_h_input, 1, 1)
         beamwidth_layout.addWidget(QLabel("°"), 1, 2)
         
         # 公式常数选择
-        beamwidth_layout.addWidget(QLabel(tr("gain.constant_k", "公式常数K:")), 2, 0)
+        lbl_k = QLabel(tr("gain.constant_k", "公式常数K:"))
+        self._static_labels.append((lbl_k, "gain", "constant_k", "text"))
+        beamwidth_layout.addWidget(lbl_k, 2, 0)
         self._constant_combo = QComboBox()
         self._constant_combo.addItems([
             tr("gain.const_ieee", "41253 (IEEE标准)"),
@@ -104,13 +115,16 @@ class GainTool(ToolBase):
         
         # 方法2: 口径效率法 (支持圆形/矩形)
         aperture_radio = QRadioButton(tr("gain.method_aperture", "口径效率法"))
+        self._static_labels.append((aperture_radio, "gain", "method_aperture", "text"))
         self._method_group.addButton(aperture_radio, 1)
         method_layout.addWidget(aperture_radio)
         
         aperture_layout = QGridLayout()
         
         # 口径形状选择
-        aperture_layout.addWidget(QLabel(tr("gain.aperture_shape", "口径形状:")), 0, 0)
+        lbl_shape = QLabel(tr("gain.aperture_shape", "口径形状:"))
+        self._static_labels.append((lbl_shape, "gain", "aperture_shape", "text"))
+        aperture_layout.addWidget(lbl_shape, 0, 0)
         self._aperture_shape = QComboBox()
         self._aperture_shape.addItems([tr("gain.shape_circ", "⚪ 圆形 (抛物面等)"), tr("gain.shape_rect", "▭ 矩形 (喇叭天线等)")])
         self._aperture_shape.setEnabled(False)
@@ -119,9 +133,11 @@ class GainTool(ToolBase):
         
         # 圆形口径 - 直径
         self._diameter_label = QLabel(tr("gain.aperture_diameter", "口径直径:"))
+        self._static_labels.append((self._diameter_label, "gain", "aperture_diameter", "text"))
         aperture_layout.addWidget(self._diameter_label, 1, 0)
         self._diameter_input = QLineEdit()
         self._diameter_input.setPlaceholderText(tr("gain.ph_diameter", "直径 D"))
+        self._static_labels.append((self._diameter_input, "gain", "ph_diameter", "placeholder"))
         self._diameter_input.setValidator(QDoubleValidator(0.001, 1000, 4))
         self._diameter_input.setText("1.0")
         self._diameter_input.setEnabled(False)
@@ -134,10 +150,12 @@ class GainTool(ToolBase):
         
         # 矩形口径 - 宽度
         self._width_label = QLabel(tr("gain.aperture_width", "口径宽度:"))
+        self._static_labels.append((self._width_label, "gain", "aperture_width", "text"))
         self._width_label.hide()
         aperture_layout.addWidget(self._width_label, 1, 0)
         self._width_input = QLineEdit()
         self._width_input.setPlaceholderText(tr("gain.ph_width", "宽度 W"))
+        self._static_labels.append((self._width_input, "gain", "ph_width", "placeholder"))
         self._width_input.setValidator(QDoubleValidator(0.001, 1000, 4))
         self._width_input.setText("0.3")
         self._width_input.setEnabled(False)
@@ -152,10 +170,12 @@ class GainTool(ToolBase):
         
         # 矩形口径 - 高度
         self._height_label = QLabel(tr("gain.aperture_height", "口径高度:"))
+        self._static_labels.append((self._height_label, "gain", "aperture_height", "text"))
         self._height_label.hide()
         aperture_layout.addWidget(self._height_label, 2, 0)
         self._height_input = QLineEdit()
         self._height_input.setPlaceholderText(tr("gain.ph_height", "高度 H"))
+        self._static_labels.append((self._height_input, "gain", "ph_height", "placeholder"))
         self._height_input.setValidator(QDoubleValidator(0.001, 1000, 4))
         self._height_input.setText("0.2")
         self._height_input.setEnabled(False)
@@ -170,9 +190,11 @@ class GainTool(ToolBase):
         
         # 工作频率 (行号根据形状变化)
         self._freq_label = QLabel(tr("gain.work_freq", "工作频率:"))
+        self._static_labels.append((self._freq_label, "gain", "work_freq", "text"))
         aperture_layout.addWidget(self._freq_label, 3, 0)
         self._freq_input = QLineEdit()
         self._freq_input.setPlaceholderText(tr("gain.ph_freq", "频率"))
+        self._static_labels.append((self._freq_input, "gain", "ph_freq", "placeholder"))
         self._freq_input.setValidator(QDoubleValidator(0.001, 1e6, 4))
         self._freq_input.setText("10")
         self._freq_input.setEnabled(False)
@@ -184,7 +206,9 @@ class GainTool(ToolBase):
         aperture_layout.addWidget(self._freq_unit, 3, 2)
         
         # 口径效率
-        aperture_layout.addWidget(QLabel(tr("gain.aperture_efficiency", "口径效率:")), 4, 0)
+        lbl_eff = QLabel(tr("gain.aperture_efficiency", "口径效率:"))
+        self._static_labels.append((lbl_eff, "gain", "aperture_efficiency", "text"))
+        aperture_layout.addWidget(lbl_eff, 4, 0)
         self._efficiency_input = QLineEdit()
         self._efficiency_input.setPlaceholderText("0~1")
         self._efficiency_input.setValidator(QDoubleValidator(0.01, 1.0, 3))
@@ -199,6 +223,7 @@ class GainTool(ToolBase):
         
         # 方法3: 增益单位转换
         convert_radio = QRadioButton(tr("gain.method_convert", "增益单位转换"))
+        self._static_labels.append((convert_radio, "gain", "method_convert", "text"))
         self._method_group.addButton(convert_radio, 2)
         method_layout.addWidget(convert_radio)
         
@@ -206,6 +231,7 @@ class GainTool(ToolBase):
         
         self._convert_input = QLineEdit()
         self._convert_input.setPlaceholderText(tr("gain.ph_gain_val", "增益值"))
+        self._static_labels.append((self._convert_input, "gain", "ph_gain_val", "placeholder"))
         self._convert_input.setValidator(QDoubleValidator(-50, 100, 4))
         self._convert_input.setText("12")
         self._convert_input.setEnabled(False)
@@ -262,6 +288,7 @@ class GainTool(ToolBase):
         quality_layout = QVBoxLayout(quality_card)
         
         quality_title = QLabel(tr("gain.type_eval", "天线类型评估"))
+        self._static_labels.append((quality_title, "gain", "type_eval", "text"))
         quality_title.setObjectName("ResultTitle")
         quality_layout.addWidget(quality_title)
         
@@ -277,6 +304,7 @@ class GainTool(ToolBase):
         gain_layout = QVBoxLayout(gain_card)
         
         gain_title = QLabel(tr("gain.res_gain", "📡 增益结果"))
+        self._static_labels.append((gain_title, "gain", "res_gain", "text"))
         gain_title.setObjectName("ResultTitle")
         gain_layout.addWidget(gain_title)
         
@@ -284,18 +312,24 @@ class GainTool(ToolBase):
         gain_grid.setSpacing(12)
         
         # dBi增益
-        gain_grid.addWidget(QLabel(tr("gain.res_dbi", "增益 (dBi):")), 0, 0)
+        lbl_res_dbi = QLabel(tr("gain.res_dbi", "增益 (dBi):"))
+        self._static_labels.append((lbl_res_dbi, "gain", "res_dbi", "text"))
+        gain_grid.addWidget(lbl_res_dbi, 0, 0)
         self._gain_dbi_label = QLabel("--")
         self._gain_dbi_label.setStyleSheet("font-weight: bold; color: #2C7BE5; font-size: 18px;")
         gain_grid.addWidget(self._gain_dbi_label, 0, 1)
         
         # dBd增益
-        gain_grid.addWidget(QLabel(tr("gain.res_dbd", "增益 (dBd):")), 1, 0)
+        lbl_res_dbd = QLabel(tr("gain.res_dbd", "增益 (dBd):"))
+        self._static_labels.append((lbl_res_dbd, "gain", "res_dbd", "text"))
+        gain_grid.addWidget(lbl_res_dbd, 1, 0)
         self._gain_dbd_label = QLabel("--")
         gain_grid.addWidget(self._gain_dbd_label, 1, 1)
         
         # 线性增益
-        gain_grid.addWidget(QLabel(tr("gain.res_linear", "线性增益:")), 2, 0)
+        lbl_res_linear = QLabel(tr("gain.res_linear", "线性增益:"))
+        self._static_labels.append((lbl_res_linear, "gain", "res_linear", "text"))
+        gain_grid.addWidget(lbl_res_linear, 2, 0)
         self._gain_linear_label = QLabel("--")
         gain_grid.addWidget(self._gain_linear_label, 2, 1)
         
@@ -308,6 +342,7 @@ class GainTool(ToolBase):
         estimate_layout = QVBoxLayout(estimate_card)
         
         estimate_title = QLabel(tr("gain.res_est_beam", "📐 估算波束宽度 (对称)"))
+        self._static_labels.append((estimate_title, "gain", "res_est_beam", "text"))
         estimate_title.setObjectName("ResultTitle")
         estimate_layout.addWidget(estimate_title)
         
@@ -592,7 +627,7 @@ class GainTool(ToolBase):
     # ==================== 四维度知识内容 ====================
     
     def get_intuition_content(self) -> Optional[str]:
-        return tr("gain.intuition", """
+        return tr("gain.intuition_content", """
         <b>📡 {t_what_is}</b><br><br>
         
         {t_desc_1}<br><br>
@@ -614,7 +649,7 @@ class GainTool(ToolBase):
         )
     
     def get_math_model_content(self) -> Optional[str]:
-        return tr("gain.math_model", """
+        return tr("gain.math_content", """
         <b>📐 {t_formula}</b><br><br>
         
         <b>{t_method_beam}:</b><br>
@@ -644,7 +679,7 @@ class GainTool(ToolBase):
         )
     
     def get_engineering_content(self) -> Optional[str]:
-        return tr("gain.eng_content", """
+        return tr("gain.engineering_content", """
         <b>✅ {t_ref_title}:</b><br>
         <table style="margin: 8px 0;">
         <tr><td>{t_dipole}</td><td>→ 2.15 dBi (0 dBd)</td></tr>
@@ -712,8 +747,25 @@ class GainTool(ToolBase):
                 widget.setTitle(tr(f"{category}.{key}"))
             elif attr == "placeholder":
                 widget.setPlaceholderText(tr(f"{category}.{key}"))
-            elif attr == "text_colon":
-                widget.setText(tr(f"{category}.{key}") + ":")
+        
+        # 处理下拉框选项
         if hasattr(self, '_aperture_shape'):
-            self._aperture_shape.setItemText(0, tr("gain.radio_circ"))
-            self._aperture_shape.setItemText(1, tr("gain.radio_rect"))
+            self._aperture_shape.setItemText(0, tr("gain.shape_circ"))
+            self._aperture_shape.setItemText(1, tr("gain.shape_rect"))
+        
+        if hasattr(self, '_constant_combo'):
+            self._constant_combo.setItemText(0, tr("gain.const_ieee"))
+            self._constant_combo.setItemText(1, tr("gain.const_uniform"))
+            self._constant_combo.setItemText(2, tr("gain.const_typical"))
+            
+        if hasattr(self, '_convert_from_unit'):
+            self._convert_from_unit.setItemText(2, tr("gain.linear_val"))
+        if hasattr(self, '_convert_to_unit'):
+            self._convert_to_unit.setItemText(2, tr("gain.linear_val"))
+            
+        if hasattr(self, '_efficiency_hint'):
+            # 根据当前形状刷新效率提示
+            if self._aperture_shape.currentIndex() == 0:
+                self._efficiency_hint.setText(tr("gain.hint_circ"))
+            else:
+                self._efficiency_hint.setText(tr("gain.hint_rect"))

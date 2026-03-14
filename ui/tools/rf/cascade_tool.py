@@ -411,13 +411,13 @@ class CascadeTool(ToolBase):
     # ==================== 知识面板内容 ====================
 
     def get_intuition_content(self) -> str:
-        return tr("cascade.intuition")
+        return tr("cascade.intuition_content")
 
     def get_math_model_content(self) -> str:
-        return tr("cascade.math_model")
+        return tr("cascade.math_content")
 
     def get_engineering_content(self) -> str:
-        return tr("cascade.eng_content")
+        return tr("cascade.engineering_content")
 
     def get_history_content(self) -> str:
         return tr("cascade.history_content")

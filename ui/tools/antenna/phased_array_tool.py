@@ -434,7 +434,7 @@ class PhasedArrayTool(ToolBase):
         self.canvas.draw()
         
     def get_intuition_content(self) -> str:
-        return tr("phased.intuition", """
+        return tr("phased.intuition_content", """
             <b>🎯 {t_intuition_title}</b><br>
             {t_intuition_1}
             {t_intuition_2}
@@ -449,7 +449,7 @@ class PhasedArrayTool(ToolBase):
         )
         
     def get_math_model_content(self) -> str:
-        return tr("phased.math_model", """
+        return tr("phased.math_content", """
             <b>📐 {t_math_title}</b><br>
             {t_math_1}<br><br>
             {t_math_2}<br><br>
@@ -473,7 +473,7 @@ class PhasedArrayTool(ToolBase):
         )
         
     def get_engineering_content(self) -> str:
-        return tr("phased.eng_content", """
+        return tr("phased.engineering_content", """
             <b>⚙️ {t_eng_title}</b><br>
             1. <b>{t_eng_1_t}</b>：{t_eng_1_v}<br>
             2. <b>{t_eng_2_t}</b>：{t_eng_2_v}<br>

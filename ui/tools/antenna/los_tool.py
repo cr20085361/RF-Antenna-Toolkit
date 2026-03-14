@@ -535,11 +535,13 @@ class LOSTool(ToolBase):
             elif attr == "placeholder":
                 widget.setPlaceholderText(tr(f"{category}.{key}"))
                 
-        self._atmosphere_combo.setItemText(0, tr("los.atm_1"))
-        self._atmosphere_combo.setItemText(1, tr("los.atm_2"))
-        self._atmosphere_combo.setItemText(2, tr("los.atm_3"))
-        self._atmosphere_combo.setItemText(3, tr("los.atm_4"))
+        # 刷新大气条件下拉框
+        if hasattr(self, '_atmosphere_combo'):
+            self._atmosphere_combo.setItemText(0, tr("los.atm_1"))
+            self._atmosphere_combo.setItemText(1, tr("los.atm_2"))
+            self._atmosphere_combo.setItemText(2, tr("los.atm_3"))
+            self._atmosphere_combo.setItemText(3, tr("los.atm_4"))
         
-        # re-trigger translation on active results area
+        # 刷新当前结果（如果已有结果）
         if self._result1_label.text() != "--":
             self._do_calculate()

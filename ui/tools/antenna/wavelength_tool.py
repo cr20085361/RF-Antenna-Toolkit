@@ -359,11 +359,18 @@ class WavelengthTool(ToolBase):
             elif attr == "placeholder":
                 widget.setPlaceholderText(tr(f"{category}.{key}"))
                 
-        # Custom material option update in combobox
-        idx = self._material_combo.findData(None)
-        if idx < 0:
-            idx = self._material_combo.count() - 1
-        current_idx = self._material_combo.currentIndex()
-        self._material_combo.setItemText(idx, tr("wavelength.custom_material"))
+        # 处理材料下拉框中的自定义选项
+        custom_idx = -1
+        for i in range(self._material_combo.count()):
+            if "Custom" in self._material_combo.itemText(i) or "自定义" in self._material_combo.itemText(i):
+                custom_idx = i
+                break
+        
+        if custom_idx >= 0:
+            self._material_combo.setItemText(custom_idx, tr("wavelength.custom_material"))
+        
+        # 刷新当前结果
+        if self._freq_input.text():
+            self._do_calculate()
         
         # Default error updating requires re-calculation or simply let it be

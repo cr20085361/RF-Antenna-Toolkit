@@ -521,13 +521,13 @@ class BandwidthTool(ToolBase):
         # 理想做法是在 _create_result_card 中保存标题标签
         
     def get_intuition_content(self) -> str:
-        return tr("bandwidth.intuition")
+        return tr("bandwidth.intuition_content")
 
     def get_math_model_content(self) -> str:
-        return tr("bandwidth.math_model")
+        return tr("bandwidth.math_content")
 
     def get_engineering_content(self) -> str:
-        return tr("bandwidth.eng_content")
+        return tr("bandwidth.engineering_content")
 
     def get_history_content(self) -> str:
         return tr("bandwidth.history_content")

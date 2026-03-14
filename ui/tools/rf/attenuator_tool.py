@@ -620,13 +620,13 @@ class AttenuatorTool(ToolBase):
     # ==================== 知识面板 ====================
 
     def get_intuition_content(self) -> str:
-        return tr("attenuator.intuition")
+        return tr("attenuator.intuition_content")
 
     def get_math_model_content(self) -> str:
-        return tr("attenuator.math_model")
+        return tr("attenuator.math_content")
 
     def get_engineering_content(self) -> str:
-        return tr("attenuator.eng_content")
+        return tr("attenuator.engineering_content")
 
     def get_history_content(self) -> str:
         return tr("attenuator.history_content")

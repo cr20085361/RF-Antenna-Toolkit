@@ -356,7 +356,7 @@ class RangeTool(ToolBase):
     # ==================== 知识区内容 ====================
     
     def get_intuition_content(self) -> str:
-        return tr("range.intuition", """
+        return tr("range.intuition_content", """
         <h3>{t_int_title}</h3>
         <p>{t_int_1}</p>
         <p>{t_int_2}</p>
@@ -369,7 +369,7 @@ class RangeTool(ToolBase):
         )
 
     def get_math_model_content(self) -> str:
-        return tr("range.math_model", """
+        return tr("range.math_content", """
         <h3>{t_math_title}</h3>
         <p>{t_math_1}</p>
         <p>{t_math_2}</p>
@@ -391,7 +391,7 @@ class RangeTool(ToolBase):
         )
 
     def get_engineering_content(self) -> str:
-        return tr("range.eng_content", """
+        return tr("range.engineering_content", """
         <h3>{t_eng_title}</h3>
         <p>{t_eng_1}</p>
         <ul>

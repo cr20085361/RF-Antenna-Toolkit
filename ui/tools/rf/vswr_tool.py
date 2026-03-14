@@ -649,13 +649,13 @@ class VSWRTool(ToolBase):
     # ==================== 四维度知识内容 ====================
     
     def get_intuition_content(self) -> str:
-        return tr("vswr.intuition")
+        return tr("vswr.intuition_content")
 
     def get_math_model_content(self) -> str:
-        return tr("vswr.math_model")
+        return tr("vswr.math_content")
 
     def get_engineering_content(self) -> str:
-        return tr("vswr.eng_content")
+        return tr("vswr.engineering_content")
 
     def get_history_content(self) -> str:
         return tr("vswr.history_content")
