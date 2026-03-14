@@ -3,7 +3,7 @@
 射频天线工具集 - 视距计算模块
 RF Antenna Toolkit - Line-of-Sight Calculator
 
-版本: v1.0.0
+版本: v2.0.0
 功能: 地球曲率视距、仰角计算、双站视距等
 """
 

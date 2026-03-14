@@ -3,7 +3,7 @@
 射频天线工具集 - 阻抗匹配核心模块
 RF Antenna Toolkit - Impedance Matching Core
 
-版本: v1.0.0
+版本: v2.0.0
 功能: 
     - 封装 scikit-rf 进行射频网络计算
     - 管理匹配网络拓扑 (LC梯形网络)

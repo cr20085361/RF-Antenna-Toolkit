@@ -3,7 +3,7 @@
 射频天线工具集 - 驻波(VSWR)计算工具
 RF Antenna Toolkit - VSWR Calculator Tool
 
-版本: v1.0.0
+版本: v2.0.0
 功能: 提供驻波比计算界面，显示反射系数、回波损耗等指标
 """
 
@@ -81,9 +81,9 @@ class PowerMeter(QWidget):
         painter.setFont(font)
         
         # 标题
-        title_text = "功率分布"
+        title_text = tr("vswr.meter_title")
         if self.show_power_values:
-            title_text += f" (输入: {self._format_power(self.input_power_w)})"
+            title_text += f" ({tr('vswr.meter_input')} {self._format_power(self.input_power_w)})"
         painter.drawText(x, y - 10, title_text)
         
         # 计算实际功率
@@ -93,17 +93,17 @@ class PowerMeter(QWidget):
         # 传输功率百分比/数值
         painter.setPen(QPen(QColor("#276749")))
         if self.show_power_values:
-            trans_text = f"✓ 传输: {self.transmitted_ratio*100:.1f}% ({self._format_power(transmitted_power)})"
+            trans_text = f"✓ {tr('vswr.meter_trans')} {self.transmitted_ratio*100:.1f}% ({self._format_power(transmitted_power)})"
         else:
-            trans_text = f"✓ 传输: {self.transmitted_ratio*100:.1f}%"
+            trans_text = f"✓ {tr('vswr.meter_trans')} {self.transmitted_ratio*100:.1f}%"
         painter.drawText(x + 5, y + height + 20, trans_text)
         
         # 反射功率百分比/数值
         painter.setPen(QPen(QColor("#C53030")))
         if self.show_power_values:
-            refl_text = f"✗ 反射: {self.reflected_ratio*100:.1f}% ({self._format_power(reflected_power)})"
+            refl_text = f"✗ {tr('vswr.meter_refl')} {self.reflected_ratio*100:.1f}% ({self._format_power(reflected_power)})"
         else:
-            refl_text = f"✗ 反射: {self.reflected_ratio*100:.1f}%"
+            refl_text = f"✗ {tr('vswr.meter_refl')} {self.reflected_ratio*100:.1f}%"
         # 计算文本宽度以右对齐
         painter.drawText(x + 5, y + height + 40, refl_text)
     
@@ -130,10 +130,10 @@ class VSWRTool(ToolBase):
     """
     
     # 工具元信息
-    tool_name = "驻波计算器"
+    tool_name = tr("vswr.tool_name")
     tool_icon = "📊"
     tool_category = "rf"
-    tool_description = "根据驻波比(VSWR)计算反射系数、回波损耗、失配损耗等指标"
+    tool_description = tr("vswr.tool_desc")
     i18n_title_key = "vswr.tool_name"
     i18n_desc_key = "vswr.tool_desc"
     
@@ -144,6 +144,7 @@ class VSWRTool(ToolBase):
         
         # 结果显示控件引用
         self._result_labels: Dict[str, QLabel] = {}
+        self._result_titles: Dict[str, QLabel] = {}
         
         # 功率仪表盘
         self._power_meter: Optional[PowerMeter] = None
@@ -159,18 +160,18 @@ class VSWRTool(ToolBase):
         layout.setSpacing(16)
         
         # ==================== 输入方式选择 ====================
-        input_group = QGroupBox("输入参数")
-        input_layout = QVBoxLayout(input_group)
+        self._grp_input = QGroupBox(tr("vswr.lbl_input_param"))
+        input_layout = QVBoxLayout(self._grp_input)
         input_layout.setSpacing(12)
         
         # 输入类型选择
         self._input_type_group = QButtonGroup(self)
         
         # VSWR输入
-        vswr_radio = QRadioButton("驻波比 (VSWR)")
-        vswr_radio.setChecked(True)
-        self._input_type_group.addButton(vswr_radio, 0)
-        input_layout.addWidget(vswr_radio)
+        self._vswr_radio = QRadioButton(tr("vswr.radio_vswr"))
+        self._vswr_radio.setChecked(True)
+        self._input_type_group.addButton(self._vswr_radio, 0)
+        input_layout.addWidget(self._vswr_radio)
         
         vswr_input_layout = QHBoxLayout()
         self._vswr_input = QLineEdit()
@@ -183,9 +184,9 @@ class VSWRTool(ToolBase):
         input_layout.addLayout(vswr_input_layout)
         
         # 反射系数输入
-        gamma_radio = QRadioButton("反射系数 |Γ|")
-        self._input_type_group.addButton(gamma_radio, 1)
-        input_layout.addWidget(gamma_radio)
+        self._gamma_radio = QRadioButton(tr("vswr.radio_gamma"))
+        self._input_type_group.addButton(self._gamma_radio, 1)
+        input_layout.addWidget(self._gamma_radio)
         
         gamma_input_layout = QHBoxLayout()
         self._gamma_input = QLineEdit()
@@ -198,9 +199,9 @@ class VSWRTool(ToolBase):
         input_layout.addLayout(gamma_input_layout)
         
         # 回波损耗输入
-        rl_radio = QRadioButton("回波损耗 (Return Loss)")
-        self._input_type_group.addButton(rl_radio, 2)
-        input_layout.addWidget(rl_radio)
+        self._rl_radio = QRadioButton(tr("vswr.radio_rl"))
+        self._input_type_group.addButton(self._rl_radio, 2)
+        input_layout.addWidget(self._rl_radio)
         
         rl_input_layout = QHBoxLayout()
         self._rl_input = QLineEdit()
@@ -209,21 +210,23 @@ class VSWRTool(ToolBase):
         self._rl_input.setText("14")
         self._rl_input.setEnabled(False)
         rl_input_layout.addWidget(self._rl_input)
-        rl_input_layout.addWidget(QLabel("dB"))
+        
+        self._rl_unit_label = QLabel("dB")
+        rl_input_layout.addWidget(self._rl_unit_label)
         rl_input_layout.addStretch()
         input_layout.addLayout(rl_input_layout)
         
         # 切换输入类型时启用/禁用对应输入框
         self._input_type_group.buttonClicked.connect(self._on_input_type_changed)
         
-        layout.addWidget(input_group)
+        layout.addWidget(self._grp_input)
         
         # ==================== 输入功率设置 (大功率场景) ====================
-        power_group = QGroupBox("输入功率 (可选)")
-        power_layout = QVBoxLayout(power_group)
+        self._grp_power = QGroupBox(tr("vswr.group_power"))
+        power_layout = QVBoxLayout(self._grp_power)
         power_layout.setSpacing(8)
         
-        power_desc = QLabel("输入发射功率，计算失配导致的实际功率损失")
+        power_desc = QLabel(tr("vswr.desc_power"))
         power_desc.setObjectName("ResultDescription")
         power_desc.setWordWrap(True)
         power_layout.addWidget(power_desc)
@@ -247,7 +250,7 @@ class VSWRTool(ToolBase):
         
         # 特性阻抗输入
         z0_layout = QHBoxLayout()
-        z0_layout.addWidget(QLabel("特性阻抗 Z₀:"))
+        z0_layout.addWidget(QLabel(tr("vswr.lbl_z0")))
         self._z0_input = QLineEdit()
         self._z0_input.setValidator(QDoubleValidator(1, 1000, 2))
         self._z0_input.setText("50")
@@ -257,14 +260,14 @@ class VSWRTool(ToolBase):
         z0_layout.addStretch()
         power_layout.addLayout(z0_layout)
         
-        layout.addWidget(power_group)
+        layout.addWidget(self._grp_power)
         
         # ==================== 计算按钮 ====================
-        calc_button = QPushButton("📊 计算")
-        calc_button.setObjectName("PrimaryButton")
-        calc_button.setCursor(Qt.CursorShape.PointingHandCursor)
-        calc_button.clicked.connect(self._do_calculate)
-        layout.addWidget(calc_button)
+        self._btn_calc = QPushButton(tr("vswr.btn_calc"))
+        self._btn_calc.setObjectName("PrimaryButton")
+        self._btn_calc.setCursor(Qt.CursorShape.PointingHandCursor)
+        self._btn_calc.clicked.connect(self._do_calculate)
+        layout.addWidget(self._btn_calc)
         
         layout.addStretch()
         
@@ -289,9 +292,9 @@ class VSWRTool(ToolBase):
         quality_card.setObjectName("ResultPanel")
         quality_layout = QVBoxLayout(quality_card)
         
-        quality_title = QLabel("匹配质量评估")
-        quality_title.setObjectName("ResultTitle")
-        quality_layout.addWidget(quality_title)
+        self._quality_title = QLabel(tr("vswr.lbl_quality"))
+        self._quality_title.setObjectName("ResultTitle")
+        quality_layout.addWidget(self._quality_title)
         
         self._quality_label = QLabel("--")
         self._quality_label.setObjectName("ResultValue")
@@ -305,23 +308,23 @@ class VSWRTool(ToolBase):
         results_grid.setSpacing(12)
         
         # VSWR
-        vswr_card = self._create_result_card("vswr", "驻波比 VSWR", ": 1")
+        vswr_card = self._create_result_card("vswr", tr("vswr.lbl_result_vswr"), ": 1")
         results_grid.addWidget(vswr_card, 0, 0)
         
         # 反射系数
-        gamma_card = self._create_result_card("gamma", "反射系数 |Γ|", "")
+        gamma_card = self._create_result_card("gamma", tr("vswr.lbl_result_gamma"), "")
         results_grid.addWidget(gamma_card, 0, 1)
         
         # 回波损耗
-        rl_card = self._create_result_card("return_loss", "回波损耗", "dB")
+        rl_card = self._create_result_card("return_loss", tr("vswr.lbl_result_rl"), "dB")
         results_grid.addWidget(rl_card, 0, 2)
         
         # 失配损耗
-        ml_card = self._create_result_card("mismatch_loss", "失配损耗", "dB")
+        ml_card = self._create_result_card("mismatch_loss", tr("vswr.lbl_result_ml"), "dB")
         results_grid.addWidget(ml_card, 1, 0)
         
         # 负载阻抗 (估算, 相位=0时)
-        zl_card = self._create_result_card("load_z", "负载阻抗 Z_L", "Ω")
+        zl_card = self._create_result_card("load_z", tr("vswr.lbl_result_zl"), "Ω")
         results_grid.addWidget(zl_card, 1, 1)
         
         layout.addLayout(results_grid)
@@ -331,19 +334,19 @@ class VSWRTool(ToolBase):
         voltage_card.setObjectName("ResultPanel")
         voltage_layout = QVBoxLayout(voltage_card)
         
-        voltage_title = QLabel("⚡ 传输线电压/电流")
+        voltage_title = QLabel(tr("vswr.title_voltage"))
         voltage_title.setObjectName("ResultTitle")
         voltage_layout.addWidget(voltage_title)
         
         voltage_grid = QGridLayout()
         voltage_grid.setSpacing(8)
         
-        voltage_grid.addWidget(QLabel("最大电压 V_max:"), 0, 0)
+        voltage_grid.addWidget(QLabel(tr("vswr.lbl_vmax")), 0, 0)
         self._vmax_label = QLabel("--")
         self._vmax_label.setStyleSheet("color: #C53030; font-weight: bold;")
         voltage_grid.addWidget(self._vmax_label, 0, 1)
         
-        voltage_grid.addWidget(QLabel("最大电流 I_max:"), 0, 2)
+        voltage_grid.addWidget(QLabel(tr("vswr.lbl_imax")), 0, 2)
         self._imax_label = QLabel("--")
         self._imax_label.setStyleSheet("color: #C53030; font-weight: bold;")
         voltage_grid.addWidget(self._imax_label, 0, 3)
@@ -356,28 +359,28 @@ class VSWRTool(ToolBase):
         power_loss_card.setObjectName("ResultPanel")
         power_loss_layout = QVBoxLayout(power_loss_card)
         
-        power_loss_title = QLabel("⚡ 功率损失详情")
-        power_loss_title.setObjectName("ResultTitle")
-        power_loss_layout.addWidget(power_loss_title)
+        self._power_loss_title = QLabel(tr("vswr.title_loss"))
+        self._power_loss_title.setObjectName("ResultTitle")
+        power_loss_layout.addWidget(self._power_loss_title)
         
         # 功率损失结果网格
         power_grid = QGridLayout()
         power_grid.setSpacing(8)
         
         # 反射功率
-        power_grid.addWidget(QLabel("反射功率:"), 0, 0)
+        power_grid.addWidget(QLabel(tr("vswr.lbl_refl_power")), 0, 0)
         self._reflected_power_label = QLabel("--")
         self._reflected_power_label.setStyleSheet("color: #C53030; font-weight: bold;")
         power_grid.addWidget(self._reflected_power_label, 0, 1)
         
         # 传输功率
-        power_grid.addWidget(QLabel("传输功率:"), 1, 0)
+        power_grid.addWidget(QLabel(tr("vswr.lbl_trans_power")), 1, 0)
         self._transmitted_power_label = QLabel("--")
         self._transmitted_power_label.setStyleSheet("color: #276749; font-weight: bold;")
         power_grid.addWidget(self._transmitted_power_label, 1, 1)
         
         # 给PA的补偿功率建议
-        power_grid.addWidget(QLabel("建议补偿:"), 2, 0)
+        power_grid.addWidget(QLabel(tr("vswr.lbl_comp")), 2, 0)
         self._compensation_label = QLabel("--")
         self._compensation_label.setStyleSheet("color: #2C7BE5; font-weight: bold;")
         power_grid.addWidget(self._compensation_label, 2, 1)
@@ -411,6 +414,7 @@ class VSWRTool(ToolBase):
         value_label = QLabel("--")
         value_label.setObjectName("ResultValue")
         self._result_labels[key] = value_label
+        self._result_titles[key] = title_label # 同时保存标题
         value_row.addWidget(value_label)
         
         if unit:
@@ -439,39 +443,39 @@ class VSWRTool(ToolBase):
             if input_type == 0:  # VSWR
                 vswr_text = self._vswr_input.text().strip()
                 if not vswr_text:
-                    return {"success": False, "error": "⚠️ 请输入驻波比 (VSWR) 值"}
+                    return {"success": False, "error": tr("vswr.err_vswr_empty")}
                 try:
                     vswr = float(vswr_text)
                 except ValueError:
-                    return {"success": False, "error": "⚠️ 驻波比格式错误，请输入有效数字"}
+                    return {"success": False, "error": tr("vswr.err_vswr_fmt")}
                 if vswr < 1.0:
-                    return {"success": False, "error": "⚠️ 驻波比必须 ≥ 1\n（完美匹配时 VSWR = 1:1）"}
+                    return {"success": False, "error": tr("vswr.err_vswr_val")}
                 result = self._calculator.calculate_from_vswr(vswr)
                 
             elif input_type == 1:  # 反射系数
                 gamma_text = self._gamma_input.text().strip()
                 if not gamma_text:
-                    return {"success": False, "error": "⚠️ 请输入反射系数 |Γ| 值"}
+                    return {"success": False, "error": tr("vswr.err_gamma_empty")}
                 try:
                     gamma = float(gamma_text)
                 except ValueError:
-                    return {"success": False, "error": "⚠️ 反射系数格式错误，请输入有效数字"}
+                    return {"success": False, "error": tr("vswr.err_gamma_fmt")}
                 if gamma < 0:
-                    return {"success": False, "error": "⚠️ 反射系数不能为负值\n（|Γ| 范围: 0 ~ 1）"}
+                    return {"success": False, "error": tr("vswr.err_gamma_neg")}
                 if gamma >= 1:
-                    return {"success": False, "error": "⚠️ 反射系数必须 < 1\n（|Γ| = 1 表示全反射）"}
+                    return {"success": False, "error": tr("vswr.err_gamma_1")}
                 result = self._calculator.calculate_from_reflection_coefficient(gamma)
                 
             else:  # 回波损耗
                 rl_text = self._rl_input.text().strip()
                 if not rl_text:
-                    return {"success": False, "error": "⚠️ 请输入回波损耗值"}
+                    return {"success": False, "error": tr("vswr.err_rl_empty")}
                 try:
                     rl = float(rl_text)
                 except ValueError:
-                    return {"success": False, "error": "⚠️ 回波损耗格式错误，请输入有效数字"}
+                    return {"success": False, "error": tr("vswr.err_rl_fmt")}
                 if rl <= 0:
-                    return {"success": False, "error": "⚠️ 回波损耗必须为正值 (dB)\n（值越大匹配越好）"}
+                    return {"success": False, "error": tr("vswr.err_rl_pos")}
                 result = self._calculator.calculate_from_return_loss(rl)
             
             return {"success": True, "result": result}
@@ -526,8 +530,8 @@ class VSWRTool(ToolBase):
                 self._vmax_label.setText(f"{v_max:.2f} V")
                 self._imax_label.setText(f"{i_max:.3f} A")
             else:
-                self._vmax_label.setText("请输入功率")
-                self._imax_label.setText("请输入功率")
+                self._vmax_label.setText(tr("vswr.err_power_req", "请输入功率"))
+                self._imax_label.setText(tr("vswr.err_power_req", "请输入功率"))
             
             # 更新功率损失详情
             if input_power_w > 0:
@@ -543,10 +547,10 @@ class VSWRTool(ToolBase):
                     compensation = required_power - input_power_w
                     self._compensation_label.setText(f"+{self._format_power(compensation)}")
                 else:
-                    self._compensation_label.setText("无法补偿")
+                    self._compensation_label.setText(tr("vswr.err_no_comp", "无法补偿"))
             else:
-                self._reflected_power_label.setText("请输入功率")
-                self._transmitted_power_label.setText("请输入功率")
+                self._reflected_power_label.setText(tr("vswr.err_power_req", "请输入功率"))
+                self._transmitted_power_label.setText(tr("vswr.err_power_req", "请输入功率"))
                 self._compensation_label.setText("--")
             
             # 更新功率仪表盘
@@ -558,7 +562,7 @@ class VSWRTool(ToolBase):
                 )
         else:
             # 显示错误提示
-            self._error_label.setText(calc_result.get("error", "未知错误"))
+            self._error_label.setText(calc_result.get("error", tr("vswr.err_unknown", "未知错误")))
             self._error_label.show()
             
             for key in ["vswr", "gamma", "return_loss", "mismatch_loss", "load_z"]:
@@ -603,88 +607,55 @@ class VSWRTool(ToolBase):
         else:
             return f"{power_w*1e6:.2f} μW"
     
+
+    # ==================== 国际化刷新接口 ====================
+
+    def retranslate_ui(self, lang: str = ""):
+        """语言切换时刷新 UI 文字"""
+        super().retranslate_ui(lang)
+        
+        # 刷新 GroupBox
+        if hasattr(self, '_grp_input'): self._grp_input.setTitle(tr("vswr.lbl_input_param"))
+        if hasattr(self, '_grp_power'): self._grp_power.setTitle(tr("vswr.group_power"))
+        
+        # 刷新 Radio 和 Label
+        if hasattr(self, '_vswr_radio'): self._vswr_radio.setText(tr("vswr.radio_vswr"))
+        if hasattr(self, '_gamma_radio'): self._gamma_radio.setText(tr("vswr.radio_gamma"))
+        if hasattr(self, '_rl_radio'): self._rl_radio.setText(tr("vswr.radio_rl"))
+        
+        # 刷新按钮
+        if hasattr(self, '_btn_calc'): self._btn_calc.setText(tr("vswr.btn_calc"))
+        
+        # 刷新标题Label
+        if hasattr(self, '_quality_title'): self._quality_title.setText(tr("vswr.lbl_quality"))
+        if hasattr(self, '_voltage_title'): self._voltage_title.setText(tr("vswr.title_voltage"))
+        if hasattr(self, '_power_loss_title'): self._power_loss_title.setText(tr("vswr.title_loss"))
+        
+        # 刷新结果卡片标题
+        if hasattr(self, '_result_titles'):
+            self._result_titles["vswr"].setText(tr("vswr.lbl_result_vswr"))
+            self._result_titles["gamma"].setText(tr("vswr.lbl_result_gamma"))
+            self._result_titles["return_loss"].setText(tr("vswr.lbl_result_rl"))
+            self._result_titles["mismatch_loss"].setText(tr("vswr.lbl_result_ml"))
+            self._result_titles["load_z"].setText(tr("vswr.lbl_result_zl"))
+            
+        # 刷新功率仪表盘 (触发重绘)
+        if hasattr(self, '_power_meter') and self._power_meter is not None:
+            self._power_meter.update()
+            
+        # 刷新当前计算结果 (以更新翻译文字)
+        self._do_calculate()
+
     # ==================== 四维度知识内容 ====================
     
-    def get_intuition_content(self) -> Optional[str]:
-        """直观理解 - 物理本质"""
-        return """
-        <b>🌊 什么是驻波？</b><br><br>
-        
-        想象你拿着绳子的一端不停地上下抖动，产生波向另一端传播。如果另一端固定在墙上，
-        波会<b>反射</b>回来，与入射波叠加形成<b>"驻波"</b>——看起来绳子在原地振动，而不是波在移动。<br><br>
-        
-        <b>🔑 射频系统中的驻波:</b><br>
-        当传输线与负载阻抗<b>不匹配</b>时，部分功率被反射回源端，形成驻波。<br><br>
-        
-        • <b>VSWR = 1:1</b> → 完美匹配，无反射<br>
-        • <b>VSWR = ∞:1</b> → 全反射（开路/短路）<br><br>
-        
-        <b>💡 核心理解:</b> VSWR越大，失配越严重，反射越多，传输效率越低。
-        """
-    
-    def get_math_model_content(self) -> Optional[str]:
-        """数学模型 - 精确公式"""
-        return """
-        <b>📐 核心公式</b><br><br>
-        
-        <b>反射系数 Γ (Gamma):</b><br>
-        <span style="font-family: 'Cambria Math', serif; font-size: 15px;">
-        Γ = (Z<sub>L</sub> - Z<sub>0</sub>) / (Z<sub>L</sub> + Z<sub>0</sub>)
-        </span><br>
-        Z<sub>L</sub> = 负载阻抗, Z<sub>0</sub> = 特性阻抗<br><br>
-        
-        <b>VSWR与反射系数关系:</b><br>
-        <span style="font-family: 'Cambria Math', serif; font-size: 15px;">
-        VSWR = (1 + |Γ|) / (1 - |Γ|)
-        </span><br><br>
-        
-        <b>回波损耗 (Return Loss):</b><br>
-        <span style="font-family: 'Cambria Math', serif; font-size: 15px;">
-        RL = -20 log₁₀|Γ| (dB)
-        </span><br><br>
-        
-        <b>失配损耗 (Mismatch Loss):</b><br>
-        <span style="font-family: 'Cambria Math', serif; font-size: 15px;">
-        ML = -10 log₁₀(1 - |Γ|²) (dB)
-        </span>
-        """
-    
-    def get_engineering_content(self) -> Optional[str]:
-        """工程边界 - 适用范围与避坑"""
-        return """
-        <b>✅ 工程经验参考值:</b><br>
-        <table style="margin: 8px 0;">
-        <tr><td>VSWR &lt; 1.2</td><td>→ 专业级射频系统</td></tr>
-        <tr><td>VSWR &lt; 1.5</td><td>→ 大多数无线通信</td></tr>
-        <tr><td>VSWR &lt; 2.0</td><td>→ 可接受最低要求</td></tr>
-        <tr><td>VSWR &gt; 3.0</td><td>→ 严重问题，需排查</td></tr>
-        </table><br>
-        
-        <b>⚠️ 常见问题避坑:</b><br><br>
-        
-        <span style="background-color: #FED7D7; padding: 4px 8px; border-radius: 4px; color: #C53030;">
-        ❌ 高VSWR的后果
-        </span><br>
-        • 功率放大器过热甚至损坏<br>
-        • 发射效率降低，信号变弱<br>
-        • 可能触发保护电路降功率<br><br>
-        
-        <span style="background-color: #C6F6D5; padding: 4px 8px; border-radius: 4px; color: #276749;">
-        💡 测量提示
-        </span><br>
-        VSWR随频率变化，需在工作频段内全频段测量
-        """
-    
-    def get_history_content(self) -> Optional[str]:
-        """发现历史 - 趣味故事"""
-        return """
-        <b>📜 驻波的发现</b><br><br>
-        
-        <b>1820年代</b> - 法国科学家<b>菲涅尔</b>研究光学干涉时首次描述了驻波现象。<br><br>
-        
-        <b>1888年</b> - <b>赫兹</b>在验证电磁波实验中，用金属反射板产生驻波，
-        并用检测环测量电场强度分布，成功验证了电磁波的波动性质。<br><br>
-        
-        <i>💭 驻波测量曾是早期无线电工程师的必备技能。在史密斯圆图发明之前，
-        工程师们需要沿传输线移动探针，手工绘制电压分布曲线来分析阻抗匹配情况！</i>
-        """
+    def get_intuition_content(self) -> str:
+        return tr("vswr.intuition")
+
+    def get_math_model_content(self) -> str:
+        return tr("vswr.math_model")
+
+    def get_engineering_content(self) -> str:
+        return tr("vswr.eng_content")
+
+    def get_history_content(self) -> str:
+        return tr("vswr.history_content")

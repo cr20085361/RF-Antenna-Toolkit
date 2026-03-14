@@ -3,7 +3,7 @@
 射频天线工具集 - 驻波(VSWR)计算模块
 RF Antenna Toolkit - VSWR Calculator
 
-版本: v1.0.0
+版本: v2.0.0
 功能: 提供驻波比与反射系数、回波损耗、失配损耗等指标的相互转换
 """
 

@@ -3,7 +3,7 @@
 射频天线工具集 - 主程序入口
 RF Antenna Toolkit - Main Entry Point
 
-版本: v1.0.0
+版本: v2.0.0
 作者: 射频天线工具集开发团队
 功能: 应用程序启动入口
 

@@ -3,7 +3,7 @@
 射频天线工具集 - 波长频率计算工具
 RF Antenna Toolkit - Wavelength/Frequency Calculator Tool
 
-版本: v1.0.0
+版本: v2.0.0
 功能: 提供频率与波长之间的转换计算界面
 """
 
@@ -35,8 +35,8 @@ class WavelengthTool(ToolBase):
     """
     
     # 工具元信息
-    tool_name = "波长计算器"
-    tool_icon = "📏"
+    tool_name = tr("wavelength.tool_name", "波长与频率")
+    tool_icon = "〰️"
     tool_category = "antenna"
     tool_description = "根据频率计算自由空间波长和介质中波长，支持常用介质材料选择"
     

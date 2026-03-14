@@ -3,7 +3,7 @@
 标准波导法兰参考表工具
 Standard Waveguide & Flange Reference Table Tool
 
-版本: v1.0.0
+版本: v2.0.0
 功能: 提供 EIA WR 系列标准矩形波导的结构尺寸、工作频段和法兰型号速查
 数据来源: MIL-DTL-3922, IEC 60154, EIA RS-261
 """
@@ -54,13 +54,13 @@ class WaveguideInfo:
 class WaveguideTableTool(ToolBase):
     """
     标准波导法兰参考表
-    v1.0.0 - 覆盖 EIA WR 系列标准矩形波导
+    v2.0.0 - 覆盖 EIA WR 系列标准矩形波导
     """
 
-    tool_name = "波导法兰参考"
-    tool_icon = "🔧"
+    tool_name = tr("waveguide.tool_name", "波导法兰")
+    tool_icon = "🔲"
     tool_category = "reference"
-    tool_description = "标准矩形波导结构尺寸与法兰型号速查 (EIA/IEC/MIL)"
+    tool_description = tr("waveguide.tool_desc", "标准矩形波导管、法兰型号及尺寸速查表 (EIA/WR)")
     i18n_title_key = "waveguide.tool_name"
     i18n_desc_key = "waveguide.tool_desc"
 
@@ -157,39 +157,39 @@ class WaveguideTableTool(ToolBase):
         layout.setSpacing(16)
 
         # 标题
-        title = QLabel("🔍 筛选与控制")
+        title = QLabel(tr("waveguide.lbl_filter_control", "🔍 筛选与控制"))
         title.setStyleSheet("font-weight: bold; font-size: 14px; color: #333;")
         layout.addWidget(title)
 
         # 1. IEEE 频段筛选
-        band_label = QLabel("按 IEEE 频段筛选:")
+        band_label = QLabel(tr("waveguide.lbl_filter_ieee_band", "按 IEEE 频段筛选:"))
         layout.addWidget(band_label)
 
         self._band_combo = QComboBox()
-        self._band_combo.addItem("全部频段", "ALL")
+        self._band_combo.addItem(tr("waveguide.opt_all_bands", "全部频段"), "ALL")
         for band in self.ieee_bands[1:]:
-            self._band_combo.addItem(f"{band} 频段", band)
+            self._band_combo.addItem(f"{band} {tr('waveguide.opt_band_suffix', '频段')}", band)
         self._band_combo.currentIndexChanged.connect(self.on_band_filter_changed)
         layout.addWidget(self._band_combo)
 
         # 2. 搜索框
-        search_label = QLabel("搜索波导:")
+        search_label = QLabel(tr("waveguide.lbl_search_waveguide", "搜索波导:"))
         layout.addWidget(search_label)
 
         self._search_input = QLineEdit()
-        self._search_input.setPlaceholderText("输入 WR 编号或频率 (如 'WR-90' 或 '10')")
+        self._search_input.setPlaceholderText(tr("waveguide.ph_search_waveguide", "输入 WR 编号或频率 (如 'WR-90' 或 '10')"))
         self._search_input.textChanged.connect(self.on_search_text_changed)
         layout.addWidget(self._search_input)
 
         # 说明
         info = QLabel(
-            "表格数据说明:\n"
-            "• 波导尺寸依据 EIA RS-261\n"
-            "• 法兰型号依据 MIL-DTL-3922\n"
-            "• 同一波导可能适配多种法兰\n"
-            "  此处列出最常用的 Cover/Choke\n"
-            "• '—' 表示该型号无标准化法兰\n"
-            "  或通常使用非标/专用法兰"
+            tr("waveguide.lbl_table_info_title", "表格数据说明:") + "\n"
+            + tr("waveguide.lbl_table_info_eia", "• 波导尺寸依据 EIA RS-261") + "\n"
+            + tr("waveguide.lbl_table_info_mil", "• 法兰型号依据 MIL-DTL-3922") + "\n"
+            + tr("waveguide.lbl_table_info_multi_flange", "• 同一波导可能适配多种法兰") + "\n"
+            + tr("waveguide.lbl_table_info_cover_choke", "  此处列出最常用的 Cover/Choke") + "\n"
+            + tr("waveguide.lbl_table_info_no_std_flange", "• '—' 表示该型号无标准化法兰") + "\n"
+            + tr("waveguide.lbl_table_info_custom_flange", "  或通常使用非标/专用法兰")
         )
         info.setWordWrap(True)
         info.setStyleSheet("color: #666; font-size: 11px; margin-top: 10px;")
@@ -208,9 +208,14 @@ class WaveguideTableTool(ToolBase):
         self._table = QTableWidget()
         self._table.setColumnCount(8)
         self._table.setHorizontalHeaderLabels([
-            "WR 编号", "IEC", "a×b (mm)",
-            "截止频率\n(GHz)", "工作频段\n(GHz)", "IEEE\n频段",
-            "Cover 法兰\n(MIL)", "Choke 法兰\n(MIL)"
+            tr("waveguide.tbl_col_wr", "WR 编号"),
+            tr("waveguide.tbl_col_iec", "IEC"),
+            tr("waveguide.tbl_col_dim", "a×b (mm)"),
+            tr("waveguide.tbl_col_fc", "截止频率\n(GHz)"),
+            tr("waveguide.tbl_col_freq_range", "工作频段\n(GHz)"),
+            tr("waveguide.tbl_col_ieee_band", "IEEE\n频段"),
+            tr("waveguide.tbl_col_cover_flange", "Cover 法兰\n(MIL)"),
+            tr("waveguide.tbl_col_choke_flange", "Choke 法兰\n(MIL)")
         ])
 
         # 表头设置
@@ -327,56 +332,81 @@ class WaveguideTableTool(ToolBase):
 
     def get_engineering_content(self) -> Optional[str]:
         """工程选型指南"""
-        return """
-        <b>🏗️ 波导选型工程指南</b><br><br>
+        return tr("waveguide.eng_content", """
+        <b>🏗️ {t_eng_title}</b><br><br>
 
-        <b>1. 基本原则:</b><br>
-        • 工作频率必须在 TE₁₀ 截止频率 (fc) 到 2fc 之间<br>
-        • 推荐工作带宽约为 fc×1.25 ~ fc×1.9 (单模传输)<br>
-        • 宽边尺寸 a 决定截止频率: fc = c/(2a)<br>
-        • 窄边尺寸 b ≈ a/2 (标准比例)<br><br>
+        <b>1. {t_basic_principles}:</b><br>
+        • {t_bp_1}<br>
+        • {t_bp_2}<br>
+        • {t_bp_3}: fc = c/(2a)<br>
+        • {t_bp_4}: b ≈ a/2 ({t_std_ratio})<br><br>
 
-        <b>2. 法兰选型:</b><br>
-        • <b>Cover (平面法兰)</b>: 结构简单，适合一般连接<br>
-        • <b>Choke (扼流法兰)</b>: 含环形槽，接触要求低<br>
-        • Cover+Choke 配对使用效果最佳<br>
-        • 同一波导可能有多种法兰标准:<br>
-        &nbsp;&nbsp;— MIL-DTL-3922 (UG 系列, 美军标)<br>
-        &nbsp;&nbsp;— IEC 60154 (国际标准)<br>
-        &nbsp;&nbsp;— CPRF (商业精密法兰)<br>
-        &nbsp;&nbsp;— CMR (商业微波法兰)<br><br>
+        <b>2. {t_flange_selection}:</b><br>
+        • <b>Cover ({t_flat_flange})</b>: {t_flat_desc}<br>
+        • <b>Choke ({t_choke_flange})</b>: {t_choke_desc}<br>
+        • {t_pair_usage}<br>
+        • {t_multi_stds}:<br>
+        &nbsp;&nbsp;— MIL-DTL-3922 ({t_mil_std})<br>
+        &nbsp;&nbsp;— IEC 60154 ({t_iec_std})<br>
+        &nbsp;&nbsp;— CPRF ({t_cprf})<br>
+        &nbsp;&nbsp;— CMR ({t_cmr})<br><br>
 
-        <b>3. 常见陷阱:</b><br>
-        • WR-28 的 UG-599/U 法兰与 WR-229 的同名法兰不同!<br>
-        • 高频段 (>40 GHz) 法兰对准精度要求极高<br>
-        • 毫米波段建议使用带定位销的精密法兰
-        """
+        <b>3. {t_common_pitfalls}:</b><br>
+        • {t_cp_1}<br>
+        • {t_cp_2}<br>
+        • {t_cp_3}
+        """).format(
+            t_eng_title=tr("waveguide.eng_title", "波导选型工程指南"),
+            t_basic_principles=tr("waveguide.eng_basic_principles", "基本原则"),
+            t_bp_1=tr("waveguide.eng_bp_1", "工作频率必须在 TE₁₀ 截止频率 (fc) 到 2fc 之间"),
+            t_bp_2=tr("waveguide.eng_bp_2", "推荐工作带宽约为 fc×1.25 ~ fc×1.9 (单模传输)"),
+            t_bp_3=tr("waveguide.eng_bp_3", "宽边尺寸 a 决定截止频率"),
+            t_bp_4=tr("waveguide.eng_bp_4", "窄边尺寸"),
+            t_std_ratio=tr("waveguide.eng_std_ratio", "标准比例"),
+            t_flange_selection=tr("waveguide.eng_flange_selection", "法兰选型"),
+            t_flat_flange=tr("waveguide.eng_flat_flange", "平面法兰"),
+            t_flat_desc=tr("waveguide.eng_flat_desc", "结构简单，适合一般连接"),
+            t_choke_flange=tr("waveguide.eng_choke_flange", "扼流法兰"),
+            t_choke_desc=tr("waveguide.eng_choke_desc", "含环形槽，接触要求低"),
+            t_pair_usage=tr("waveguide.eng_pair_usage", "Cover+Choke 配对使用效果最佳"),
+            t_multi_stds=tr("waveguide.eng_multi_stds", "同一波导可能有多种法兰标准"),
+            t_mil_std=tr("waveguide.eng_mil_std", "UG 系列, 美军标"),
+            t_iec_std=tr("waveguide.eng_iec_std", "国际标准"),
+            t_cprf=tr("waveguide.eng_cprf", "商业精密法兰"),
+            t_cmr=tr("waveguide.eng_cmr", "商业微波法兰"),
+            t_common_pitfalls=tr("waveguide.eng_common_pitfalls", "常见陷阱"),
+            t_cp_1=tr("waveguide.eng_cp_1", "WR-28 的 UG-599/U 法兰与 WR-229 的同名法兰不同!"),
+            t_cp_2=tr("waveguide.eng_cp_2", "高频段 (>40 GHz) 法兰对准精度要求极高"),
+            t_cp_3=tr("waveguide.eng_cp_3", "毫米波段建议使用带定位销的精密法兰")
+        )
 
     def get_history_content(self) -> Optional[str]:
         """波导发展历史"""
-        return """
-        <b>📜 矩形波导发展简史</b><br><br>
+        return tr("waveguide.history_content", """
+        <b>📜 {t_history_title}</b><br><br>
 
-        <b>理论奠基 (1890s):</b><br>
-        Lord Rayleigh 于 1897 年首次从数学上证明了
-        电磁波可以在中空金属管中传播，但当时没有实际应用。<br><br>
+        <b>{t_theory} (1890s):</b><br>
+        {t_theory_desc}<br><br>
 
-        <b>实验验证 (1930s):</b><br>
-        George Southworth (AT&T Bell Labs) 和 Wilmer Barrow (MIT)
-        在 1936 年几乎同时独立实验验证了波导传输。<br><br>
+        <b>{t_experiment} (1930s):</b><br>
+        {t_exp_desc}<br><br>
 
-        <b>二战驱动 (1940s):</b><br>
-        雷达技术的爆发式发展使波导成为核心元件。
-        MIT 辐射实验室 (Rad Lab) 系统整理了波导理论，
-        奠定了现代微波工程的基础。
-        EIA WR 命名体系也在此时期确立。<br><br>
+        <b>{t_ww2} (1940s):</b><br>
+        {t_ww2_desc}<br><br>
 
-        <b>法兰标准化:</b><br>
-        MIL-DTL-3922 标准定义了 UG 系列法兰接口，
-        确保不同厂商的波导组件可以互换连接。
-        随着频率升高 (>40 GHz)，传统 UG 法兰的对准精度
-        已不能满足需求，催生了 CPRF 等精密法兰标准。
-        """
+        <b>{t_flange_stds}:</b><br>
+        {t_flange_desc}
+        """).format(
+            t_history_title=tr("waveguide.his_title", "矩形波导发展简史"),
+            t_theory=tr("waveguide.his_theory", "理论奠基"),
+            t_theory_desc=tr("waveguide.his_theory_desc", "Lord Rayleigh 于 1897 年首次从数学上证明了电磁波可以在中空金属管中传播，但当时没有实际应用。"),
+            t_experiment=tr("waveguide.his_experiment", "实验验证"),
+            t_exp_desc=tr("waveguide.his_exp_desc", "George Southworth (AT&T Bell Labs) 和 Wilmer Barrow (MIT) 在 1936 年几乎同时独立实验验证了波导传输。"),
+            t_ww2=tr("waveguide.his_ww2", "二战驱动"),
+            t_ww2_desc=tr("waveguide.his_ww2_desc", "雷达技术的爆发式发展使波导成为核心元件。MIT 辐射实验室 (Rad Lab) 系统整理了波导理论，奠定了现代微波工程的基础。EIA WR 命名体系也在此时期确立。"),
+            t_flange_stds=tr("waveguide.his_flange_stds", "法兰标准化"),
+            t_flange_desc=tr("waveguide.his_flange_desc", "MIL-DTL-3922 标准定义了 UG 系列法兰接口，确保不同厂商的波导组件可以互换连接。随着频率升高 (>40 GHz)，传统 UG 法兰的对准精度已不能满足需求，催生了 CPRF 等精密法兰标准。")
+        )
 
     def get_boundary_content(self) -> Optional[str]:
         return None

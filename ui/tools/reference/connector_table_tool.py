@@ -3,7 +3,7 @@
 射频连接器选型参考表工具
 RF Connector Selection Reference Tool
 
-版本: v1.0.0
+版本: v2.0.0
 功能: 提供主流射频连接器的频率范围、功率容量、阻抗等关键选型参数速查
 数据来源: MIL-STD-348, IEC 61169, 各厂商 (Amphenol/Rosenberger/Southwest) 典型规格
 """
@@ -59,13 +59,13 @@ class ConnectorInfo:
 class ConnectorTableTool(ToolBase):
     """
     射频连接器选型参考表
-    v1.0.0 - 覆盖主流射频/微波同轴连接器
+    v2.0.0 - 覆盖主流射频/微波同轴连接器
     """
 
-    tool_name = "连接器选型"
+    tool_name = tr("connector.tool_name", "连接器选型")
     tool_icon = "🔌"
     tool_category = "reference"
-    tool_description = "射频连接器频率范围、功率容量与关键参数速查"
+    tool_description = tr("connector.tool_desc", "射频同轴连接器类型、频率范围及功率承受能力")
     i18n_title_key = "connector.tool_name"
     i18n_desc_key = "connector.tool_desc"
 
@@ -114,147 +114,147 @@ class ConnectorTableTool(ToolBase):
             # ==================== 大功率连接器 ====================
             ConnectorInfo(
                 "7/16 DIN", "50", "7.5 GHz", "2500 W (@1GHz)", "20 kW",
-                "≤1.15", "螺纹", "16/7 mm",
-                "基站天线、大功率射频系统", C
+                "≤1.15", tr("connector.coupling_threaded", "螺纹"), tr("connector.interface_16_7mm", "16/7 mm"),
+                tr("connector.app_din", "基站天线、大功率射频系统"), C
             ),
             ConnectorInfo(
                 "LC", "50", "6 GHz", "5000 W (@1GHz)", "30 kW",
-                "≤1.20", "卡口", "—",
-                "高功率雷达、广播发射", C
+                "≤1.20", tr("connector.coupling_bayonet", "卡口"), "—",
+                tr("connector.app_lc", "高功率雷达、广播发射"), C
             ),
             ConnectorInfo(
                 "SC", "50", "11 GHz", "2000 W (@1GHz)", "15 kW",
-                "≤1.20", "螺纹", "—",
-                "大功率微波系统", C
+                "≤1.20", tr("connector.coupling_threaded", "螺纹"), "—",
+                tr("connector.app_sc", "大功率微波系统"), C
             ),
             ConnectorInfo(
                 "HN", "50", "4 GHz", "5000 W (@1GHz)", "35 kW",
-                "≤1.30", "螺纹", "—",
-                "高压大功率射频", C
+                "≤1.30", tr("connector.coupling_threaded", "螺纹"), "—",
+                tr("connector.app_hn", "高压大功率射频"), C
             ),
 
             # ==================== 通用连接器 ====================
             ConnectorInfo(
                 "N 型", "50", "18 GHz", "1900 W (@1GHz)", "5 kW",
-                "≤1.15", "螺纹", "外Ø 1/4″",
-                "测试仪器、基站馈线、实验室", C
+                "≤1.15", tr("connector.coupling_threaded", "螺纹"), tr("connector.interface_outer_1_4_inch", "外Ø 1/4″"),
+                tr("connector.app_n_type", "测试仪器、基站馈线、实验室"), C
             ),
             ConnectorInfo(
                 "N 型 (75Ω)", "75", "11 GHz", "1000 W (@1GHz)", "3 kW",
-                "≤1.15", "螺纹", "外Ø 1/4″",
-                "有线电视、视频传输", C
+                "≤1.15", tr("connector.coupling_threaded", "螺纹"), tr("connector.interface_outer_1_4_inch", "外Ø 1/4″"),
+                tr("connector.app_n_type_75ohm", "有线电视、视频传输"), C
             ),
             ConnectorInfo(
                 "TNC", "50", "18 GHz", "950 W (@1GHz)", "1.5 kW",
-                "≤1.15", "螺纹", "外Ø 1/4″",
-                "振动环境、军用、航空航天", C
+                "≤1.15", tr("connector.coupling_threaded", "螺纹"), tr("connector.interface_outer_1_4_inch", "外Ø 1/4″"),
+                tr("connector.app_tnc", "振动环境、军用、航空航天"), C
             ),
             ConnectorInfo(
                 "BNC", "50", "4 GHz", "350 W (@1GHz)", "500 W",
-                "≤1.30", "卡口", "外Ø 1/4″",
-                "示波器、低频测试、视频", C
+                "≤1.30", tr("connector.coupling_bayonet", "卡口"), tr("connector.interface_outer_1_4_inch", "外Ø 1/4″"),
+                tr("connector.app_bnc", "示波器、低频测试、视频"), C
             ),
             ConnectorInfo(
                 "BNC (75Ω)", "75", "2 GHz", "200 W (@1GHz)", "200 W",
-                "≤1.30", "卡口", "外Ø 1/4″",
-                "视频监控、广播设备", C
+                "≤1.30", tr("connector.coupling_bayonet", "卡口"), tr("connector.interface_outer_1_4_inch", "外Ø 1/4″"),
+                tr("connector.app_bnc_75ohm", "视频监控、广播设备"), C
             ),
 
             # ==================== 精密连接器 (毫米波) ====================
             ConnectorInfo(
                 "SMA", "50", "27 GHz", "600 W (@1GHz)", "1.5 kW",
-                "≤1.15", "螺纹", "外Ø 1/4″ (6.35)",
-                "最广泛使用的射频连接器", C
+                "≤1.15", tr("connector.coupling_threaded", "螺纹"), tr("connector.interface_outer_1_4_inch_6_35mm", "外Ø 1/4″ (6.35)"),
+                tr("connector.app_sma", "最广泛使用的射频连接器"), C
             ),
             ConnectorInfo(
                 "SMB", "50", "4 GHz", "200 W (@1GHz)", "250 W",
-                "≤1.30", "推入式", "外Ø 3.5mm",
-                "PCB 板端、GPS 模块", C
+                "≤1.30", tr("connector.coupling_push_on", "推入式"), tr("connector.interface_outer_3_5mm", "外Ø 3.5mm"),
+                tr("connector.app_smb", "PCB 板端、GPS 模块"), C
             ),
             ConnectorInfo(
                 "SMC", "50", "10 GHz", "200 W (@1GHz)", "250 W",
-                "≤1.30", "螺纹", "外Ø 3.5mm",
-                "紧凑型微波组件", C
+                "≤1.30", tr("connector.coupling_threaded", "螺纹"), tr("connector.interface_outer_3_5mm", "外Ø 3.5mm"),
+                tr("connector.app_smc", "紧凑型微波组件"), C
             ),
             ConnectorInfo(
                 "SMP/SMPM", "50", "40 GHz", "200 W (@1GHz)", "200 W",
-                "≤1.25", "推入式", "外Ø 2.5mm",
-                "高密度板间连接、5G 模组", C
+                "≤1.25", tr("connector.coupling_push_on", "推入式"), tr("connector.interface_outer_2_5mm", "外Ø 2.5mm"),
+                tr("connector.app_smp_smpm", "高密度板间连接、5G 模组"), C
             ),
             ConnectorInfo(
                 "SSMA", "50", "36 GHz", "320 W (@1GHz)", "500 W",
-                "≤1.20", "螺纹", "外Ø 4.0mm",
-                "小型化微波组件", C
+                "≤1.20", tr("connector.coupling_threaded", "螺纹"), tr("connector.interface_outer_4_0mm", "外Ø 4.0mm"),
+                tr("connector.app_ssma", "小型化微波组件"), C
             ),
 
             # ==================== 3.5mm/2.92mm/2.4mm/1.85mm/1.0mm 系列 ====================
             # (数据基于 Southwest Microwave 官方 Power Handling Graph 校准)
             ConnectorInfo(
                 "3.5mm (APC-3.5)", "50", "33 GHz", "250 W (@1GHz)", "1 kW",
-                "≤1.15", "螺纹", "外Ø 3.5mm",
-                "精密测量、与 SMA 兼容", C
+                "≤1.15", tr("connector.coupling_threaded", "螺纹"), tr("connector.interface_outer_3_5mm", "外Ø 3.5mm"),
+                tr("connector.app_3_5mm", "精密测量、与 SMA 兼容"), C
             ),
             ConnectorInfo(
                 "2.92mm (K)", "50", "40 GHz", "140 W (@1GHz)", "500 W",
-                "≤1.15", "螺纹", "外Ø 2.92mm",
-                "毫米波测试、与 SMA/3.5mm 兼容", C
+                "≤1.15", tr("connector.coupling_threaded", "螺纹"), tr("connector.interface_outer_2_92mm", "外Ø 2.92mm"),
+                tr("connector.app_2_92mm", "毫米波测试、与 SMA/3.5mm 兼容"), C
             ),
             ConnectorInfo(
                 "2.4mm", "50", "50 GHz", "80 W (@1GHz)", "400 W",
-                "≤1.20", "螺纹", "外Ø 2.4mm",
-                "50 GHz 精密测量", C
+                "≤1.20", tr("connector.coupling_threaded", "螺纹"), tr("connector.interface_outer_2_4mm", "外Ø 2.4mm"),
+                tr("connector.app_2_4mm", "50 GHz 精密测量"), C
             ),
             ConnectorInfo(
                 "1.85mm (V)", "50", "67 GHz", "44 W (@1GHz)", "200 W",
-                "≤1.25", "螺纹", "外Ø 1.85mm",
-                "V 频段测试、与 2.4mm 兼容", C
+                "≤1.25", tr("connector.coupling_threaded", "螺纹"), tr("connector.interface_outer_1_85mm", "外Ø 1.85mm"),
+                tr("connector.app_1_85mm", "V 频段测试、与 2.4mm 兼容"), C
             ),
             ConnectorInfo(
                 "1.35mm", "50", "90 GHz", "25 W (@1GHz)", "100 W",
-                "≤1.30", "螺纹", "外Ø 1.35mm",
-                "E/W 频段精密测量", C
+                "≤1.30", tr("connector.coupling_threaded", "螺纹"), tr("connector.interface_outer_1_35mm", "外Ø 1.35mm"),
+                tr("connector.app_1_35mm", "E/W 频段精密测量"), C
             ),
             ConnectorInfo(
                 "1.0mm (W)", "50", "110 GHz", "16 W (@1GHz)", "50 W",
-                "≤1.35", "螺纹", "外Ø 1.0mm",
-                "W 频段毫米波、110 GHz 测试", C
+                "≤1.35", tr("connector.coupling_threaded", "螺纹"), tr("connector.interface_outer_1_0mm", "外Ø 1.0mm"),
+                tr("connector.app_1_0mm", "W 频段毫米波、110 GHz 测试"), C
             ),
             ConnectorInfo(
                 "0.8mm", "50", "145 GHz", "10 W (@1GHz)", "20 W",
-                "≤1.40", "螺纹", "外Ø 0.8mm",
-                "亚毫米波前沿研究", C
+                "≤1.40", tr("connector.coupling_threaded", "螺纹"), tr("connector.interface_outer_0_8mm", "外Ø 0.8mm"),
+                tr("connector.app_0_8mm", "亚毫米波前沿研究"), C
             ),
 
             # ==================== 特殊应用 ====================
             ConnectorInfo(
                 "F 型", "75", "3 GHz", "100 W (@1GHz)", "200 W",
-                "≤1.30", "螺纹", "外Ø 9.5mm",
-                "有线电视、卫星电视机顶盒", C
+                "≤1.30", tr("connector.coupling_threaded", "螺纹"), tr("connector.interface_outer_9_5mm", "外Ø 9.5mm"),
+                tr("connector.app_f_type", "有线电视、卫星电视机顶盒"), C
             ),
             ConnectorInfo(
                 "MCX", "50", "6 GHz", "150 W (@1GHz)", "150 W",
-                "≤1.30", "推入式", "外Ø 3.6mm",
-                "GPS、WiFi 模块板端", C
+                "≤1.30", tr("connector.coupling_push_on", "推入式"), tr("connector.interface_outer_3_6mm", "外Ø 3.6mm"),
+                tr("connector.app_mcx", "GPS、WiFi 模块板端"), C
             ),
             ConnectorInfo(
                 "MMCX", "50", "6 GHz", "100 W (@1GHz)", "100 W",
-                "≤1.30", "推入式", "外Ø 2.8mm",
-                "超小型 GPS/蓝牙模组", C
+                "≤1.30", tr("connector.coupling_push_on", "推入式"), tr("connector.interface_outer_2_8mm", "外Ø 2.8mm"),
+                tr("connector.app_mmcx", "超小型 GPS/蓝牙模组"), C
             ),
             ConnectorInfo(
                 "QMA", "50", "18 GHz", "900 W (@1GHz)", "2 kW",
-                "≤1.15", "推入锁定", "外Ø 1/4″",
-                "基站快速安装、替代 SMA", C
+                "≤1.15", tr("connector.coupling_push_lock", "推入锁定"), tr("connector.interface_outer_1_4_inch", "外Ø 1/4″"),
+                tr("connector.app_qma", "基站快速安装、替代 SMA"), C
             ),
             ConnectorInfo(
                 "NEX10", "50", "12 GHz", "1500 W (@1GHz)", "5 kW",
-                "≤1.15", "推入锁定", "外Ø 10mm",
-                "5G 小基站、新一代替代 4.3-10", C
+                "≤1.15", tr("connector.coupling_push_lock", "推入锁定"), tr("connector.interface_outer_10mm", "外Ø 10mm"),
+                tr("connector.app_nex10", "5G 小基站、新一代替代 4.3-10"), C
             ),
             ConnectorInfo(
                 "4.3-10", "50", "12 GHz", "2500 W (@1GHz)", "10 kW",
-                "≤1.12", "推入锁定", "外Ø 10mm",
-                "5G 基站天线、低 PIM 场景", C
+                "≤1.12", tr("connector.coupling_push_lock", "推入锁定"), tr("connector.interface_outer_10mm", "外Ø 10mm"),
+                tr("connector.app_4_3_10", "5G 基站天线、低 PIM 场景"), C
             ),
         ]
 
@@ -267,43 +267,43 @@ class ConnectorTableTool(ToolBase):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(16)
 
-        title = QLabel("🔍 筛选与控制")
+        title = QLabel(tr("connector.lbl_search", "🔍 筛选与控制"))
         title.setStyleSheet("font-weight: bold; font-size: 14px; color: #333;")
         layout.addWidget(title)
 
         # 1. 场景筛选
-        filter_label = QLabel("按应用场景筛选:")
+        filter_label = QLabel(tr("connector.lbl_filter_scenario", "按应用场景筛选:"))
         layout.addWidget(filter_label)
 
         self._filter_combo = QComboBox()
-        self._filter_combo.addItem("全部连接器", "ALL")
-        self._filter_combo.addItem("大功率 (>200W)", "HIGH_POWER")
-        self._filter_combo.addItem("通用型 (N/BNC/TNC/SMA)", "GENERAL")
-        self._filter_combo.addItem("毫米波精密 (>18GHz)", "PRECISION")
-        self._filter_combo.addItem("小型化板端 (SMB/MCX/MMCX)", "MINIATURE")
-        self._filter_combo.addItem("5G/基站 (4.3-10/NEX10/QMA)", "BASE_STATION")
+        self._filter_combo.addItem(tr("connector.filter_all", "全部连接器"), "ALL")
+        self._filter_combo.addItem(tr("connector.filter_high_power", "大功率 (>200W)"), "HIGH_POWER")
+        self._filter_combo.addItem(tr("connector.filter_general", "通用型 (N/BNC/TNC/SMA)"), "GENERAL")
+        self._filter_combo.addItem(tr("connector.filter_precision", "毫米波精密 (>18GHz)"), "PRECISION")
+        self._filter_combo.addItem(tr("connector.filter_miniature", "小型化板端 (SMB/MCX/MMCX)"), "MINIATURE")
+        self._filter_combo.addItem(tr("connector.filter_base_station", "5G/基站 (4.3-10/NEX10/QMA)"), "BASE_STATION")
         self._filter_combo.currentIndexChanged.connect(self.on_filter_changed)
         layout.addWidget(self._filter_combo)
 
         # 2. 搜索框
-        search_label = QLabel("搜索连接器:")
+        search_label = QLabel(tr("connector.lbl_search_label", "搜索连接器类型:"))
         layout.addWidget(search_label)
 
         self._search_input = QLineEdit()
-        self._search_input.setPlaceholderText("输入名称 (如 'SMA' 或 '2.92')")
+        self._search_input.setPlaceholderText(tr("connector.ph_search", "输入连接器类型 (如 'SMA', 'N')..."))
         self._search_input.textChanged.connect(self.on_search_text_changed)
         layout.addWidget(self._search_input)
 
         # 说明
         info = QLabel(
-            "数据说明:\n"
-            "• CW 功率基于 Southwest Microwave\n"
-            "  官方 Power Handling Graph 校准\n"
-            "• 条件: 40°C / 海平面 / VSWR 1.0\n"
-            "• 功率随频率升高而降低\n"
-            "  P(f) = P_ref × √(f_ref / f)\n"
-            "• 实际功率因供应商而异\n"
-            "• 点选表格行查看降额曲线"
+            tr("connector.info_data_title", "数据说明:") + "\n"
+            + tr("connector.info_cw_power_src", "• CW 功率基于 Southwest Microwave") + "\n"
+            + tr("connector.info_cw_power_src_cont", "  官方 Power Handling Graph 校准") + "\n"
+            + tr("connector.info_conditions", "• 条件: 40°C / 海平面 / VSWR 1.0") + "\n"
+            + tr("connector.info_power_freq_relation", "• 功率随频率升高而降低") + "\n"
+            + tr("connector.info_power_formula", "  P(f) = P_ref × √(f_ref / f)") + "\n"
+            + tr("connector.info_vendor_variation", "• 实际功率因供应商而异") + "\n"
+            + tr("connector.info_click_for_curve", "• 点选表格行查看降额曲线")
         )
         info.setWordWrap(True)
         info.setStyleSheet("color: #666; font-size: 11px; margin-top: 10px;")
@@ -321,9 +321,14 @@ class ConnectorTableTool(ToolBase):
         self._table = QTableWidget()
         self._table.setColumnCount(8)
         self._table.setHorizontalHeaderLabels([
-            "连接器", "阻抗\n(Ω)", "最高频率",
-            "CW额定功率", "峰值功率", "VSWR",
-            "连接方式", "典型应用"
+            tr("connector.tbl_col_name", "连接器"),
+            tr("connector.tbl_col_impedance", "阻抗\n(Ω)"),
+            tr("connector.tbl_col_max_freq", "最高频率"),
+            tr("connector.tbl_col_cw_power", "CW额定功率"),
+            tr("connector.tbl_col_peak_power", "峰值功率"),
+            tr("connector.tbl_col_vswr", "VSWR"),
+            tr("connector.tbl_col_coupling", "连接方式"),
+            tr("connector.tbl_col_application", "典型应用")
         ])
 
         header = self._table.horizontalHeader()
@@ -380,11 +385,11 @@ class ConnectorTableTool(ToolBase):
         ax.axis('off')
         
         # 主提示文字
-        ax.text(0.5, 0.55, "📊 点击上方表格中的连接器",
+        ax.text(0.5, 0.55, tr("connector.plot_hint_title", "📊 点击上方表格中的连接器"),
                 ha='center', va='center', fontsize=13,
                 color='#718096', fontweight='bold',
                 fontfamily=['Microsoft YaHei UI', 'sans-serif'])
-        ax.text(0.5, 0.42, "查看 CW 功率容量 vs 频率降额曲线",
+        ax.text(0.5, 0.42, tr("connector.plot_hint_desc", "查看 CW 功率容量 vs 频率降额曲线"),
                 ha='center', va='center', fontsize=12,
                 color='#A0AEC0',
                 fontfamily=['Microsoft YaHei UI', 'sans-serif'])
@@ -633,82 +638,115 @@ class ConnectorTableTool(ToolBase):
 
     def get_math_model_content(self) -> Optional[str]:
         """功率降额计算模型"""
-        return """
-        <b>📐 功率降额数学模型</b><br><br>
+        return tr("connector.math_model_content", """
+        <b>📐 {t_math_title}</b><br><br>
 
-        射频连接器的平均功率容量主要受限于中心导体的焦耳热耗散。
-        随频率升高，趋肤效应导致电阻增加，功率容量随之下降。<br><br>
+        {t_math_intro}<br><br>
 
-        <b>计算公式:</b><br>
+        <b>{t_math_formula}:</b><br>
         P(f) = P<sub>ref</sub> &times; &radic;(f<sub>ref</sub> / f)
         <br>
-        其中:<br>
-        • <b>P(f)</b>: 目标频率 f 下的平均功率容量<br>
-        • <b>P<sub>ref</sub></b>: 参考频率下的功率容量 (通常取 1GHz)<br>
-        • <b>f<sub>ref</sub></b>: 参考频率 (通常取 1GHz)<br>
-        • <b>f</b>: 工作频率<br><br>
+        {t_math_where}:<br>
+        • <b>P(f)</b>: {t_math_pf}<br>
+        • <b>P<sub>ref</sub></b>: {t_math_pref}<br>
+        • <b>f<sub>ref</sub></b>: {t_math_fref}<br>
+        • <b>f</b>: {t_math_f}<br><br>
 
-        <b>说明:</b><br>
-        该模型适用于同轴线和连接器的主模传输模式。
-        峰值功率则由电压击穿决定，通常视为常数，但在高海拔处需降额。
-        """
+        <b>{t_math_notes}:</b><br>
+        {t_math_notes_desc}
+        """).format(
+            t_math_title=tr("connector.math_title", "功率降额数学模型"),
+            t_math_intro=tr("connector.math_intro", "射频连接器的平均功率容量主要受限于中心导体的焦耳热耗散。随频率升高，趋肤效应导致电阻增加，功率容量随之下降。"),
+            t_math_formula=tr("connector.math_formula", "计算公式"),
+            t_math_where=tr("connector.math_where", "其中"),
+            t_math_pf=tr("connector.math_pf", "目标频率 f 下的平均功率容量"),
+            t_math_pref=tr("connector.math_pref", "参考频率下的功率容量 (通常取 1GHz)"),
+            t_math_fref=tr("connector.math_fref", "参考频率 (通常取 1GHz)"),
+            t_math_f=tr("connector.math_f", "工作频率"),
+            t_math_notes=tr("connector.math_notes", "说明"),
+            t_math_notes_desc=tr("connector.math_notes_desc", "该模型适用于同轴线和连接器的主模传输模式。峰值功率则由电压击穿决定，通常视为常数，但在高海拔处需降额。")
+        )
 
     def get_engineering_content(self) -> Optional[str]:
         """连接器选型工程指南"""
-        return """
-        <b>🏗️ 射频连接器选型指南</b><br>
+        return tr("connector.eng_content", """
+        <b>🏗️ {t_eng_title}</b><br>
         <span style="color: #E53E3E; font-size: 12px;">
-        数据基于 Southwest Microwave 官方文档</span><br><br>
+        {t_eng_src}</span><br><br>
 
-        <b>1. 频率优先:</b><br>
-        • 连接器最高频率必须覆盖系统工作频带<br>
-        • 余量建议 ≥20% (如系统 10 GHz，选 ≥12 GHz)<br><br>
+        <b>1. {t_freq_first}:</b><br>
+        • {t_freq_c1}<br>
+        • {t_freq_c2}<br><br>
 
-        <b>2. 功率降额 (三个维度):</b><br>
-        • <b>频率降额:</b> P(f) = P<sub>ref</sub> × √(f<sub>ref</sub>/f)<br>
-        • <b>温度降额 (基准 40°C):</b><br>
+        <b>2. {t_power_derating}:</b><br>
+        • <b>{t_freq_derating}:</b> P(f) = P<sub>ref</sub> × √(f<sub>ref</sub>/f)<br>
+        • <b>{t_temp_derating}:</b><br>
         &nbsp;&nbsp;0°C → ×1.20 | 80°C → ×0.80<br>
         &nbsp;&nbsp;120°C → ×0.60 | 160°C → ×0.40<br>
-        • <b>海拔降额 (基准海平面):</b><br>
+        • <b>{t_alt_derating}:</b><br>
         &nbsp;&nbsp;6000m → ×0.80 | 12000m → ×0.60<br>
         &nbsp;&nbsp;18000m → ×0.40 | 21000m → ×0.30<br>
-        • <b>组合降额:</b> P = P(f) × DF<sub>temp</sub> × DF<sub>alt</sub><br><br>
+        • <b>{t_comb_derating}:</b> P = P(f) × DF<sub>temp</sub> × DF<sub>alt</sub><br><br>
 
-        <b>3. 互配兼容:</b><br>
-        • SMA ↔ 3.5mm ↔ 2.92mm 机械兼容 (可直连)<br>
-        • 2.4mm ↔ 1.85mm 机械兼容<br>
-        • N 型 50Ω 和 75Ω 物理可插但阻抗不匹配!<br><br>
+        <b>3. {t_compatibility}:</b><br>
+        • {t_comp_1}<br>
+        • {t_comp_2}<br>
+        • {t_comp_3}<br><br>
 
-        <b>4. 可靠性:</b><br>
-        • 螺纹连接 > 卡口 > 推入式 (振动环境)<br>
-        • SMA 典型寿命 ~500 次插拔<br>
-        • 精密连接器 (3.5mm 等) 需用力矩扳手
-        """
+        <b>4. {t_reliability}:</b><br>
+        • {t_rel_1}<br>
+        • {t_rel_2}<br>
+        • {t_rel_3}
+        """).format(
+            t_eng_title=tr("connector.eng_title", "射频连接器选型指南"),
+            t_eng_src=tr("connector.eng_src", "数据基于 Southwest Microwave 官方文档"),
+            t_freq_first=tr("connector.eng_freq_first", "频率优先"),
+            t_freq_c1=tr("connector.eng_freq_c1", "连接器最高频率必须覆盖系统工作频带"),
+            t_freq_c2=tr("connector.eng_freq_c2", "余量建议 ≥20% (如系统 10 GHz，选 ≥12 GHz)"),
+            t_power_derating=tr("connector.eng_power_derating", "功率降额 (三个维度)"),
+            t_freq_derating=tr("connector.eng_freq_derating", "频率降额"),
+            t_temp_derating=tr("connector.eng_temp_derating", "温度降额 (基准 40°C)"),
+            t_alt_derating=tr("connector.eng_alt_derating", "海拔降额 (基准海平面)"),
+            t_comb_derating=tr("connector.eng_comb_derating", "组合降额"),
+            t_compatibility=tr("connector.eng_compatibility", "互配兼容"),
+            t_comp_1=tr("connector.eng_comp_1", "SMA ↔ 3.5mm ↔ 2.92mm 机械兼容 (可直连)"),
+            t_comp_2=tr("connector.eng_comp_2", "2.4mm ↔ 1.85mm 机械兼容"),
+            t_comp_3=tr("connector.eng_comp_3", "N 型 50Ω 和 75Ω 物理可插但阻抗不匹配!"),
+            t_reliability=tr("connector.eng_reliability", "可靠性"),
+            t_rel_1=tr("connector.eng_rel_1", "螺纹连接 > 卡口 > 推入式 (振动环境)"),
+            t_rel_2=tr("connector.eng_rel_2", "SMA 典型寿命 ~500 次插拔"),
+            t_rel_3=tr("connector.eng_rel_3", "精密连接器 (3.5mm 等) 需用力矩扳手")
+        )
 
     def get_history_content(self) -> Optional[str]:
         """连接器发展历史"""
-        return """
-        <b>📜 射频连接器发展简史</b><br><br>
+        return tr("connector.history_content", """
+        <b>📜 {t_his_title}</b><br><br>
 
-        <b>BNC — 二战产物 (1951):</b><br>
-        名称来自 Bayonet Neill-Concelman，
-        由 Paul Neill (Bell Labs) 和 Carl Concelman 联合设计。
-        卡口式连接开创了快速连接的先河。<br><br>
+        <b>{t_his_bnc_title} (1951):</b><br>
+        {t_his_bnc_desc}<br><br>
 
-        <b>N 型 — 微波时代基石 (1942):</b><br>
-        以发明者 Paul Neill 命名，是第一个真正的
-        微波同轴连接器。至今仍是实验室测量的标准。<br><br>
+        <b>{t_his_n_title} (1942):</b><br>
+        {t_his_n_desc}<br><br>
 
-        <b>SMA — 最成功的射频连接器 (1960s):</b><br>
-        Sub-Miniature version A，由 Bendix 公司发明。
-        全球使用量最大的射频连接器，几乎无处不在。<br><br>
+        <b>{t_his_sma_title} (1960s):</b><br>
+        {t_his_sma_desc}<br><br>
 
-        <b>精密系列 — 毫米波驱动:</b><br>
+        <b>{t_his_prec_title}:</b><br>
         3.5mm (Hewlett-Packard, 1970s) → 2.92mm (K, Wiltron 1983)
         → 2.4mm (HP 1988) → 1.85mm (V, Anritsu) → 1.0mm (W, HP 1990s)。<br>
-        连接器尺寸与频率上限的关系: f_max ≈ c / (π×d)，
-        口径越小频率越高，这也是精密连接器命名用 mm 的原因。
-        """
+        {t_his_prec_desc}
+        """).format(
+            t_his_title=tr("connector.his_title", "射频连接器发展简史"),
+            t_his_bnc_title=tr("connector.his_bnc_title", "BNC — 二战产物"),
+            t_his_bnc_desc=tr("connector.his_bnc_desc", "名称来自 Bayonet Neill-Concelman，由 Paul Neill (Bell Labs) 和 Carl Concelman 联合设计。卡口式连接开创了快速连接的先河。"),
+            t_his_n_title=tr("connector.his_n_title", "N 型 — 微波时代基石"),
+            t_his_n_desc=tr("connector.his_n_desc", "以发明者 Paul Neill 命名，是第一个真正的微波同轴连接器。至今仍是实验室测量的标准。"),
+            t_his_sma_title=tr("connector.his_sma_title", "SMA — 最成功的射频连接器"),
+            t_his_sma_desc=tr("connector.his_sma_desc", "Sub-Miniature version A，由 Bendix 公司发明。全球使用量最大的射频连接器，几乎无处不在。"),
+            t_his_prec_title=tr("connector.his_prec_title", "精密系列 — 毫米波驱动"),
+            t_his_prec_desc=tr("connector.his_prec_desc", "连接器尺寸与频率上限的关系: f_max ≈ c / (π×d)，口径越小频率越高，这也是精密连接器命名用 mm 的原因。")
+        )
 
     def get_boundary_content(self) -> Optional[str]:
         return None

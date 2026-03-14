@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 阻抗计算模块 (Impedance Calculator)
-版本: v1.0
+版本: v2.0
 功能: 计算传输线特性阻抗
 支持结构:
   1. 同轴线 (Coaxial)

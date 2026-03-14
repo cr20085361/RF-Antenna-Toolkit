@@ -10,7 +10,8 @@ from PyQt6.QtWidgets import (
     QSizePolicy
 )
 from PyQt6.QtCore import Qt, QUrl
-from PyQt6.QtGui import QDesktopServices, QCursor
+from PyQt6.QtGui import QIcon, QDesktopServices, QCursor
+from core.i18n import tr
 
 class ToolCard(QFrame):
     """独立的工具展示卡片组件"""
@@ -91,7 +92,7 @@ class ToolCard(QFrame):
         layout.addStretch()
         
         # 底部：跳转按钮
-        btn = QPushButton("🚀 浏览器打开工具")
+        btn = QPushButton(tr("online_tools.btn_open", "🚀 浏览器打开工具"))
         btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         btn.setStyleSheet(f"""
             QPushButton {{
@@ -121,36 +122,36 @@ class OnlineToolsPage(QWidget):
     TOOLS_DATA = [
         {
             "brand": "Murata",
-            "name": "SimSurfing 元件特性计算器",
-            "desc": "全球顶级的被动元器件（电容、电感、滤波器、巴伦）S参数、阻抗曲线与频率响应一键在线出图查看系统。",
-            "url": "https://ds.murata.com/simsurfing/index.html?lcid=zh-cn#_pt_link=https%3A%2F%2Fwww.murata.com.cn%2Fzh-cn%2Fproducts%2Fconnectivitymodule%3Fgad_source%3D1%26gad_campaignid%3D21768348886%26gbraid%3D0AAAAApU99OPdIg_HrQhJmtPnnXSHDTqnw%26gclid%3DCj0KCQiA8KTNBhD_ARIsAOvp6DJpUlEjWdp2QxJjwIljYrAfXRdHsjuWpKu1DbreG7E5lvLHdeCIxd8aAsHoEALw_wcB_s_62acf7fc.f59637b7-afa9-41a3-94f1-792e5357a63a.89786f7f-44ca-431c-8096-cd8a43a3ef0a.1.2.1..1772774308679",
+            "name": tr("online_tools.murata_name", "SimSurfing 元件特性计算器"),
+            "desc": tr("online_tools.murata_desc", "全球顶级的被动元器件（电容、电感、滤波器、巴伦）S参数、阻抗曲线与频率响应一键在线出图查看系统。"),
+            "url": "https://ds.murata.com/simsurfing/index.html?lcid=zh-cn#_pt_link=https%3A%2F%2Fwww.murata.com.cn%2Fzh-cn%2Fproducts%2Fconnectivitymodule%3Fgad_source%3D1%26gad_campaignid%3D21768348886%26gbraid%3D0AAAAApU99OPdIg_HrQhJmtPnnXSHDTqnw%26gclid%3DCj0KCQiA8KTNBhD_ARIsAOvp6DJpUlEjWdp2QxJjwIlYrHdHsjuWpKu1DbreG7E5lvLHdeCIxd8aAsHoEALw_wcB_s_62acf7fc.f59637b7-afa9-41a3-94f1-792e5357a63a.89786f7f-44ca-431c-8096-cd8a43a3ef0a.1.2.1..1772774308679",
             "color": "#E50020" # 村田红
         },
         {
             "brand": "ADI",
-            "name": "Analog Filter Wizard",
-            "desc": "强大的有源及无源滤波器在线合成工具。支持多拓扑（巴特沃斯、切比雪夫等）极点设计，自动选配运放并出具理想/真实响应图。",
+            "name": tr("online_tools.adi_filter_name", "Analog Filter Wizard"),
+            "desc": tr("online_tools.adi_filter_desc", "强大的有源及无源滤波器在线合成工具。支持多拓扑（巴特沃斯、切比雪夫等）极点设计，自动选配运放并出具理想/真实响应图。"),
             "url": "https://tools.analog.com/en/filterwizard/",
             "color": "#00A1E0" # ADI 蓝
         },
         {
             "brand": "ADI",
-            "name": "ADIsimRF 信号链系统管家",
-            "desc": "用于计算复杂射频微波信号链的级联增益、噪声系数 (NF)、1dB压缩点 (P1dB) 及 IP3 互调指标的核心在线神器。",
+            "name": tr("online_tools.adisimrf_name", "ADIsimRF 信号链系统管家"),
+            "desc": tr("online_tools.adisimrf_desc", "用于计算复杂射频微波信号链的级联增益、噪声系数 (NF)、1dB压缩点 (P1dB) 及 IP3 互调指标的核心在线神器。"),
             "url": "https://www.analog.com/cn/design-center/adisimrf.html",
             "color": "#00A1E0"
         },
         {
             "brand": "TI",
-            "name": "WEBENCH® Power Designer",
-            "desc": "射频供电首选方案！输入系统的核心低噪供电需求，自动生成最佳电源拓扑（DC-DC/LDO）、原理图、BOM清单及稳态热仿真图。",
+            "name": tr("online_tools.ti_power_name", "WEBENCH® Power Designer"),
+            "desc": tr("online_tools.ti_power_desc", "射频供电首选方案！输入系统的核心低噪供电需求，自动生成最佳电源拓扑（DC-DC/LDO）、原理图、BOM清单及稳态热仿真图。"),
             "url": "https://webench.ti.com/power-designer/",
             "color": "#CC0000" # TI 红
         },
         {
             "brand": "Qorvo",
-            "name": "MatchCalc 射频匹配计算",
-            "desc": "偏向纯微波实战射频通道的轻量级匹配阻抗计算、微波级联评估平台（史密斯圆图辅助网络综合匹配设计）。",
+            "name": tr("online_tools.qorvo_matchcalc_name", "MatchCalc 射频匹配计算"),
+            "desc": tr("online_tools.qorvo_matchcalc_desc", "偏向纯微波实战射频通道的轻量级匹配阻抗计算、微波级联评估平台（史密斯圆图辅助网络综合匹配设计）。"),
             "url": "https://www.qorvo.com/design-hub/design-tools/matchcalc",
             "color": "#0E2B58" # Qorvo 藏青蓝
         }
@@ -159,7 +160,7 @@ class OnlineToolsPage(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.tool_id = "online_tools_hub"
-        self.tool_name = "在线精品推荐"
+        self.tool_name = tr("online_tools.tool_name", "在线精品推荐")
         self.tool_icon = "🌐"
         
         self._setup_ui()
@@ -183,11 +184,11 @@ class OnlineToolsPage(QWidget):
         layout.setSpacing(20)
         
         # 页面标题头
-        header = QLabel("🌐 精品在线实战工具推荐")
+        header = QLabel(tr("online_tools.lbl_title", "🌐 精品在线实战工具推荐"))
         header.setStyleSheet("font-size: 22px; font-weight: bold; color: #1A202C;")
         layout.addWidget(header)
         
-        sub_desc = QLabel("以下皆为精挑细选的 **全球半导体大厂官方无墙** 权威工具，点击卡片即可在本地浏览器安全快速打开：")
+        sub_desc = QLabel(tr("online_tools.lbl_subtitle", "以下皆为精挑细选的 **全球半导体大厂官方无墙** 权威工具，点击卡片即可在本地浏览器安全快速打开："))
         sub_desc.setStyleSheet("color: #718096; font-size: 14px; margin-bottom: 10px;")
         sub_desc.setWordWrap(True)
         layout.addWidget(sub_desc)
@@ -215,7 +216,7 @@ class OnlineToolsPage(QWidget):
         
         # 免责声明底部占位
         layout.addStretch()
-        footer = QLabel("免责声明：以上推荐平台各项权利均属于其原开发公司及半导体厂商。本页面仅提供便捷外链访问。")
+        footer = QLabel(tr("online_tools.footer_disclaimer", "免责声明：以上推荐平台各项权利均属于其原开发公司及半导体厂商。本页面仅提供便捷外链访问。"))
         footer.setStyleSheet("color: #CBD5E0; font-size: 12px; margin-top: 40px;")
         footer.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(footer)

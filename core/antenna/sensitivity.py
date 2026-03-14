@@ -3,7 +3,7 @@
 射频天线工具集 - 系统灵敏度计算模块
 RF Antenna Toolkit - System Sensitivity Calculator
 
-版本: v1.0.0
+版本: v2.0.0
 功能:
 - 计算天线系数 (Antenna Factor)
 - 计算系统灵敏度 (最小场强)

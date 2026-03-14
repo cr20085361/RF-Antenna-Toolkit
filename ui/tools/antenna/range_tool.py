@@ -3,7 +3,7 @@
 射频天线工具集 - 收发距离计算工具
 RF Antenna Toolkit - Range Calculator Tool
 
-版本: v1.0.0
+版本: v2.0.0
 功能: 根据 Friis 传输方程计算最远通信距离并可视化
 """
 
@@ -32,10 +32,10 @@ class RangeTool(ToolBase):
     """
     
     # 工具元信息
-    tool_name = "收发距离计算"
-    tool_icon = "📡"
+    tool_name = tr("range.tool_name", "收发距离计算")
+    tool_icon = "📏"
     tool_category = "antenna"
-    tool_description = "基于 Friis 方程计算最大通信距离"
+    tool_description = tr("range.tool_desc", "基于 Friis 方程计算最大通信距离")
     
     def __init__(self, parent: Optional[QWidget] = None):
         """初始化"""
@@ -56,7 +56,7 @@ class RangeTool(ToolBase):
         layout.setSpacing(16)
         
         # 1. 链路参数输入框 (QGroupBox)
-        param_group = QGroupBox("射频链路参数")
+        param_group = QGroupBox(tr("range.rf_params", "射频链路参数"))
         param_layout = QGridLayout(param_group)
         param_layout.setSpacing(12)
         param_layout.setColumnStretch(1, 1) # 让中间的输入框占据更多伸展空间
@@ -74,25 +74,25 @@ class RangeTool(ToolBase):
             return edit
 
         # 行 0: 发射功率
-        param_layout.addWidget(QLabel("发射功率 (Pt):"), 0, 0)
+        param_layout.addWidget(QLabel(tr("range.tx_power", "发射功率 (Pt):")), 0, 0)
         self.edit_tx_power = create_line_edit("30.0")
         param_layout.addWidget(self.edit_tx_power, 0, 1)
         param_layout.addWidget(QLabel("dBm"), 0, 2)
         
         # 行 1: 发射天线增益
-        param_layout.addWidget(QLabel("发射天线增益 (Gt):"), 1, 0)
+        param_layout.addWidget(QLabel(tr("range.tx_gain", "发射天线增益 (Gt):")), 1, 0)
         self.edit_tx_gain = create_line_edit("10.0")
         param_layout.addWidget(self.edit_tx_gain, 1, 1)
         param_layout.addWidget(QLabel("dBi"), 1, 2)
         
         # 行 2: 接收天线增益
-        param_layout.addWidget(QLabel("接收天线增益 (Gr):"), 2, 0)
+        param_layout.addWidget(QLabel(tr("range.rx_gain", "接收天线增益 (Gr):")), 2, 0)
         self.edit_rx_gain = create_line_edit("10.0")
         param_layout.addWidget(self.edit_rx_gain, 2, 1)
         param_layout.addWidget(QLabel("dBi"), 2, 2)
         
         # 行 3: 频率设置
-        param_layout.addWidget(QLabel("工作频率 (f):"), 3, 0)
+        param_layout.addWidget(QLabel(tr("range.work_freq", "工作频率 (f):")), 3, 0)
         self.edit_freq = create_line_edit("1000")
         param_layout.addWidget(self.edit_freq, 3, 1)
         
@@ -102,27 +102,27 @@ class RangeTool(ToolBase):
         param_layout.addWidget(self.combo_freq_unit, 3, 2)
         
         # 行 4: 接收底噪/灵敏度
-        param_layout.addWidget(QLabel("接收灵敏度底噪 (Rmin):"), 4, 0)
+        param_layout.addWidget(QLabel(tr("range.rx_sens", "接收灵敏度底噪 (Rmin):")), 4, 0)
         self.edit_rx_sens = create_line_edit("-90.0")
         param_layout.addWidget(self.edit_rx_sens, 4, 1)
         param_layout.addWidget(QLabel("dBm"), 4, 2)
 
         # 行 5: 解调信噪比
-        param_layout.addWidget(QLabel("解调信噪比 (SNR):"), 5, 0)
+        param_layout.addWidget(QLabel(tr("range.snr_req", "解调信噪比 (SNR):")), 5, 0)
         self.edit_snr_req = create_line_edit("0.0")
-        self.edit_snr_req.setToolTip("目标解调所需的最小信噪比")
+        self.edit_snr_req.setToolTip(tr("range.tt_snr", "目标解调所需的最小信噪比"))
         param_layout.addWidget(self.edit_snr_req, 5, 1)
         param_layout.addWidget(QLabel("dB"), 5, 2)
         
         # 行 6: 空间衰落余量
-        param_layout.addWidget(QLabel("空间衰落余量 (Margin):"), 6, 0)
+        param_layout.addWidget(QLabel(tr("range.fade_margin", "空间衰落余量 (Margin):")), 6, 0)
         self.edit_fade_margin = create_line_edit("0.0")
-        self.edit_fade_margin.setToolTip("抵抗多径、雨衰等波动的余量预留")
+        self.edit_fade_margin.setToolTip(tr("range.tt_margin", "抵抗多径、雨衰等波动的余量预留"))
         param_layout.addWidget(self.edit_fade_margin, 6, 1)
         param_layout.addWidget(QLabel("dB"), 6, 2)
         
         # 行 7: 附加损耗
-        param_layout.addWidget(QLabel("固定附加损耗 (L_extra):"), 7, 0)
+        param_layout.addWidget(QLabel(tr("range.extra_loss", "固定附加损耗 (L_extra):")), 7, 0)
         self.edit_extra_loss = create_line_edit("0.0")
         param_layout.addWidget(self.edit_extra_loss, 7, 1)
         param_layout.addWidget(QLabel("dB"), 7, 2)
@@ -151,7 +151,7 @@ class RangeTool(ToolBase):
         layout.setSpacing(16)
         
         # ==================== 计算结果卡片 ====================
-        result_group = QGroupBox("计算结果")
+        result_group = QGroupBox(tr("range.calc_res", "计算结果"))
         result_layout = QVBoxLayout(result_group)
         result_layout.setSpacing(12)
         
@@ -159,30 +159,30 @@ class RangeTool(ToolBase):
         self._create_result_card(
             result_layout,
             "max_range",
-            "最远通信距离 (D_max):",
-            "理论最大的视距通信距离，受地球曲率及障碍物限制"
+            tr("range.max_dist", "最远通信距离 (D_max):"),
+            tr("range.max_dist_desc", "理论最大的视距通信距离，受地球曲率及障碍物限制")
         )
         
         # 2. 自由空间路损
         self._create_result_card(
             result_layout,
             "fspl",
-            "自由空间路径损耗 (FSPL_max):",
-            "电磁波在真空中扩散至最大通信距离时的理论衰减量"
+            tr("range.fspl_max", "自由空间路径损耗 (FSPL_max):"),
+            tr("range.fspl_desc", "电磁波在真空中扩散至最大通信距离时的理论衰减量")
         )
         
         # 3. 等效全向辐射功率 EIRP
         self._create_result_card(
             result_layout,
             "eirp",
-            "等效全向辐射功率 (EIRP):",
-            "发射端的等效辐射功率 (Pt + Gt)，用于管制标准合规评估"
+            tr("range.eirp", "等效全向辐射功率 (EIRP):"),
+            tr("range.eirp_desc", "发射端的等效辐射功率 (Pt + Gt)，用于管制标准合规评估")
         )
         
         layout.addWidget(result_group)
         
         # 底部图表区域 (随距离的接收功率衰减)
-        chart_group = QGroupBox("链路衰减曲线 (Pr vs Distance)")
+        chart_group = QGroupBox(tr("range.chart_title", "链路衰减曲线 (Pr vs Distance)"))
         chart_layout = QVBoxLayout(chart_group)
         self.fig = Figure(figsize=(5, 3), dpi=100)
         self.canvas = FigureCanvas(self.fig)
@@ -304,7 +304,7 @@ class RangeTool(ToolBase):
         """输入改变时触发计算和更新"""
         data = self.calculate()
         if not data:
-            self._result_labels["max_range"].setText("计算错误 (输入非法)")
+            self._result_labels["max_range"].setText(tr("range.err_invalid", "计算错误 (输入非法)"))
             self._result_labels["fspl"].setText("--")
             self._result_labels["eirp"].setText("--")
             return
@@ -331,10 +331,10 @@ class RangeTool(ToolBase):
         x_label = plot_data["x_label"]
         
         # 画功率随距离曲线
-        ax.plot(d_plot, pr_list, label="Received Power (Pr)", color="#3182CE", linewidth=2)
+        ax.plot(d_plot, pr_list, label=tr("range.pr", "Received Power (Pr)"), color="#3182CE", linewidth=2)
         
         # 画灵敏度阈值虚线
-        ax.axhline(y=sens_dbm, color="#E53E3E", linestyle="--", label="Rx Sensitivity (Rmin)")
+        ax.axhline(y=sens_dbm, color="#E53E3E", linestyle="--", label=tr("range.rx_sens_line", "Rx Sensitivity (Rmin)"))
         
         # 画最大距离垂直截顶线
         ax.vlines(x=d_max, ymin=min(pr_list) - 10, ymax=sens_dbm, color="#DD6B20", linestyle=":")
@@ -346,7 +346,7 @@ class RangeTool(ToolBase):
         
         ax.set_xlabel(x_label)
         ax.set_ylabel("Power (dBm)")
-        ax.set_title("Link Budget Attenuation Profile", fontsize=10)
+        ax.set_title(tr("range.att_profile", "Link Budget Attenuation Profile"), fontsize=10)
         ax.grid(True, linestyle= "--", alpha=0.5)
         ax.legend(loc="upper right", fontsize=8)
         
@@ -356,45 +356,78 @@ class RangeTool(ToolBase):
     # ==================== 知识区内容 ====================
     
     def get_intuition_content(self) -> str:
-        return """
-        <h3>直观理解：电磁波的空间扩散</h3>
-        <p>想象你在平静的湖面投入一颗石子，水波会一圈一圈向外扩散。电磁波在自由空间的传播与此类似，它像一个不断膨胀的理想球体。</p>
-        <p>随着距离 <i>d</i> 的增加，这个球体的表面积以 <i>O(d²)</i> 的速度急剧增大，因此分布在单位面积上的能量（功率密度）就会以平方反比规律迅速衰减。</p>
-        <p>这解释了为什么我们增加 6 dB 的发射功率，最远通信距离仅仅只能增加一倍。</p>
-        """
+        return tr("range.intuition", """
+        <h3>{t_int_title}</h3>
+        <p>{t_int_1}</p>
+        <p>{t_int_2}</p>
+        <p>{t_int_3}</p>
+        """).format(
+            t_int_title=tr("range.dd_int_title", "直观理解：电磁波的空间扩散"),
+            t_int_1=tr("range.dd_int_1", "想象你在平静的湖面投入一颗石子，水波会一圈一圈向外扩散。电磁波在自由空间的传播与此类似，它像一个不断膨胀的理想球体。"),
+            t_int_2=tr("range.dd_int_2", "随着距离 <i>d</i> 的增加，这个球体的表面积以 <i>O(d²)</i> 的速度急剧增大，因此分布在单位面积上的能量（功率密度）就会以平方反比规律迅速衰减。"),
+            t_int_3=tr("range.dd_int_3", "这解释了为什么我们增加 6 dB 的发射功率，最远通信距离仅仅只能增加一倍。")
+        )
 
     def get_math_model_content(self) -> str:
-        return """
-        <h3>数学模型：Friis 传输方程</h3>
-        <p>Friis 传输方程是射频链路计算的基石：</p>
-        <p>对数形式（工程常用）：</p>
+        return tr("range.math_model", """
+        <h3>{t_math_title}</h3>
+        <p>{t_math_1}</p>
+        <p>{t_math_2}</p>
         <ul>
             <li>P<sub>r</sub>(dBm) = Pt(dBm) + Gt(dBi) + Gr(dBi) - FSPL(dB)</li>
-            <li>自由空间路损 FSPL(dB) = 20·log<sub>10</sub>(d) + 20·log<sub>10</sub>(f) + 32.44</li>
-            <li style='list-style-type: none;'>(假设 d 单位为 km, f 单位为 MHz)</li>
+            <li>{t_math_fspl} FSPL(dB) = 20·log<sub>10</sub>(d) + 20·log<sub>10</sub>(f) + 32.44</li>
+            <li style='list-style-type: none;'>({t_math_unit})</li>
         </ul>
-        <p>当接收功率 P<sub>r</sub> 正好逼近 <b>[底噪 + 解调信噪比 + 衰落余量]</b> 的统合极限阈值时，反解得到的 d 即为理论最大极限通信距离。</p>
-        """
+        <p>{t_math_3} <b>[{t_math_lim}]</b> {t_math_4}</p>
+        """).format(
+            t_math_title=tr("range.dd_math_title", "数学模型：Friis 传输方程"),
+            t_math_1=tr("range.dd_math_1", "Friis 传输方程是射频链路计算的基石："),
+            t_math_2=tr("range.dd_math_2", "对数形式（工程常用）："),
+            t_math_fspl=tr("range.dd_math_fspl", "自由空间路损"),
+            t_math_unit=tr("range.dd_math_unit", "假设 d 单位为 km, f 单位为 MHz"),
+            t_math_3=tr("range.dd_math_3", "当接收功率 P<sub>r</sub> 正好逼近"),
+            t_math_lim=tr("range.dd_math_lim", "底噪 + 解调信噪比 + 衰落余量"),
+            t_math_4=tr("range.dd_math_4", "的统合极限阈值时，反解得到的 d 即为理论最大极限通信距离。")
+        )
 
     def get_engineering_content(self) -> str:
-        return """
-        <h3>工程边界：理论与现实的差异</h3>
-        <p>虽然 Friis 方程能计算出极限距离，但在实际工程中几乎无法达到：</p>
+        return tr("range.eng_content", """
+        <h3>{t_eng_title}</h3>
+        <p>{t_eng_1}</p>
         <ul>
-            <li><b>地球曲率阻挡：</b>对于微波频段（直线传播），如果天线高度不够，信号会被地球表面遮挡。实际视距更取决于架设高度。</li>
-            <li><b>多径干涉：</b>地面反射波与直达波干涉，会产生严重的深度衰落现象。</li>
-            <li><b>大气衰减：</b>空气中的氧气 (~60GHz) 和水蒸气 (~24GHz) 会吸收部分微波。</li>
-            <li><b>雨衰：</b>在 K 频段 (比如卫星通信) 以上，雨滴会导致显著的额外衰减。</li>
+            <li><b>{t_eng_e_title}：</b>{t_eng_e_desc}</li>
+            <li><b>{t_eng_m_title}：</b>{t_eng_m_desc}</li>
+            <li><b>{t_eng_a_title}：</b>{t_eng_a_desc}</li>
+            <li><b>{t_eng_r_title}：</b>{t_eng_r_desc}</li>
         </ul>
-        <p>工程师正是利用设置 <b>空间衰落余量 (Fade Margin)</b> (通常 10 ~ 20 dB) 以抵抗上述这些现实环境的不稳定因素从而保障稳定通讯。</p>
-        """
+        <p>{t_eng_final_1} <b>{t_eng_margin}</b> {t_eng_final_2}</p>
+        """).format(
+            t_eng_title=tr("range.dd_eng_title", "工程边界：理论与现实的差异"),
+            t_eng_1=tr("range.dd_eng_1", "虽然 Friis 方程能计算出极限距离，但在实际工程中几乎无法达到："),
+            t_eng_e_title=tr("range.dd_eng_e_t", "地球曲率阻挡"),
+            t_eng_e_desc=tr("range.dd_eng_e_d", "对于微波频段（直线传播），如果天线高度不够，信号会被地球表面遮挡。实际视距更取决于架设高度。"),
+            t_eng_m_title=tr("range.dd_eng_m_t", "多径干涉"),
+            t_eng_m_desc=tr("range.dd_eng_m_d", "地面反射波与直达波干涉，会产生严重的深度衰落现象。"),
+            t_eng_a_title=tr("range.dd_eng_a_t", "大气衰减"),
+            t_eng_a_desc=tr("range.dd_eng_a_d", "空气中的氧气 (~60GHz) 和水蒸气 (~24GHz) 会吸收部分微波。"),
+            t_eng_r_title=tr("range.dd_eng_r_t", "雨衰"),
+            t_eng_r_desc=tr("range.dd_eng_r_d", "在 K 频段 (比如卫星通信) 以上，雨滴会导致显著的额外衰减。"),
+            t_eng_final_1=tr("range.dd_eng_f1", "工程师正是利用设置"),
+            t_eng_margin=tr("range.dd_eng_margin", "空间衰落余量 (Fade Margin)"),
+            t_eng_final_2=tr("range.dd_eng_f2", "(通常 10 ~ 20 dB) 以抵抗上述这些现实环境的不稳定因素从而保障稳定通讯。")
+        )
 
     def get_history_content(self) -> str:
-        return """
-        <h3>发现历史：Harald T. Friis 的贡献</h3>
-        <p>1946 年，贝尔实验室的工程师 <b>Harald T. Friis</b> 发表了划时代的论文《A Note on a Simple Transmission Formula》。</p>
-        <p>在此之前，无线电工程师们被迫使用极其繁琐和容易出错的电磁场积分来计算收发天线之间的能量耦合。Friis 敏锐地引入了“有效接收面积 (Effective Area)”这一优雅的宏观物理量，把微观复杂的 Maxwell 方程组化繁为简，彻底颠覆并奠定了现代无线电链路预算的基础，让无线通信进入了可以被快速、精准量化的工程时代。</p>
-        """
+        return tr("range.history_content", """
+        <h3>{t_his_title}</h3>
+        <p>{t_his_1} <b>Harald T. Friis</b> {t_his_2}</p>
+        <p>{t_his_3}</p>
+        """).format(
+            t_his_title=tr("range.dd_his_title", "发现历史：Harald T. Friis 的贡献"),
+            t_his_1=tr("range.dd_his_1", "1946 年，贝尔实验室的工程师"),
+            t_his_2=tr("range.dd_his_2", "发表了划时代的论文《A Note on a Simple Transmission Formula》。"),
+            t_his_3=tr("range.dd_his_3", "在此之前，无线电工程师们被迫使用极其繁琐和容易出错的电磁场积分来计算收发天线之间的能量耦合。Friis 敏锐地引入了“有效接收面积 (Effective Area)”这一优雅的宏观物理量，把微观复杂的 Maxwell 方程组化繁为简，彻底颠覆并奠定了现代无线电链路预算的基础，让无线通信进入了可以被快速、精准量化的工程时代。")
+        )
 
     def retranslate_ui(self, lang: str = ""):
         super().retranslate_ui(lang)

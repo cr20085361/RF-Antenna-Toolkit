@@ -3,7 +3,7 @@
 射频天线工具集 - 波长频率计算模块
 RF Antenna Toolkit - Wavelength/Frequency Calculator
 
-版本: v1.0.0
+版本: v2.0.0
 功能: 提供频率与波长之间的转换计算，支持不同介质
 """
 

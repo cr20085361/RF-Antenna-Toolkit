@@ -3,7 +3,7 @@
 射频天线工具集 - 衰减计算器工具
 RF Antenna Toolkit - Attenuator Calculator Tool
 
-版本: v1.0.0
+版本: v2.0.0
 功能: 计算 T 型和 π 型衰减器电阻值，支持标准阻值系列匹配
 迭代: 初始版本
 """
@@ -102,7 +102,7 @@ class SchematicWidget(QWidget):
         painter.setPen(QPen(text_color))
         title_font = QFont("Microsoft YaHei", 10, QFont.Weight.Bold)
         painter.setFont(title_font)
-        title = "T 型 (星型) 衰减器" if self._topology == "T" else "π 型衰减器"
+        title = tr("attenuator.schem_t") if self._topology == "T" else tr("attenuator.schem_pi")
         painter.drawText(10, 20, title)
 
         # 端口标签
@@ -275,10 +275,10 @@ class AttenuatorTool(ToolBase):
     - 偏差分析与可视化
     """
 
-    tool_name = "衰减计算"
+    tool_name = tr("attenuator.tool_name")
     tool_icon = "📉"
     tool_category = "rf"
-    tool_description = "T 型/π 型衰减器电阻值计算，支持标准阻值系列匹配"
+    tool_description = tr("attenuator.tool_desc")
     i18n_title_key = "attenuator.tool_name"
     i18n_desc_key = "attenuator.tool_desc"
 
@@ -296,76 +296,71 @@ class AttenuatorTool(ToolBase):
         layout.setSpacing(16)
 
         # ── 标题 ──
-        title = QLabel("🔧 筛选与控制")
-        title.setObjectName("InputTitle")
-        layout.addWidget(title)
+        self._input_title = QLabel(tr("attenuator.title_input", "🔧 筛选与控制"))
+        self._input_title.setObjectName("InputTitle")
+        layout.addWidget(self._input_title)
 
         # ── 拓扑选择 ──
-        topo_group = QGroupBox("衰减器拓扑")
-        topo_layout = QVBoxLayout(topo_group)
+        self._grp_topo = QGroupBox(tr("attenuator.group_topo", "衰减器拓扑"))
+        topo_layout = QVBoxLayout(self._grp_topo)
 
         self._topo_btn_group = QButtonGroup()
-        self._radio_t = QRadioButton("T 型 (星型)")
-        self._radio_pi = QRadioButton("π 型")
+        self._radio_t = QRadioButton(tr("attenuator.radio_t", "T 型 (星型)"))
+        self._radio_pi = QRadioButton(tr("attenuator.radio_pi", "π 型"))
         self._radio_t.setChecked(True)
         self._topo_btn_group.addButton(self._radio_t, 0)
         self._topo_btn_group.addButton(self._radio_pi, 1)
         topo_layout.addWidget(self._radio_t)
         topo_layout.addWidget(self._radio_pi)
-        layout.addWidget(topo_group)
+        layout.addWidget(self._grp_topo)
 
         # ── 系统阻抗 ──
-        z0_group = QGroupBox("系统阻抗")
-        z0_layout = QHBoxLayout(z0_group)
+        self._grp_z0 = QGroupBox(tr("attenuator.group_z0", "系统阻抗"))
+        z0_layout = QHBoxLayout(self._grp_z0)
         self._z0_input = QLineEdit("50")
         self._z0_input.setValidator(QDoubleValidator(0.1, 10000, 2))
         self._z0_input.setPlaceholderText("50")
         z0_unit = QLabel("Ω")
         z0_layout.addWidget(self._z0_input)
         z0_layout.addWidget(z0_unit)
-        layout.addWidget(z0_group)
+        layout.addWidget(self._grp_z0)
 
         # ── 目标衰减值 ──
-        atten_group = QGroupBox("目标衰减值")
-        atten_layout = QHBoxLayout(atten_group)
+        self._grp_atten = QGroupBox(tr("attenuator.group_atten", "目标衰减值"))
+        atten_layout = QHBoxLayout(self._grp_atten)
         self._atten_input = QLineEdit("6")
         self._atten_input.setValidator(QDoubleValidator(0.1, 100, 2))
         self._atten_input.setPlaceholderText("6")
         atten_unit = QLabel("dB")
         atten_layout.addWidget(self._atten_input)
         atten_layout.addWidget(atten_unit)
-        layout.addWidget(atten_group)
+        layout.addWidget(self._grp_atten)
 
         # ── 阻值系列 ──
-        series_group = QGroupBox("标准阻值系列")
-        series_layout = QVBoxLayout(series_group)
+        self._grp_series = QGroupBox(tr("attenuator.group_series", "标准阻值系列"))
+        series_layout = QVBoxLayout(self._grp_series)
         self._series_combo = QComboBox()
-        self._series_combo.addItem("理想值 (不匹配)", "IDEAL")
+        self._series_combo.addItem(tr("attenuator.series_ideal", "理想值 (不匹配)"), "IDEAL")
         self._series_combo.addItem("E12 (±10%)", "E12")
         self._series_combo.addItem("E24 (±5%)", "E24")
         self._series_combo.addItem("E48 (±2%)", "E48")
         self._series_combo.addItem("E96 (±1%)", "E96")
         self._series_combo.setCurrentIndex(2)  # 默认 E24
         series_layout.addWidget(self._series_combo)
-        layout.addWidget(series_group)
+        layout.addWidget(self._grp_series)
 
         # ── 计算按钮 ──
-        self._calc_btn = QPushButton("计算")
+        self._calc_btn = QPushButton(tr("attenuator.btn_calc", "计算"))
         self._calc_btn.setObjectName("PrimaryButton")
         self._calc_btn.setCursor(Qt.CursorShape.PointingHandCursor)
         self._calc_btn.clicked.connect(self.calculate)
         layout.addWidget(self._calc_btn)
 
         # ── 数据说明 ──
-        info = QLabel(
-            "<b>数据说明:</b><br>"
-            "• 对称衰减器 (R₁ = R₃)<br>"
-            "• 阻值系列: IEC 60063<br>"
-            "• 匹配算法: 对数最近邻"
-        )
-        info.setObjectName("DataSourceLabel")
-        info.setWordWrap(True)
-        layout.addWidget(info)
+        self._info_label = QLabel(tr("attenuator.data_desc", "<b>数据说明:</b><br>• 对称衰减器 (R₁ = R₃)<br>• 阻值系列: IEC 60063<br>• 匹配算法: 对数最近邻"))
+        self._info_label.setObjectName("DataSourceLabel")
+        self._info_label.setWordWrap(True)
+        layout.addWidget(self._info_label)
 
         layout.addStretch()
         return panel
@@ -378,9 +373,9 @@ class AttenuatorTool(ToolBase):
         layout.setSpacing(12)
 
         # ── 标题 ──
-        title = QLabel("📊 计算结果")
-        title.setObjectName("ResultTitle")
-        layout.addWidget(title)
+        self._res_title = QLabel(tr("attenuator.title_res", "📊 计算结果"))
+        self._res_title.setObjectName("ResultTitle")
+        layout.addWidget(self._res_title)
 
         # ── 电路示意图 ──
         self._schematic = SchematicWidget()
@@ -399,7 +394,8 @@ class AttenuatorTool(ToolBase):
         self._cards: Dict[str, QLabel] = {}
 
         # 第一行: 理想值
-        cards_layout.addWidget(self._create_header("理想电阻值"), 0, 0, 1, 3)
+        self._hdr_ideal = self._create_header(tr("attenuator.hdr_ideal", "理想电阻值"))
+        cards_layout.addWidget(self._hdr_ideal, 0, 0, 1, 3)
         self._cards["r1_ideal"] = self._create_card("R₁", cards_layout, 1, 0)
         self._cards["r2_ideal"] = self._create_card("R₂", cards_layout, 1, 1)
         self._cards["r3_ideal"] = self._create_card("R₃", cards_layout, 1, 2)
@@ -411,7 +407,7 @@ class AttenuatorTool(ToolBase):
         cards_layout.addWidget(sep, 2, 0, 1, 3)
 
         # 第二行: 标准值
-        self._std_header = self._create_header("标准阻值 (E24)")
+        self._std_header = self._create_header(tr("attenuator.hdr_std", "标准阻值") + " (E24)")
         cards_layout.addWidget(self._std_header, 3, 0, 1, 3)
         self._cards["r1_std"] = self._create_card("R₁'", cards_layout, 4, 0)
         self._cards["r2_std"] = self._create_card("R₂'", cards_layout, 4, 1)
@@ -424,10 +420,11 @@ class AttenuatorTool(ToolBase):
         cards_layout.addWidget(sep2, 5, 0, 1, 3)
 
         # 第三行: 偏差分析
-        cards_layout.addWidget(self._create_header("偏差分析"), 6, 0, 1, 3)
-        self._cards["actual_atten"] = self._create_card("实际衰减", cards_layout, 7, 0)
-        self._cards["deviation"] = self._create_card("偏差", cards_layout, 7, 1)
-        self._cards["quality"] = self._create_card("评估", cards_layout, 7, 2)
+        self._hdr_dev = self._create_header(tr("attenuator.hdr_dev", "偏差分析"))
+        cards_layout.addWidget(self._hdr_dev, 6, 0, 1, 3)
+        self._cards["actual_atten"] = self._create_card(tr("attenuator.card_act", "实际衰减"), cards_layout, 7, 0)
+        self._cards["deviation"] = self._create_card(tr("attenuator.card_dev", "偏差"), cards_layout, 7, 1)
+        self._cards["quality"] = self._create_card(tr("attenuator.card_eval", "评估"), cards_layout, 7, 2)
 
         layout.addWidget(cards_frame)
         layout.addStretch()
@@ -474,6 +471,58 @@ class AttenuatorTool(ToolBase):
         layout.addWidget(card, row, col)
         return value_label
 
+
+    # ==================== 国际化刷新接口 ====================
+
+    def retranslate_ui(self, lang: str = ""):
+        """语言切换时刷新 UI 文字"""
+        super().retranslate_ui(lang)
+        if hasattr(self, '_input_title'):
+            self._input_title.setText(tr("attenuator.title_input", "🔧 筛选与控制"))
+            
+        if hasattr(self, '_grp_topo'):
+            self._grp_topo.setTitle(tr("attenuator.group_topo"))
+        if hasattr(self, '_radio_t'):
+            self._radio_t.setText(tr("attenuator.radio_t"))
+        if hasattr(self, '_radio_pi'):
+            self._radio_pi.setText(tr("attenuator.radio_pi"))
+            
+        if hasattr(self, '_grp_z0'):
+            self._grp_z0.setTitle(tr("attenuator.group_z0"))
+        if hasattr(self, '_grp_atten'):
+            self._grp_atten.setTitle(tr("attenuator.group_atten"))
+        if hasattr(self, '_grp_series'):
+            self._grp_series.setTitle(tr("attenuator.group_series"))
+            
+        if hasattr(self, '_series_combo'):
+            current_idx = self._series_combo.currentIndex()
+            # 仅刷新第一个“理想值”条目
+            self._series_combo.setItemText(0, tr("attenuator.series_ideal"))
+            self._series_combo.setCurrentIndex(current_idx)
+
+        if hasattr(self, '_calc_btn'):
+            self._calc_btn.setText(tr("attenuator.btn_calc"))
+            
+        if hasattr(self, '_info_label'):
+             self._info_label.setText(tr("attenuator.data_desc"))
+             
+        # 结果面板
+        if hasattr(self, '_res_title'):
+            self._res_title.setText(tr("attenuator.title_res"))
+            
+        if hasattr(self, '_hdr_ideal'):
+            self._hdr_ideal.setText(tr("attenuator.hdr_ideal"))
+        if hasattr(self, '_hdr_dev'):
+            self._hdr_dev.setText(tr("attenuator.hdr_dev"))
+            
+        # 结果刷新
+        if self._result:
+            self._update_display(self._result)
+        else:
+            # 重置示意图标题
+            if hasattr(self, '_schematic'):
+                self._schematic.update() # 会触发 paintEvent 重新读 tr()
+
     def calculate(self):
         """执行计算"""
         try:
@@ -519,7 +568,8 @@ class AttenuatorTool(ToolBase):
                 fmt(r.r1_std), fmt(r.r2_std), fmt(r.r3_std)
             )
             # 更新标准值卡片
-            self._std_header.setText(f"标准阻值 ({r.series_name})")
+            hdr_str = tr("attenuator.hdr_std", "标准阻值")
+            self._std_header.setText(f"{hdr_str} ({r.series_name})")
             self._cards["r1_std"].setText(fmt(r.r1_std))
             self._cards["r2_std"].setText(fmt(r.r2_std))
             self._cards["r3_std"].setText(fmt(r.r3_std))
@@ -533,16 +583,16 @@ class AttenuatorTool(ToolBase):
             abs_dev = abs(dev)
             if abs_dev <= 0.1:
                 color = "#38A169"  # 绿色: 偏差很小
-                quality = "🟢 精确"
+                quality = tr("attenuator.eval_exact", "🟢 精确")
             elif abs_dev <= 0.3:
                 color = "#2C7BE5"  # 蓝色: 偏差可接受
-                quality = "🔵 良好"
+                quality = tr("attenuator.eval_good", "🔵 良好")
             elif abs_dev <= 0.5:
                 color = "#DD6B20"  # 橙色: 有一定偏差
-                quality = "🟡 可接受"
+                quality = tr("attenuator.eval_acc", "🟡 可接受")
             else:
                 color = "#E53E3E"  # 红色: 偏差较大
-                quality = "🔴 偏差较大"
+                quality = tr("attenuator.eval_bad", "🔴 偏差较大")
 
             self._cards["deviation"].setStyleSheet(
                 f"font-size: 16px; font-weight: 700; color: {color}; border: none;"
@@ -554,7 +604,9 @@ class AttenuatorTool(ToolBase):
                 r.topology,
                 fmt(r.r1_ideal), fmt(r.r2_ideal), fmt(r.r3_ideal)
             )
-            self._std_header.setText("标准阻值 (未选择系列)")
+            hdr_str = tr("attenuator.hdr_std", "标准阻值")
+            unselected = tr("attenuator.series_ideal", "未选择系列")
+            self._std_header.setText(f"{hdr_str} ({unselected})")
             self._cards["r1_std"].setText("—")
             self._cards["r2_std"].setText("—")
             self._cards["r3_std"].setText("—")
@@ -563,87 +615,18 @@ class AttenuatorTool(ToolBase):
             self._cards["deviation"].setStyleSheet(
                 "font-size: 16px; font-weight: 700; color: #38A169; border: none;"
             )
-            self._cards["quality"].setText("🟢 精确")
+            self._cards["quality"].setText(tr("attenuator.eval_exact", "🟢 精确"))
 
     # ==================== 知识面板 ====================
 
-    def get_intuition_content(self) -> Optional[str]:
-        """直观理解 - 物理本质"""
-        return """
-        <b>💡 衰减器的物理本质</b><br><br>
+    def get_intuition_content(self) -> str:
+        return tr("attenuator.intuition")
 
-        射频衰减器是一种 <b>无源电阻网络</b>，通过精确的电阻分压来降低信号幅度，
-        同时保持输入/输出端口的阻抗匹配。<br><br>
+    def get_math_model_content(self) -> str:
+        return tr("attenuator.math_model")
 
-        <b>T 型 vs π 型:</b><br>
-        • <b>T 型 (星型)</b>: 两个串联电阻 + 一个并联电阻。
-          适合 <u>小衰减值</u> (≤10dB)，因为并联电阻较大，寄生电容影响小。<br>
-        • <b>π 型</b>: 一个串联电阻 + 两个并联电阻。
-          适合 <u>大衰减值</u> (>10dB)，因为串联电阻较大，布局上更容易接地。<br><br>
+    def get_engineering_content(self) -> str:
+        return tr("attenuator.eng_content")
 
-        <b>关键特性:</b><br>
-        • 理想情况下，衰减量与频率无关<br>
-        • 实际中，高频时电阻的寄生参数会导致衰减偏离理想值<br>
-        • 功率容量取决于电阻的功率额定值
-        """
-
-    def get_math_model_content(self) -> Optional[str]:
-        """数学模型"""
-        return """
-        <b>📐 衰减器计算公式</b><br><br>
-
-        设衰减量 A (dB)，系统阻抗 Z<sub>0</sub> (Ω)，
-        线性比值 K = 10<sup>A/20</sup><br><br>
-
-        <b>T 型衰减器:</b><br>
-        • R<sub>1</sub> = R<sub>3</sub> = Z<sub>0</sub> × (K−1) / (K+1)<br>
-        • R<sub>2</sub> = Z<sub>0</sub> × 2K / (K²−1)<br><br>
-
-        <b>π 型衰减器:</b><br>
-        • R<sub>1</sub> = R<sub>3</sub> = Z<sub>0</sub> × (K+1) / (K−1)<br>
-        • R<sub>2</sub> = Z<sub>0</sub> × (K²−1) / (2K)<br><br>
-
-        <b>反算公式 (ABCD 矩阵):</b><br>
-        利用二端口网络 ABCD 参数矩阵反算实际插入损耗:<br>
-        IL = 20 log<sub>10</sub>(|A + B/Z<sub>0</sub> + CZ<sub>0</sub> + D| / 2)
-        """
-
-    def get_engineering_content(self) -> Optional[str]:
-        """工程指南"""
-        return """
-        <b>⚙️ 工程设计指南</b><br><br>
-
-        <b>阻值系列选择:</b><br>
-        • <b>E24</b>: 最常用，成本低，偏差通常 ≤0.5dB<br>
-        • <b>E48</b>: 精密应用推荐，偏差通常 ≤0.2dB<br>
-        • <b>E96</b>: 测量级应用 (校准衰减器)，偏差极小<br>
-        • <b>E12</b>: 仅用于精度要求极低的场合<br><br>
-
-        <b>功率考量:</b><br>
-        • 0402 贴片电阻: ~62.5mW (单片)<br>
-        • 0603 贴片电阻: ~100mW<br>
-        • 0805 贴片电阻: ~125mW<br>
-        • 衰减器总功率 = 输入功率 × (1 − 10<sup>−A/10</sup>)<br><br>
-
-        <b>频率限制:</b><br>
-        • 0402 封装: 适用于 ≤26GHz<br>
-        • 0201 封装: 适用于 ≤40GHz<br>
-        • 薄膜电阻器: 寄生参数更小，高频性能更好
-        """
-
-    def get_history_content(self) -> Optional[str]:
-        """历史"""
-        return """
-        <b>📜 衰减器发展简史</b><br><br>
-
-        电阻衰减器的历史可以追溯到电报时代。早期的 "衰减箱" 使用
-        机械开关选择不同的电阻网络来调节信号电平。<br><br>
-
-        T 型和 π 型拓扑因结构简单、计算精确而成为最经典的衰减器设计。
-        现代微波衰减器则广泛使用薄膜电阻工艺，在 GaAs 或 氮化铝基板上
-        实现亚毫米级精密电阻网络。<br><br>
-
-        标准阻值系列 (E 系列) 由 IEC 60063 标准定义，
-        最早的 E12 系列可追溯到 1952 年。其设计原则是使相邻阻值之间
-        的对数间距均匀分布，从而保证任何目标值都能找到足够接近的标准值。
-        """
+    def get_history_content(self) -> str:
+        return tr("attenuator.history_content")

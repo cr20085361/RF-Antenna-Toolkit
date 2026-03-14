@@ -3,7 +3,7 @@
 射频天线工具集 - 远场距离计算工具
 RF Antenna Toolkit - Far-Field Distance Calculator Tool
 
-版本: v1.0.0
+版本: v2.0.0
 功能: 基于 IEEE 149-2019 / 3GPP TS 38.810 计算天线远场距离
       支持电大/电小天线自动判据切换与相控阵扫描角修正
 """
@@ -39,7 +39,7 @@ class FarFieldTool(ToolBase):
     """
 
     # 工具元信息
-    tool_name = "远场计算器"
+    tool_name = tr("farfield.tool_name", "远场距离")
     tool_icon = "🎯"
     tool_category = "antenna"
     tool_description = "计算天线远场测试距离 (IEEE 149 / 3GPP 38.810)"

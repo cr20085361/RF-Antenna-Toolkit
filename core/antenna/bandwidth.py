@@ -3,7 +3,7 @@
 射频天线工具集 - 带宽计算模块
 RF Antenna Toolkit - Bandwidth Calculator
 
-版本: v1.0.0
+版本: v2.0.0
 功能: 提供各种带宽定义的相互转换与计算
 """
 

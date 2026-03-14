@@ -44,10 +44,10 @@ class SensitivityTool(ToolBase):
     """
     
     # 工具元信息
-    tool_name = "系统灵敏度计算"
-    tool_icon = "📶"
+    tool_name = tr("sensitivity.tool_name", "系统灵敏度")
+    tool_icon = "🎛️"
     tool_category = "antenna"
-    tool_description = "计算无源天线+射频链路的总灵敏度 (场强)"
+    tool_description = tr("sensitivity.tool_description", "计算无源天线+射频链路的总灵敏度 (场强)")
     
     def __init__(self):
         """初始化工具"""
@@ -70,12 +70,12 @@ class SensitivityTool(ToolBase):
         layout.setSpacing(12)
         
         # ==================== 1. 系统配置 ====================
-        config_group = QGroupBox("系统配置")
+        config_group = QGroupBox(tr("sens.sys_config", "系统配置"))
         config_layout = QGridLayout(config_group)
         config_layout.setVerticalSpacing(8)
         
         # 第一行: 参数输入
-        config_layout.addWidget(QLabel("信道带宽:"), 0, 0)
+        config_layout.addWidget(QLabel(tr("sens.ch_bw", "信道带宽:")), 0, 0)
         self._bw_input = QLineEdit("1000")
         # 提高精度，允许输入 Hz 级别 (例如 0.001 kHz)
         self._bw_input.setValidator(QDoubleValidator(0.0, 1e9, 6)) 
@@ -90,7 +90,7 @@ class SensitivityTool(ToolBase):
         self._bw_unit_combo.currentTextChanged.connect(self._recalc_all)
         config_layout.addWidget(self._bw_unit_combo, 0, 2)
         
-        config_layout.addWidget(QLabel("噪声系数:"), 0, 3)
+        config_layout.addWidget(QLabel(tr("sens.nf", "噪声系数:")), 0, 3)
         self._nf_input = QLineEdit("5.0")
         self._nf_input.setValidator(QDoubleValidator(0, 50, 2))
         self._nf_input.setPlaceholderText("dB")
@@ -107,7 +107,7 @@ class SensitivityTool(ToolBase):
         config_layout.addWidget(self._snr_input, 1, 1)
         config_layout.addWidget(QLabel("dB"), 1, 2)
         
-        config_layout.addWidget(QLabel("场强单位:"), 1, 3)
+        config_layout.addWidget(QLabel(tr("sens.field_unit", "场强单位:")), 1, 3)
         self._unit_combo = QComboBox()
         self._unit_combo.addItems(["dBuV/m", "uV/m"])
         self._unit_combo.currentTextChanged.connect(self._on_unit_changed)
@@ -116,19 +116,19 @@ class SensitivityTool(ToolBase):
         layout.addWidget(config_group)
         
         # ==================== 2. 频率计算表格 ====================
-        table_group = QGroupBox("计算结果列表")
+        table_group = QGroupBox(tr("sens.res_list", "计算结果列表"))
         table_layout = QVBoxLayout(table_group)
         table_layout.setContentsMargins(8, 8, 8, 8)
         
         # 操作栏
         btn_layout = QHBoxLayout()
-        btn_add = QPushButton("➕ 添加频点")
+        btn_add = QPushButton(tr("sens.btn_add_freq", "➕ 添加频点"))
         btn_add.clicked.connect(self._add_row)
-        btn_remove = QPushButton("➖ 删除")
+        btn_remove = QPushButton(tr("sens.btn_remove", "➖ 删除"))
         btn_remove.clicked.connect(self._remove_row)
-        btn_clear = QPushButton("🗑️ 清空")
+        btn_clear = QPushButton(tr("sens.btn_clear", "🗑️ 清空"))
         btn_clear.clicked.connect(self._clear_table)
-        btn_recalc = QPushButton("🔄 全局刷新")
+        btn_recalc = QPushButton(tr("sens.btn_refresh", "🔄 全局刷新"))
         btn_recalc.setObjectName("PrimaryButton")
         btn_recalc.clicked.connect(self._recalc_all)
         
@@ -142,7 +142,7 @@ class SensitivityTool(ToolBase):
         # 表格
         self._table = QTableWidget()
         # 列: Freq, Gain, Loss, RxSens, AF, E-Field
-        headers = ["频率(MHz)", "增益(dBi)", "线缆损耗(dB)", "Rx灵敏度", "天线系数", "最小场强"]
+        headers = [tr("sens.col_freq", "频率(MHz)"), tr("sens.col_gain", "增益(dBi)"), tr("sens.col_cable_loss", "线缆损耗(dB)"), tr("sens.col_rx_sens", "Rx灵敏度"), tr("sens.col_af", "天线系数"), tr("sens.col_min_field", "最小场强")]
         self._table.setColumnCount(len(headers))
         self._table.setHorizontalHeaderLabels(headers)
         
@@ -189,7 +189,7 @@ class SensitivityTool(ToolBase):
         layout.setSpacing(16)
         
         # ==================== 1. 系统示意图 (左下) ====================
-        diagram_group = QGroupBox("系统链路架构")
+        diagram_group = QGroupBox(tr("sens.sys_diagram", "系统链路架构"))
         diagram_layout = QVBoxLayout(diagram_group)
         diagram_layout.setContentsMargins(4, 16, 4, 4)
         
@@ -207,7 +207,7 @@ class SensitivityTool(ToolBase):
         layout.addWidget(diagram_group, 1)
         
         # ==================== 2. 灵敏度曲线 (右下) ====================
-        chart_group = QGroupBox("灵敏度曲线")
+        chart_group = QGroupBox(tr("sens.curve_chart", "灵敏度曲线"))
         chart_layout = QVBoxLayout(chart_group)
         chart_layout.setContentsMargins(4, 16, 4, 4)
         
@@ -242,9 +242,9 @@ class SensitivityTool(ToolBase):
                                               Qt.TransformationMode.SmoothTransformation)
                 self._diagram_label.setPixmap(scaled_pixmap)
             else:
-                self._diagram_label.setText("示意图加载中...\n(或文件不存在)")
+                self._diagram_label.setText(tr("sens.err_diagram_load", "示意图加载中...\n(或文件不存在)"))
         except Exception as e:
-            self._diagram_label.setText(f"错误: {str(e)}")
+            self._diagram_label.setText(tr("sens.err_prefix", "错误: {0}").format(str(e)))
 
     def _init_default_data(self):
         """初始化演示数据"""
@@ -304,7 +304,7 @@ class SensitivityTool(ToolBase):
         # 更新表头单位指示
         header_item = self._table.horizontalHeaderItem(5)
         if header_item:
-            header_item.setText(f"最小场强 ({unit})")
+            header_item.setText(tr("sens.col_min_field_unit", "最小场强 ({0})").format(unit))
 
     def _on_item_changed(self, item):
         if item.column() < 3: # 仅输入列变化生效
@@ -432,13 +432,17 @@ class SensitivityTool(ToolBase):
         return tr("sens.engineering_content")
 
     def get_history_content(self) -> Optional[str]:
-        return """
-        <b>📜 历史背景：</b>
+        return tr("sens.history_content", """
+        <b>📜 {t_history_title}：</b>
         <ul>
-            <li><b>Harry Nyquist (1928):</b> 发现了热噪声原理，确定了 -174dBm/Hz 的物理基底。</li>
-            <li><b>Claude Shannon (1948):</b> 提出了香农极限，定义了在给定带宽和信噪比下的最大信息传输速率，间接给出了灵敏度的理论边界。</li>
+            <li><b>Harry Nyquist (1928):</b> {t_nyquist_desc}</li>
+            <li><b>Claude Shannon (1948):</b> {t_shannon_desc}</li>
         </ul>
-        """
+        """).format(
+            t_history_title=tr("sens.hist_title", "历史背景"),
+            t_nyquist_desc=tr("sens.hist_nyquist", "发现了热噪声原理，确定了 -174dBm/Hz 的物理基底。"),
+            t_shannon_desc=tr("sens.hist_shannon", "提出了香农极限，定义了在给定带宽和信噪比下的最大信息传输速率，间接给出了灵敏度的理论边界。")
+        )
 
     def retranslate_ui(self, lang: str = ""):
         super().retranslate_ui(lang)

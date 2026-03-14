@@ -3,7 +3,7 @@
 射频天线工具集 - 衰减器计算模块
 RF Antenna Toolkit - Attenuator Calculator
 
-版本: v1.0.0
+版本: v2.0.0
 功能: 计算 T 型(星型)和 π 型衰减器的电阻值，
       支持标准阻值系列匹配与偏差分析
 """

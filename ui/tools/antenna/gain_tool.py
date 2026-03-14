@@ -3,7 +3,7 @@
 射频天线工具集 - 天线增益计算工具
 RF Antenna Toolkit - Antenna Gain Calculator Tool
 
-版本: v1.0.0
+版本: v2.0.0
 功能: 提供多种天线增益计算界面
 """
 
@@ -34,10 +34,10 @@ class GainTool(ToolBase):
     """
     
     # 工具元信息
-    tool_name = "增益计算器"
-    tool_icon = "📡"
+    tool_name = tr("gain.tool_name", "天线增益")
+    tool_icon = "📶"
     tool_category = "antenna"
-    tool_description = "根据波束宽度或口径计算天线增益"
+    tool_description = tr("gain.tool_desc", "根据波束宽度或口径计算天线增益")
     
     def __init__(self, parent: Optional[QWidget] = None):
         """初始化增益计算工具"""
@@ -59,14 +59,14 @@ class GainTool(ToolBase):
         layout.setSpacing(16)
         
         # ==================== 计算方法选择 ====================
-        method_group = QGroupBox("计算方法")
+        method_group = QGroupBox(tr("gain.calc_method", "计算方法"))
         method_layout = QVBoxLayout(method_group)
         method_layout.setSpacing(12)
         
         self._method_group = QButtonGroup(self)
         
         # 方法1: 波束宽度法 (最常用)
-        beamwidth_radio = QRadioButton("波束宽度法 (3dB波束角)")
+        beamwidth_radio = QRadioButton(tr("gain.method_beamwidth", "波束宽度法 (3dB波束角)"))
         beamwidth_radio.setChecked(True)
         self._method_group.addButton(beamwidth_radio, 0)
         method_layout.addWidget(beamwidth_radio)
@@ -74,54 +74,54 @@ class GainTool(ToolBase):
         # 波束宽度输入
         beamwidth_layout = QGridLayout()
         
-        beamwidth_layout.addWidget(QLabel("E面 θ_E:"), 0, 0)
+        beamwidth_layout.addWidget(QLabel(tr("gain.theta_e", "E面 θ_E:")), 0, 0)
         self._theta_e_input = QLineEdit()
-        self._theta_e_input.setPlaceholderText("E面波束角")
+        self._theta_e_input.setPlaceholderText(tr("gain.placeholder_theta", "E面波束角"))
         self._theta_e_input.setValidator(QDoubleValidator(0.1, 180, 2))
         self._theta_e_input.setText("30")
         beamwidth_layout.addWidget(self._theta_e_input, 0, 1)
         beamwidth_layout.addWidget(QLabel("°"), 0, 2)
         
-        beamwidth_layout.addWidget(QLabel("H面 θ_H:"), 1, 0)
+        beamwidth_layout.addWidget(QLabel(tr("gain.theta_h", "H面 θ_H:")), 1, 0)
         self._theta_h_input = QLineEdit()
-        self._theta_h_input.setPlaceholderText("H面波束角")
+        self._theta_h_input.setPlaceholderText(tr("gain.placeholder_theta_h", "H面波束角"))
         self._theta_h_input.setValidator(QDoubleValidator(0.1, 180, 2))
         self._theta_h_input.setText("30")
         beamwidth_layout.addWidget(self._theta_h_input, 1, 1)
         beamwidth_layout.addWidget(QLabel("°"), 1, 2)
         
         # 公式常数选择
-        beamwidth_layout.addWidget(QLabel("公式常数K:"), 2, 0)
+        beamwidth_layout.addWidget(QLabel(tr("gain.constant_k", "公式常数K:")), 2, 0)
         self._constant_combo = QComboBox()
         self._constant_combo.addItems([
-            "41253 (IEEE标准)",
-            "32400 (均匀口径)",
-            "26000 (典型值)"
+            tr("gain.const_ieee", "41253 (IEEE标准)"),
+            tr("gain.const_uniform", "32400 (均匀口径)"),
+            tr("gain.const_typical", "26000 (典型值)")
         ])
         beamwidth_layout.addWidget(self._constant_combo, 2, 1, 1, 2)
         
         method_layout.addLayout(beamwidth_layout)
         
         # 方法2: 口径效率法 (支持圆形/矩形)
-        aperture_radio = QRadioButton("口径效率法")
+        aperture_radio = QRadioButton(tr("gain.method_aperture", "口径效率法"))
         self._method_group.addButton(aperture_radio, 1)
         method_layout.addWidget(aperture_radio)
         
         aperture_layout = QGridLayout()
         
         # 口径形状选择
-        aperture_layout.addWidget(QLabel("口径形状:"), 0, 0)
+        aperture_layout.addWidget(QLabel(tr("gain.aperture_shape", "口径形状:")), 0, 0)
         self._aperture_shape = QComboBox()
-        self._aperture_shape.addItems(["⚪ 圆形 (抛物面等)", "▭ 矩形 (喇叭天线等)"])
+        self._aperture_shape.addItems([tr("gain.shape_circ", "⚪ 圆形 (抛物面等)"), tr("gain.shape_rect", "▭ 矩形 (喇叭天线等)")])
         self._aperture_shape.setEnabled(False)
         self._aperture_shape.currentIndexChanged.connect(self._on_aperture_shape_changed)
         aperture_layout.addWidget(self._aperture_shape, 0, 1, 1, 2)
         
         # 圆形口径 - 直径
-        self._diameter_label = QLabel("口径直径:")
+        self._diameter_label = QLabel(tr("gain.aperture_diameter", "口径直径:"))
         aperture_layout.addWidget(self._diameter_label, 1, 0)
         self._diameter_input = QLineEdit()
-        self._diameter_input.setPlaceholderText("直径 D")
+        self._diameter_input.setPlaceholderText(tr("gain.ph_diameter", "直径 D"))
         self._diameter_input.setValidator(QDoubleValidator(0.001, 1000, 4))
         self._diameter_input.setText("1.0")
         self._diameter_input.setEnabled(False)
@@ -133,11 +133,11 @@ class GainTool(ToolBase):
         aperture_layout.addWidget(self._diameter_unit, 1, 2)
         
         # 矩形口径 - 宽度
-        self._width_label = QLabel("口径宽度:")
+        self._width_label = QLabel(tr("gain.aperture_width", "口径宽度:"))
         self._width_label.hide()
         aperture_layout.addWidget(self._width_label, 1, 0)
         self._width_input = QLineEdit()
-        self._width_input.setPlaceholderText("宽度 W")
+        self._width_input.setPlaceholderText(tr("gain.ph_width", "宽度 W"))
         self._width_input.setValidator(QDoubleValidator(0.001, 1000, 4))
         self._width_input.setText("0.3")
         self._width_input.setEnabled(False)
@@ -151,11 +151,11 @@ class GainTool(ToolBase):
         aperture_layout.addWidget(self._width_unit, 1, 2)
         
         # 矩形口径 - 高度
-        self._height_label = QLabel("口径高度:")
+        self._height_label = QLabel(tr("gain.aperture_height", "口径高度:"))
         self._height_label.hide()
         aperture_layout.addWidget(self._height_label, 2, 0)
         self._height_input = QLineEdit()
-        self._height_input.setPlaceholderText("高度 H")
+        self._height_input.setPlaceholderText(tr("gain.ph_height", "高度 H"))
         self._height_input.setValidator(QDoubleValidator(0.001, 1000, 4))
         self._height_input.setText("0.2")
         self._height_input.setEnabled(False)
@@ -169,10 +169,10 @@ class GainTool(ToolBase):
         aperture_layout.addWidget(self._height_unit, 2, 2)
         
         # 工作频率 (行号根据形状变化)
-        self._freq_label = QLabel("工作频率:")
+        self._freq_label = QLabel(tr("gain.work_freq", "工作频率:"))
         aperture_layout.addWidget(self._freq_label, 3, 0)
         self._freq_input = QLineEdit()
-        self._freq_input.setPlaceholderText("频率")
+        self._freq_input.setPlaceholderText(tr("gain.ph_freq", "频率"))
         self._freq_input.setValidator(QDoubleValidator(0.001, 1e6, 4))
         self._freq_input.setText("10")
         self._freq_input.setEnabled(False)
@@ -184,7 +184,7 @@ class GainTool(ToolBase):
         aperture_layout.addWidget(self._freq_unit, 3, 2)
         
         # 口径效率
-        aperture_layout.addWidget(QLabel("口径效率:"), 4, 0)
+        aperture_layout.addWidget(QLabel(tr("gain.aperture_efficiency", "口径效率:")), 4, 0)
         self._efficiency_input = QLineEdit()
         self._efficiency_input.setPlaceholderText("0~1")
         self._efficiency_input.setValidator(QDoubleValidator(0.01, 1.0, 3))
@@ -192,34 +192,34 @@ class GainTool(ToolBase):
         self._efficiency_input.setEnabled(False)
         aperture_layout.addWidget(self._efficiency_input, 4, 1)
         
-        self._efficiency_hint = QLabel("(圆形典型0.55)")
+        self._efficiency_hint = QLabel(tr("gain.hint_circ", "(圆形典型0.55)"))
         aperture_layout.addWidget(self._efficiency_hint, 4, 2)
         
         method_layout.addLayout(aperture_layout)
         
         # 方法3: 增益单位转换
-        convert_radio = QRadioButton("增益单位转换")
+        convert_radio = QRadioButton(tr("gain.method_convert", "增益单位转换"))
         self._method_group.addButton(convert_radio, 2)
         method_layout.addWidget(convert_radio)
         
         convert_layout = QHBoxLayout()
         
         self._convert_input = QLineEdit()
-        self._convert_input.setPlaceholderText("增益值")
+        self._convert_input.setPlaceholderText(tr("gain.ph_gain_val", "增益值"))
         self._convert_input.setValidator(QDoubleValidator(-50, 100, 4))
         self._convert_input.setText("12")
         self._convert_input.setEnabled(False)
         convert_layout.addWidget(self._convert_input)
         
         self._convert_from_unit = QComboBox()
-        self._convert_from_unit.addItems(["dBi", "dBd", "线性值"])
+        self._convert_from_unit.addItems(["dBi", "dBd", tr("gain.linear_val", "线性值")])
         self._convert_from_unit.setEnabled(False)
         convert_layout.addWidget(self._convert_from_unit)
         
         convert_layout.addWidget(QLabel("→"))
         
         self._convert_to_unit = QComboBox()
-        self._convert_to_unit.addItems(["dBd", "dBi", "线性值"])
+        self._convert_to_unit.addItems(["dBd", "dBi", tr("gain.linear_val", "线性值")])
         self._convert_to_unit.setEnabled(False)
         convert_layout.addWidget(self._convert_to_unit)
         
@@ -261,7 +261,7 @@ class GainTool(ToolBase):
         quality_card.setObjectName("ResultPanel")
         quality_layout = QVBoxLayout(quality_card)
         
-        quality_title = QLabel("天线类型评估")
+        quality_title = QLabel(tr("gain.type_eval", "天线类型评估"))
         quality_title.setObjectName("ResultTitle")
         quality_layout.addWidget(quality_title)
         
@@ -276,7 +276,7 @@ class GainTool(ToolBase):
         gain_card.setObjectName("ResultPanel")
         gain_layout = QVBoxLayout(gain_card)
         
-        gain_title = QLabel("📡 增益结果")
+        gain_title = QLabel(tr("gain.res_gain", "📡 增益结果"))
         gain_title.setObjectName("ResultTitle")
         gain_layout.addWidget(gain_title)
         
@@ -284,18 +284,18 @@ class GainTool(ToolBase):
         gain_grid.setSpacing(12)
         
         # dBi增益
-        gain_grid.addWidget(QLabel("增益 (dBi):"), 0, 0)
+        gain_grid.addWidget(QLabel(tr("gain.res_dbi", "增益 (dBi):")), 0, 0)
         self._gain_dbi_label = QLabel("--")
         self._gain_dbi_label.setStyleSheet("font-weight: bold; color: #2C7BE5; font-size: 18px;")
         gain_grid.addWidget(self._gain_dbi_label, 0, 1)
         
         # dBd增益
-        gain_grid.addWidget(QLabel("增益 (dBd):"), 1, 0)
+        gain_grid.addWidget(QLabel(tr("gain.res_dbd", "增益 (dBd):")), 1, 0)
         self._gain_dbd_label = QLabel("--")
         gain_grid.addWidget(self._gain_dbd_label, 1, 1)
         
         # 线性增益
-        gain_grid.addWidget(QLabel("线性增益:"), 2, 0)
+        gain_grid.addWidget(QLabel(tr("gain.res_linear", "线性增益:")), 2, 0)
         self._gain_linear_label = QLabel("--")
         gain_grid.addWidget(self._gain_linear_label, 2, 1)
         
@@ -307,7 +307,7 @@ class GainTool(ToolBase):
         estimate_card.setObjectName("ResultPanel")
         estimate_layout = QVBoxLayout(estimate_card)
         
-        estimate_title = QLabel("📐 估算波束宽度 (对称)")
+        estimate_title = QLabel(tr("gain.res_est_beam", "📐 估算波束宽度 (对称)"))
         estimate_title.setObjectName("ResultTitle")
         estimate_layout.addWidget(estimate_title)
         
@@ -379,10 +379,10 @@ class GainTool(ToolBase):
         
         # 更新效率提示
         if is_circular:
-            self._efficiency_hint.setText("(圆形典型0.55)")
+            self._efficiency_hint.setText(tr("gain.hint_circ", "(圆形典型0.55)"))
             self._efficiency_input.setText("0.55")
         else:
-            self._efficiency_hint.setText("(矩形典型0.60)")
+            self._efficiency_hint.setText(tr("gain.hint_rect", "(矩形典型0.60)"))
             self._efficiency_input.setText("0.60")
     
     def calculate(self) -> Dict[str, Any]:
@@ -395,20 +395,20 @@ class GainTool(ToolBase):
                 theta_h_text = self._theta_h_input.text().strip()
                 
                 if not theta_e_text:
-                    return {"success": False, "error": "⚠️ 请输入E面波束宽度"}
+                    return {"success": False, "error": tr("gain.err_no_e", "⚠️ 请输入E面波束宽度")}
                 if not theta_h_text:
-                    return {"success": False, "error": "⚠️ 请输入H面波束宽度"}
+                    return {"success": False, "error": tr("gain.err_no_h", "⚠️ 请输入H面波束宽度")}
                 
                 try:
                     theta_e = float(theta_e_text)
                     theta_h = float(theta_h_text)
                 except ValueError:
-                    return {"success": False, "error": "⚠️ 波束角格式错误，请输入有效数字"}
+                    return {"success": False, "error": tr("gain.err_format_beam", "⚠️ 波束角格式错误，请输入有效数字")}
                 
                 if theta_e <= 0 or theta_h <= 0:
-                    return {"success": False, "error": "⚠️ 波束宽度必须为正值"}
+                    return {"success": False, "error": tr("gain.err_beam_positive", "⚠️ 波束宽度必须为正值")}
                 if theta_e > 180 or theta_h > 180:
-                    return {"success": False, "error": "⚠️ 波束宽度不能超过180°\n（全向天线约为360°/2=180°）"}
+                    return {"success": False, "error": tr("gain.err_beam_too_large", "⚠️ 波束宽度不能超过180°\n（全向天线约为360°/2=180°）")}
                 
                 # 解析常数
                 const_text = self._constant_combo.currentText()
@@ -428,20 +428,20 @@ class GainTool(ToolBase):
                 efficiency_text = self._efficiency_input.text().strip()
                 
                 if not freq_text:
-                    return {"success": False, "error": "⚠️ 请输入工作频率"}
+                    return {"success": False, "error": tr("gain.err_no_freq", "⚠️ 请输入工作频率")}
                 if not efficiency_text:
-                    return {"success": False, "error": "⚠️ 请输入口径效率"}
+                    return {"success": False, "error": tr("gain.err_no_eff", "⚠️ 请输入口径效率")}
                 
                 try:
                     freq = float(freq_text)
                     efficiency = float(efficiency_text)
                 except ValueError:
-                    return {"success": False, "error": "⚠️ 频率/效率格式错误，请输入有效数字"}
+                    return {"success": False, "error": tr("gain.err_format_fe", "⚠️ 频率/效率格式错误，请输入有效数字")}
                 
                 if freq <= 0:
-                    return {"success": False, "error": "⚠️ 频率必须为正值"}
+                    return {"success": False, "error": tr("gain.err_freq_positive", "⚠️ 频率必须为正值")}
                 if efficiency <= 0 or efficiency > 1:
-                    return {"success": False, "error": "⚠️ 口径效率必须在 (0, 1] 范围内\n（圆形典型0.55, 矩形典型0.60）"}
+                    return {"success": False, "error": tr("gain.err_eff_range", "⚠️ 口径效率必须在 (0, 1] 范围内\n（圆形典型0.55, 矩形典型0.60）")}
                 
                 # 频率单位转换
                 freq_unit = self._freq_unit.currentText()
@@ -456,13 +456,13 @@ class GainTool(ToolBase):
                     # 圆形口径
                     diameter_text = self._diameter_input.text().strip()
                     if not diameter_text:
-                        return {"success": False, "error": "⚠️ 请输入口径直径"}
+                        return {"success": False, "error": tr("gain.err_no_dia", "⚠️ 请输入口径直径")}
                     try:
                         diameter = float(diameter_text)
                     except ValueError:
-                        return {"success": False, "error": "⚠️ 直径格式错误，请输入有效数字"}
+                        return {"success": False, "error": tr("gain.err_format_dia", "⚠️ 直径格式错误，请输入有效数字")}
                     if diameter <= 0:
-                        return {"success": False, "error": "⚠️ 口径直径必须为正值"}
+                        return {"success": False, "error": tr("gain.err_dia_positive", "⚠️ 口径直径必须为正值")}
                     
                     # 单位转换
                     diameter_unit = self._diameter_unit.currentText()
@@ -480,20 +480,20 @@ class GainTool(ToolBase):
                     height_text = self._height_input.text().strip()
                     
                     if not width_text:
-                        return {"success": False, "error": "⚠️ 请输入口径宽度"}
+                        return {"success": False, "error": tr("gain.err_no_w", "⚠️ 请输入口径宽度")}
                     if not height_text:
-                        return {"success": False, "error": "⚠️ 请输入口径高度"}
+                        return {"success": False, "error": tr("gain.err_no_h_dim", "⚠️ 请输入口径高度")}
                     
                     try:
                         width = float(width_text)
                         height = float(height_text)
                     except ValueError:
-                        return {"success": False, "error": "⚠️ 尺寸格式错误，请输入有效数字"}
+                        return {"success": False, "error": tr("gain.err_format_dim", "⚠️ 尺寸格式错误，请输入有效数字")}
                     
                     if width <= 0:
-                        return {"success": False, "error": "⚠️ 口径宽度必须为正值"}
+                        return {"success": False, "error": tr("gain.err_w_positive", "⚠️ 口径宽度必须为正值")}
                     if height <= 0:
-                        return {"success": False, "error": "⚠️ 口径高度必须为正值"}
+                        return {"success": False, "error": tr("gain.err_h_positive", "⚠️ 口径高度必须为正值")}
                     
                     # 宽度单位转换
                     width_unit = self._width_unit.currentText()
@@ -521,23 +521,23 @@ class GainTool(ToolBase):
                 value_text = self._convert_input.text().strip()
                 
                 if not value_text:
-                    return {"success": False, "error": "⚠️ 请输入增益值"}
+                    return {"success": False, "error": tr("gain.err_no_gain", "⚠️ 请输入增益值")}
                 
                 try:
                     value = float(value_text)
                 except ValueError:
-                    return {"success": False, "error": "⚠️ 增益值格式错误，请输入有效数字"}
+                    return {"success": False, "error": tr("gain.err_format_gain", "⚠️ 增益值格式错误，请输入有效数字")}
                 
                 from_unit = self._convert_from_unit.currentText()
                 to_unit = self._convert_to_unit.currentText()
                 
                 # 映射单位名称
-                unit_map = {"dBi": "dBi", "dBd": "dBd", "线性值": "linear"}
+                unit_map = {"dBi": "dBi", "dBd": "dBd", tr("gain.linear_val", "线性值"): "linear"}
                 from_u = unit_map.get(from_unit, from_unit)
                 to_u = unit_map.get(to_unit, to_unit)
                 
                 if from_u == "linear" and value <= 0:
-                    return {"success": False, "error": "⚠️ 线性增益必须为正值"}
+                    return {"success": False, "error": tr("gain.err_linear_positive", "⚠️ 线性增益必须为正值")}
                 
                 # 计算所有单位的值
                 gain_dbi = self._calculator.convert_gain(value, from_u, "dBi")
@@ -553,7 +553,7 @@ class GainTool(ToolBase):
                 return {"success": True, "result": result, "method": "convert"}
             
         except Exception as e:
-            return {"success": False, "error": f"⚠️ 计算错误: {str(e)}"}
+            return {"success": False, "error": tr("gain.err_calc", "⚠️ 计算错误: {0}").format(str(e))}
     
     def _do_calculate(self):
         """执行计算并更新显示"""
@@ -576,11 +576,11 @@ class GainTool(ToolBase):
             
             # 估算波束宽度
             theta_e, theta_h = self._calculator.estimate_beamwidth_from_gain(result.gain_dbi)
-            self._beamwidth_estimate_label.setText(f"≈ {theta_e:.1f}° × {theta_h:.1f}° (对称假设)")
+            self._beamwidth_estimate_label.setText(tr("gain.est_res", "≈ {0:.1f}° × {1:.1f}° (对称假设)").format(theta_e, theta_h))
             
         else:
             # 显示错误提示
-            self._error_label.setText(calc_result.get("error", "未知错误"))
+            self._error_label.setText(calc_result.get("error", tr("gain.err_unknown", "未知错误")))
             self._error_label.show()
             
             self._gain_dbi_label.setText("--")
@@ -592,87 +592,114 @@ class GainTool(ToolBase):
     # ==================== 四维度知识内容 ====================
     
     def get_intuition_content(self) -> Optional[str]:
-        """直观理解 - 物理本质"""
-        return """
-        <b>📡 什么是天线增益？</b><br><br>
+        return tr("gain.intuition", """
+        <b>📡 {t_what_is}</b><br><br>
         
-        天线增益描述天线在特定方向上<b>聚焦能量</b>的能力。
-        就像手电筒的反射镜把灯泡的光聚集成一束光一样。<br><br>
+        {t_desc_1}<br><br>
         
-        <b>🎯 关键概念:</b><br>
-        • <b>dBi</b>: 相对于理想全向天线的增益<br>
-        • <b>dBd</b>: 相对于半波偶极子的增益<br>
+        <b>🎯 {t_key_concept}:</b><br>
+        • <b>dBi</b>: {t_dbi_desc}<br>
+        • <b>dBd</b>: {t_dbd_desc}<br>
         • dBi = dBd + 2.15<br><br>
         
-        <b>💡 核心理解:</b> 天线不能"放大"信号，只能把能量集中到
-        特定方向，牺牲其他方向来换取更强的定向辐射。
-        """
+        <b>💡 {t_core}:</b> {t_core_desc}
+        """).format(
+            t_what_is=tr("gain.dd_what_is", "什么是天线增益？"),
+            t_desc_1=tr("gain.dd_desc_1", "天线增益描述天线在特定方向上<b>聚焦能量</b>的能力。就像手电筒的反射镜把灯泡的光聚集成一束光一样。"),
+            t_key_concept=tr("gain.dd_key_concept", "关键概念"),
+            t_dbi_desc=tr("gain.dd_dbi_desc", "相对于理想全向天线的增益"),
+            t_dbd_desc=tr("gain.dd_dbd_desc", "相对于半波偶极子的增益"),
+            t_core=tr("gain.dd_core", "核心理解"),
+            t_core_desc=tr("gain.dd_core_desc", "天线不能\"放大\"信号，只能把能量集中到特定方向，牺牲其他方向来换取更强的定向辐射。")
+        )
     
     def get_math_model_content(self) -> Optional[str]:
-        """数学模型 - 精确公式"""
-        return """
-        <b>📐 增益公式</b><br><br>
+        return tr("gain.math_model", """
+        <b>📐 {t_formula}</b><br><br>
         
-        <b>波束宽度法:</b><br>
+        <b>{t_method_beam}:</b><br>
         <span style="font-family: 'Cambria Math', serif; font-size: 15px;">
         G ≈ 41253 / (θ<sub>E</sub> × θ<sub>H</sub>)
         </span><br>
-        其中 θ 为半功率(-3dB)波束宽度(度)<br><br>
+        {t_beam_desc}<br><br>
         
-        <b>口径效率法:</b><br>
+        <b>{t_method_apt}:</b><br>
         <span style="font-family: 'Cambria Math', serif; font-size: 15px;">
         G = η × (πD/λ)²
         </span><br>
-        其中 η 为口径效率, D 为直径, λ 为波长<br><br>
+        {t_apt_desc}<br><br>
         
-        <b>单位转换:</b><br>
+        <b>{t_unit_conv}:</b><br>
         <span style="font-family: 'Cambria Math', serif; font-size: 15px;">
         G(dBi) = G(dBd) + 2.15<br>
         G(线性) = 10^(G(dB)/10)
         </span>
-        """
+        """).format(
+            t_formula=tr("gain.dd_formula", "增益公式"),
+            t_method_beam=tr("gain.dd_method_beam", "波束宽度法"),
+            t_beam_desc=tr("gain.dd_beam_desc", "其中 θ 为半功率(-3dB)波束宽度(度)"),
+            t_method_apt=tr("gain.dd_method_apt", "口径效率法"),
+            t_apt_desc=tr("gain.dd_apt_desc", "其中 η 为口径效率, D 为直径, λ 为波长"),
+            t_unit_conv=tr("gain.dd_unit_conv", "单位转换")
+        )
     
     def get_engineering_content(self) -> Optional[str]:
-        """工程边界 - 适用范围与避坑"""
-        return """
-        <b>✅ 典型天线增益参考:</b><br>
+        return tr("gain.eng_content", """
+        <b>✅ {t_ref_title}:</b><br>
         <table style="margin: 8px 0;">
-        <tr><td>半波偶极子</td><td>→ 2.15 dBi (0 dBd)</td></tr>
-        <tr><td>八木天线(5单元)</td><td>→ 10~12 dBi</td></tr>
-        <tr><td>喇叭天线</td><td>→ 15~25 dBi</td></tr>
-        <tr><td>抛物面(1m@10GHz)</td><td>→ 35~40 dBi</td></tr>
+        <tr><td>{t_dipole}</td><td>→ 2.15 dBi (0 dBd)</td></tr>
+        <tr><td>{t_yagi}</td><td>→ 10~12 dBi</td></tr>
+        <tr><td>{t_horn}</td><td>→ 15~25 dBi</td></tr>
+        <tr><td>{t_para}</td><td>→ 35~40 dBi</td></tr>
         </table><br>
         
-        <b>⚠️ 注意事项:</b><br><br>
+        <b>⚠️ {t_notice}:</b><br><br>
         
         <span style="background-color: #FED7D7; padding: 4px 8px; border-radius: 4px; color: #C53030;">
-        ❌ 常见误区
+        ❌ {t_err_title}
         </span><br>
-        • 波束宽度法是<b>近似公式</b>，精度约±1~2dB<br>
-        • 常数K因天线类型而异 (26000~41253)<br><br>
+        • {t_err_1}<br>
+        • {t_err_2}<br><br>
         
         <span style="background-color: #C6F6D5; padding: 4px 8px; border-radius: 4px; color: #276749;">
-        💡 口径效率典型值
+        💡 {t_tip_title}
         </span><br>
-        抛物面: 0.5~0.6 | 喇叭: 0.6~0.7 | 优化型: 0.7~0.85
-        """
+        {t_tip_1}
+        """).format(
+            t_ref_title=tr("gain.dd_ref_title", "典型天线增益参考"),
+            t_dipole=tr("gain.dd_dipole", "半波偶极子"),
+            t_yagi=tr("gain.dd_yagi", "八木天线(5单元)"),
+            t_horn=tr("gain.dd_horn", "喇叭天线"),
+            t_para=tr("gain.dd_para", "抛物面(1m@10GHz)"),
+            t_notice=tr("gain.dd_notice", "注意事项"),
+            t_err_title=tr("gain.dd_err_title", "常见误区"),
+            t_err_1=tr("gain.dd_err_1", "波束宽度法是<b>近似公式</b>，精度约±1~2dB"),
+            t_err_2=tr("gain.dd_err_2", "常数K因天线类型而异 (26000~41253)"),
+            t_tip_title=tr("gain.dd_tip_title", "口径效率典型值"),
+            t_tip_1=tr("gain.dd_tip_1", "抛物面: 0.5~0.6 | 喇叭: 0.6~0.7 | 优化型: 0.7~0.85")
+        )
     
     def get_history_content(self) -> Optional[str]:
-        """发现历史 - 趣味故事"""
-        return """
-        <b>📜 天线增益的故事</b><br><br>
+        return tr("gain.history_content", """
+        <b>📜 {t_hist_title}</b><br><br>
         
-        <b>1888年</b> - 赫兹用抛物面反射器进行了最早的
-        "高增益"天线实验，证明了电磁波可以像光一样被聚焦。<br><br>
+        <b>{t_era1}</b> - {t_era1_desc}<br><br>
         
-        <b>1926年</b> - 八木秀次和宇田太郎发明了"八木天线"，
-        成为世界上最著名的高增益天线，至今仍广泛用于电视接收。<br><br>
+        <b>{t_era2}</b> - {t_era2_desc}<br><br>
         
-        <b>1960年代</b> - 阿雷西博射电望远镜建成，305米口径
-        提供了约70dBi的惊人增益，用于探测遥远的宇宙信号。<br><br>
+        <b>{t_era3}</b> - {t_era3_desc}<br><br>
         
-        <i>💭 天线增益是无源的，就像放大镜聚焦阳光——不创造能量，只是重新分配！</i>
-        """
+        <i>💭 {t_quote}</i>
+        """).format(
+            t_hist_title=tr("gain.hist_title", "天线增益的故事"),
+            t_era1=tr("gain.hist_era1", "1888年"),
+            t_era1_desc=tr("gain.hist_era1_desc", "赫兹用抛物面反射器进行了最早的\"高增益\"天线实验，证明了电磁波可以像光一样被聚焦。"),
+            t_era2=tr("gain.hist_era2", "1926年"),
+            t_era2_desc=tr("gain.hist_era2_desc", "八木秀次和宇田太郎发明了\"八木天线\"，成为世界上最著名的高增益天线，至今仍广泛用于电视接收。"),
+            t_era3=tr("gain.hist_era3", "1960年代"),
+            t_era3_desc=tr("gain.hist_era3_desc", "阿雷西博射电望远镜建成，305米口径提供了约70dBi的惊人增益，用于探测遥远的宇宙信号。"),
+            t_quote=tr("gain.hist_quote", "天线增益是无源的，就像放大镜聚焦阳光——不创造能量，只是重新分配！")
+        )
 
     def retranslate_ui(self, lang: str = ""):
         super().retranslate_ui(lang)

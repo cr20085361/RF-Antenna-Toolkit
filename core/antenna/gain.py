@@ -3,7 +3,7 @@
 射频天线工具集 - 天线增益计算模块
 RF Antenna Toolkit - Antenna Gain Calculator
 
-版本: v1.0.0
+版本: v2.0.0
 功能: 提供多种天线增益计算方法
 """
 

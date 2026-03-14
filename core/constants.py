@@ -3,7 +3,7 @@
 射频天线工具集 - 物理常数定义
 RF Antenna Toolkit - Physical Constants
 
-版本: v1.0.0
+版本: v2.0.0
 功能: 定义射频和天线计算中常用的物理常数
 """
 

@@ -3,7 +3,7 @@
 射频天线工具集 - 阻抗计算工具
 RF Antenna Toolkit - Impedance Calculator Tool
 
-版本: v1.0.0
+版本: v2.0.0
 功能: 计算传输线特性阻抗
 支持结构:
   1. 同轴线 (Coaxial)
@@ -631,7 +631,7 @@ class ImpedanceTool(ToolBase):
             if inner <= 0 or outer <= 0:
                 raise ValueError(tr("impedance.err_dim"))
             if outer <= inner:
-                raise ValueError(tr("impedance", "err_d_D"))
+                raise ValueError(tr("impedance.err_d_D", "外径必须大于内径"))
             result = self.calculator.calculate_coaxial(inner, outer, er)
             self._coax_z_input.setText(f"{result.impedance:.2f}")
             self._show_result(result, "coaxial")
@@ -640,7 +640,7 @@ class ImpedanceTool(ToolBase):
             # 反算内径 d: Z₀, D, εr → d
             target_z = float(self._coax_z_input.text() or 0)
             if target_z <= 0 or outer <= 0:
-                raise ValueError(tr("impedance", "err_z_D"))
+                raise ValueError(tr("impedance.err_z_D", "目标阻抗和外径必须大于0"))
             # d = D / exp(Z₀ × √εr / 60)
             import math
             d = outer / math.exp(target_z * math.sqrt(er) / 60)
@@ -653,7 +653,7 @@ class ImpedanceTool(ToolBase):
             # 反算外径 D: Z₀, d, εr → D
             target_z = float(self._coax_z_input.text() or 0)
             if target_z <= 0 or inner <= 0:
-                raise ValueError(tr("impedance.err_z_d"))
+                raise ValueError(tr("impedance.err_z_d", "目标阻抗和内径必须大于0"))
             D = self.calculator.solve_coaxial_outer(target_z, inner, er)
             self._set_mm_value(self._coax_outer_input, "coax_D", D)
             result = self.calculator.calculate_coaxial(inner, D, er)
@@ -678,7 +678,7 @@ class ImpedanceTool(ToolBase):
             # 反算线宽 W: Z₀, H, T, εr → W
             target_z = float(self._ms_z_input.text() or 0)
             if target_z <= 0 or height <= 0:
-                raise ValueError(tr("impedance", "err_z_H"))
+                raise ValueError(tr("impedance.err_z_H", "目标阻抗和介质厚度必须大于0"))
             W = self.calculator.solve_microstrip_width(target_z, height, er, thickness)
             self._set_mm_value(self._ms_width_input, "ms_W", W)
             result = self.calculator.calculate_microstrip(W, height, er, thickness)
@@ -688,7 +688,7 @@ class ImpedanceTool(ToolBase):
             # 反算介质厚度 H: Z₀, W, T, εr → H (二分法)
             target_z = float(self._ms_z_input.text() or 0)
             if target_z <= 0 or width <= 0:
-                raise ValueError(tr("impedance", "err_z_W"))
+                raise ValueError(tr("impedance.err_z_W", "目标阻抗和线宽必须大于0"))
             H = self._bisect_solve(
                 lambda h: self.calculator.calculate_microstrip(width, h, er, thickness).impedance,
                 target_z, 0.01, 10.0, increasing=True
@@ -795,7 +795,7 @@ class ImpedanceTool(ToolBase):
         if solved:
             param_name, param_value = solved
             self._impedance_label.setText(f"{param_name} = {param_value:.4f} mm")
-            self._quality_label.setText(f"{tr("impedance.eval_veri")}{result.impedance:.2f} Ω")
+            self._quality_label.setText(f"{tr('impedance.eval_veri')}{result.impedance:.2f} Ω")
             self._quality_label.setStyleSheet("QLabel { font-size: 14px; color: #38A169; }")
         else:
             self._impedance_label.setText(f"{result.impedance:.2f} Ω")
@@ -856,7 +856,7 @@ class ImpedanceTool(ToolBase):
             elif attr == "placeholder":
                 widget.setPlaceholderText(tr(f"{category}.{key}"))
             elif attr == "text_colon":
-                widget.setText(f"{tr(f"{category}.{key}")}:")
+                widget.setText(f"{tr(f'{category}.{key}')}:")
                 
         # combobox custom edit
         idx0 = self._coax_er_combo.findData(None)

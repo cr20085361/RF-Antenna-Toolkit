@@ -37,19 +37,22 @@ class ESeriesTableTool(ToolBase):
     # 在这里我们使用算法动态生成，避免冗长的硬编码
     
     SERIES_CONFIG = {
-        "E6"  : {"tol": "±20%", "sig_figs": 2, "desc": "基础容差，适用于早期粗精度元件或大电解电容"},
-        "E12" : {"tol": "±10%", "sig_figs": 2, "desc": "常规容差，多用于普通电容及非关键电路电阻"},
-        "E24" : {"tol": "±5%",  "sig_figs": 2, "desc": "【最常用】标准碳膜/厚膜电阻、主流片式电容及电感"},
-        "E48" : {"tol": "±2%",  "sig_figs": 3, "desc": "较高精度，主要用于金属膜电阻 (使用3位有效数字)"},
-        "E96" : {"tol": "±1%",  "sig_figs": 3, "desc": "【高精常用】精密金属膜/贴片电阻 (1%阻值必须选用此表)"},
-        "E192": {"tol": "±0.5% 及以下", "sig_figs": 3, "desc": "最高精度，用于仪器仪表级超精细电阻 (0.5%, 0.25%, 0.1%)"}
+        "E6"  : {"tol": "±20%", "sig_figs": 2, "desc": tr("eseries.desc_e6", "基础容差，适用于早期粗精度元件或大电解电容")},
+        "E12" : {"tol": "±10%", "sig_figs": 2, "desc": tr("eseries.desc_e12", "常规容差，多用于普通电容及非关键电路电阻")},
+        "E24" : {"tol": "±5%",  "sig_figs": 2, "desc": tr("eseries.desc_e24", "【最常用】标准碳膜/厚膜电阻、主流片式电容及电感")},
+        "E48" : {"tol": "±2%",  "sig_figs": 3, "desc": tr("eseries.desc_e48", "较高精度，主要用于金属膜电阻 (使用3位有效数字)")},
+        "E96" : {"tol": "±1%",  "sig_figs": 3, "desc": tr("eseries.desc_e96", "【高精常用】精密金属膜/贴片电阻 (1%阻值必须选用此表)")},
+        "E192": {"tol": "±0.5% 及以下", "sig_figs": 3, "desc": tr("eseries.desc_e192", "最高精度，用于仪器仪表级超精细电阻 (0.5%, 0.25%, 0.1%)")}
     }
 
     def __init__(self, parent=None):
         self.tool_id = "eseries_table"
-        self.tool_name = "元件标称值 (E系列)"
+        self.tool_name = tr("nominal.tool_name", "标称值速查")
         self.tool_icon = "🏷️"
-        self.tool_description = "依据 IEC 60063 查询电阻/电容/电感的标准标称值，支持任意值就近匹配"
+        self.tool_category = "reference"
+        self.tool_description = tr("nominal.tool_desc", "标准电阻(E24/E96)、电感(E12/E24)、电容常用标称值速查表")
+        self.i18n_title_key = "nominal.tool_name"
+        self.i18n_desc_key = "nominal.tool_desc"
         
         self._current_series = "E24"
         self._table = None
@@ -85,7 +88,7 @@ class ESeriesTableTool(ToolBase):
         sg_layout = QVBoxLayout(series_group)
         sg_layout.setContentsMargins(0, 0, 0, 0)
         
-        sg_layout.addWidget(QLabel("<b>1. 选择容差标准 (E 系列)</b>"))
+        sg_layout.addWidget(QLabel(tr("eseries.lbl_select_standard", "<b>1. 选择容差标准 (E 系列)</b>")))
         
         self._combo_series = QComboBox()
         self._combo_series.addItems(list(self.SERIES_CONFIG.keys()))
@@ -113,16 +116,16 @@ class ESeriesTableTool(ToolBase):
         mg_layout = QVBoxLayout(match_group)
         mg_layout.setContentsMargins(0, 0, 0, 0)
         
-        mg_layout.addWidget(QLabel("<b>2. 智能就近匹配</b>"))
-        mg_layout.addWidget(QLabel("<span style='color:#718096;font-size:12px;'>输入理论计算值，寻找最接近的标准元件</span>"))
+        mg_layout.addWidget(QLabel(tr("eseries.lbl_smart_match", "<b>2. 智能就近匹配</b>")))
+        mg_layout.addWidget(QLabel(tr("eseries.lbl_smart_match_desc", "<span style='color:#718096;font-size:12px;'>输入理论计算值，寻找最接近的标准元件</span>")))
         
         input_layout = QHBoxLayout()
         self._search_input = QLineEdit()
-        self._search_input.setPlaceholderText("例如: 4700 或 3.8")
+        self._search_input.setPlaceholderText(tr("eseries.ph_match_input", "例如: 4700 或 3.8"))
         self._search_input.setFixedHeight(36)
         self._search_input.returnPressed.connect(self._do_match)
         
-        btn_match = QPushButton("匹配")
+        btn_match = QPushButton(tr("eseries.btn_match", "匹配"))
         btn_match.setFixedHeight(36)
         btn_match.setCursor(Qt.CursorShape.PointingHandCursor)
         btn_match.clicked.connect(self._do_match)
@@ -159,7 +162,7 @@ class ESeriesTableTool(ToolBase):
         layout.setContentsMargins(0, 0, 0, 0)
         
         # 表格标题
-        self._table_title = QLabel("E24 标准标称值基数 (1.0 ~ 9.9)")
+        self._table_title = QLabel(tr("eseries.table_title_e24", "E24 标准标称值基数 (1.0 ~ 9.9)"))
         self._table_title.setStyleSheet("font-size: 14px; font-weight: bold; margin-bottom: 5px;")
         layout.addWidget(self._table_title)
         
@@ -205,16 +208,16 @@ class ESeriesTableTool(ToolBase):
         config = self.SERIES_CONFIG[series]
         
         desc = (
-            f"<b>容差标准:</b> {config['tol']}<br>"
-            f"<b>有效数字:</b> {config['sig_figs']} 位<br>"
-            f"<b>典型应用:</b> {config['desc']}"
+            f"<b>{tr('eseries.lbl_tolerance_std', '容差标准:')}</b> {config['tol']}<br>"
+            f"<b>{tr('eseries.lbl_sig_figs', '有效数字:')}</b> {config['sig_figs']} {tr('eseries.lbl_digits', '位')}<br>"
+            f"<b>{tr('eseries.lbl_typical_app', '典型应用:')}</b> {config['desc']}"
         )
         self._desc_label.setText(desc)
         
         if self._table:
             self._update_table()
             # 更新表头提示
-            self._table_title.setText(f"{series} 标准元器件数值速查表 (×0.01 ~ ×1M)")
+            self._table_title.setText(tr("eseries.table_title_dynamic", "{0} 标准元器件数值速查表 (×0.01 ~ ×1M)").format(series))
             
         # 如果搜索框有值，重新匹配
         if self._search_input and self._search_input.text().strip():
@@ -288,7 +291,7 @@ class ESeriesTableTool(ToolBase):
                 raise ValueError
         except ValueError:
             self._match_result.show()
-            self._match_result.setText("<span style='color:#E53E3E;'>错误: 请输入有效的正数计算值</span>")
+            self._match_result.setText(tr("eseries.err_invalid_input", "<span style='color:#E53E3E;'>错误: 请输入有效的正数计算值</span>"))
             return
             
         # 1. 提取数量级 (乘数) 和底数
@@ -329,13 +332,13 @@ class ESeriesTableTool(ToolBase):
         base_str = f"{closest_base:.1f}" if self.SERIES_CONFIG[self._current_series]["sig_figs"] == 2 else f"{closest_base:.2f}"
         result_html = (
             f"<div style='margin-bottom: 5px;'>"
-            f"目标理论值: <b>{format_val(target_val)}</b></div>"
+            f"{tr('eseries.target_theoretical', '目标理论值:')} <b>{format_val(target_val)}</b></div>"
             f"<div style='color: #2B6CB0; font-size: 14px; margin-bottom: 5px;'>"
-            f"→ 最匹配的 <b>{self._current_series}</b> 标称值:<br>"
+            f"→ {tr('eseries.best_match', '最匹配的')} <b>{self._current_series}</b> {tr('eseries.nominal_val', '标称值:')}<br>"
             f"<b><span style='font-size: 18px;'>{format_val(standard_val)}</span></b> "
-            f"(基数 {base_str} ×10<sup>{power}</sup>)</div>"
+            f"({tr('eseries.base_val', '基数')} {base_str} ×10<sup>{power}</sup>)</div>"
             f"<div style='color: {'#E53E3E' if abs(error_pct)>5 else '#38A169'};'>"
-            f"偏差率: <b>{error_pct:+.2f}%</b></div>"
+            f"{tr('eseries.deviation_rate', '偏差率:')} <b>{error_pct:+.2f}%</b></div>"
         )
         self._match_result.setText(result_html)
         self._match_result.show()

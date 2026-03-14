@@ -3,7 +3,7 @@
 射频天线工具集 - 视距计算工具
 RF Antenna Toolkit - Line-of-Sight Calculator Tool
 
-版本: v1.0.0
+版本: v2.0.0
 功能: 地球曲率视距、仰角计算、双站视距等
 """
 
@@ -34,8 +34,8 @@ class LOSTool(ToolBase):
     """
     
     # 工具元信息
-    tool_name = "视距计算"
-    tool_icon = "🌍"
+    tool_name = tr("los.tool_name", "视距计算")
+    tool_icon = "🔭"
     tool_category = "antenna"
     tool_description = "地球曲率视距与仰角计算"
     
@@ -468,7 +468,7 @@ class LOSTool(ToolBase):
                 result: HorizonResult = calc_result["result"]
                 self._main_title.setText(tr("los.radio_horizon"))
                 self._result1_label.setText(f"{result.radio_horizon_km:.2f} km")
-                self._result2_label.setText(f"{tr("los.horizon_opt")} {result.optical_horizon_km:.2f} km")
+                self._result2_label.setText(f"{tr('los.horizon_opt')} {result.optical_horizon_km:.2f} km")
                 self._quality_label.setText(tr("los.horizon_qual"))
                 
                 self._lbl_param1.setText(tr("los.horizon_d1")); self._detail1_label.setText(f"{result.antenna_height_m:.1f} m")
@@ -479,7 +479,7 @@ class LOSTool(ToolBase):
                 result: ElevationResult = calc_result["result"]
                 self._main_title.setText(tr("los.radio_ele"))
                 self._result1_label.setText(f"{result.corrected_angle_deg:.3f}°")
-                self._result2_label.setText(f"{tr("los.ele_geom")} {result.geometric_angle_deg:.3f}°")
+                self._result2_label.setText(f"{tr('los.ele_geom')} {result.geometric_angle_deg:.3f}°")
                 qual = self._calculator.get_elevation_quality(result.corrected_angle_deg)
                 qual_map = {"✅ 仰角较大，受地球曲率影响小": "✅ Large angle, small Earth curvature effect", "⚠️ 低仰角，地球曲率修正显著": "⚠️ Low angle, significant Earth curvature effect", "❌ 超出视距或被地球遮挡": "❌ Beyond horizon or Earth blocked"}
                 self._quality_label.setText(qual_map.get(qual, qual) if "✅" not in tr("los.tool_name") and "a" in tr("los.tool_name") else qual)

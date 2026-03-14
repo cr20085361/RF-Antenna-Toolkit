@@ -3,7 +3,7 @@
 射频天线工具集 - 收发距离计算模块
 RF Antenna Toolkit - Range Calculator Module
 
-版本: v1.0.0
+版本: v2.0.0
 功能: 根据 Friis 传输方程计算最远收发通信距离
 """
 

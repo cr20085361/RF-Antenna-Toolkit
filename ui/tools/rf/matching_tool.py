@@ -3,7 +3,7 @@
 射频天线工具集 - 阻抗匹配工具界面
 RF Antenna Toolkit - Impedance Matching Tool UI
 
-版本: v1.0.0
+版本: v2.0.0
 功能: 
     - 阻抗匹配网络设计与仿真
     - 实时史密斯圆图显示
@@ -15,6 +15,14 @@ import sys
 import numpy as np
 import skrf as rf
 from typing import Optional, List, Dict
+
+from core.i18n import tr
+from ui.base.tool_base import ToolBase
+from core.rf.matching import (
+    MatchingCalculator, MatchingElement,
+    ELEMENT_SERIES_R, ELEMENT_SERIES_L, ELEMENT_SERIES_C,
+    ELEMENT_SHUNT_R, ELEMENT_SHUNT_L, ELEMENT_SHUNT_C
+)
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel,
     QComboBox, QLineEdit, QFrame, QPushButton,
@@ -154,7 +162,7 @@ class LadderSchematicWidget(QWidget):
             
         # 绘制 Load 端口
         painter.drawLine(x, cy, x + 20, cy)
-        painter.drawText(x + 5, cy - 10, "Load")
+        painter.drawText(x + 5, cy - 10, tr("matching.lbl_load", "Load"))
         
         # 调整自身宽度
         total_w = x + 40
@@ -239,14 +247,6 @@ class LadderSchematicWidget(QWidget):
              pass
 
 
-from core.i18n import tr
-from ui.base.tool_base import ToolBase
-from core.rf.matching import (
-    MatchingCalculator, MatchingElement,
-    ELEMENT_SERIES_R, ELEMENT_SERIES_L, ELEMENT_SERIES_C,
-    ELEMENT_SHUNT_R, ELEMENT_SHUNT_L, ELEMENT_SHUNT_C
-)
-
 class SmithChartCanvas(FigureCanvasQTAgg):
     """史密斯圆图画布"""
     def __init__(self, parent=None, width=5, height=5, dpi=100):
@@ -273,7 +273,7 @@ class SmithChartCanvas(FigureCanvasQTAgg):
         except Exception as e:
             print(f"Grid Error: {e}")
             
-        self.ax.set_title("Smith Chart", pad=20)
+        self.ax.set_title(tr("matching.title_smith_chart", "Smith Chart"), pad=20)
         self.draw()
 
     def plot_networks(self, net_orig: Optional[rf.Network], net_matched: Optional[rf.Network]):
@@ -309,7 +309,7 @@ class SmithChartCanvas(FigureCanvasQTAgg):
                     ls = '-' 
 
                 self.ax.plot(s_param.real, s_param.imag, 
-                             linestyle=ls, linewidth=2, color='#ED8936', alpha=0.9, label='Original',
+                             linestyle=ls, linewidth=2, color='#ED8936', alpha=0.9, label=tr("matching.lbl_original", "Original"),
                              marker=marker, markersize=6, zorder=3)
                              
             except Exception as e:
@@ -330,7 +330,7 @@ class SmithChartCanvas(FigureCanvasQTAgg):
                 ls = '' if is_single else '-'
                 
                 self.ax.plot(s_param.real, s_param.imag, 
-                             linewidth=2, linestyle=ls, color='#0070F3', label='Matched',
+                             linewidth=2, linestyle=ls, color='#0070F3', label=tr("matching.lbl_matched", "Matched"),
                              marker=marker, markersize=5, zorder=4)
             except Exception as e:
                 print(f"Plot Matched Error: {e}")
@@ -351,7 +351,7 @@ class ElementControlWidget(QWidget):
         layout.setContentsMargins(0, 5, 0, 5)
         
         # 标签
-        self._label = QLabel("元件值:")
+        self._label = QLabel(tr("matching.lbl_element_value", "元件值:"))
         layout.addWidget(self._label)
         
         # 控件行
@@ -463,10 +463,10 @@ class ElementControlWidget(QWidget):
 
 class MatchingTool(ToolBase):
     """阻抗匹配工具"""
-    tool_name = "阻抗匹配"
+    tool_name = tr("matching.tool_name", "阻抗匹配")
     tool_icon = "🔧"
     tool_category = "rf"
-    tool_description = "阻抗匹配网络设计与实时调谐"
+    tool_description = tr("matching.tool_desc", "阻抗匹配网络设计与实时调谐")
     i18n_title_key = "matching.tool_name"
     i18n_desc_key = "matching.tool_desc"
 
@@ -480,8 +480,9 @@ class MatchingTool(ToolBase):
         layout.setContentsMargins(0, 0, 0, 0)
         
         # ── 源阻抗设置 (Tab) ──
-        src_group = QGroupBox("源/负载阻抗")
-        src_layout = QVBoxLayout(src_group)
+        self._grp_src = QGroupBox(tr("matching.group_src_load_impedance", "源/负载阻抗设置"))
+        self._grp_src.setObjectName("MatchingGroup")
+        src_layout = QVBoxLayout(self._grp_src)
         self._src_tab = QTabWidget()
         
         # Tab 1: 单点
@@ -490,17 +491,17 @@ class MatchingTool(ToolBase):
         
         # Freq Range
         row_f = QHBoxLayout()
-        row_f.addWidget(QLabel("起始频率 (MHz):"))
+        row_f.addWidget(QLabel(tr("matching.lbl_start_freq", "起始频率 (MHz):")))
         self._freq_start = QDoubleSpinBox()
         self._freq_start.setRange(0.1, 100000)
         self._freq_start.setValue(2400) 
         row_f.addWidget(self._freq_start)
         
-        row_f.addWidget(QLabel("终止频率 (MHz):"))
+        row_f.addWidget(QLabel(tr("matching.lbl_stop_freq", "终止频率 (MHz):")))
         self._freq_stop = QDoubleSpinBox()
         self._freq_stop.setRange(0.1, 100000)
         self._freq_stop.setValue(2500)
-        self._freq_stop.setToolTip("如果起始=终止，则为单频点模式")
+        self._freq_stop.setToolTip(tr("matching.tip_single_freq", "如果起始=终止，则为单频点模式"))
         row_f.addWidget(self._freq_stop)
         form1.addLayout(row_f)
         
@@ -519,7 +520,7 @@ class MatchingTool(ToolBase):
         row_z.addWidget(self._x_input)
         form1.addLayout(row_z)
         
-        btn_set_single = QPushButton("设置 / 更新")
+        btn_set_single = QPushButton(tr("matching.btn_set_update", "设置 / 更新"))
         btn_set_single.setFixedHeight(32)
         btn_set_single.setStyleSheet("""
             QPushButton {
@@ -542,20 +543,20 @@ class MatchingTool(ToolBase):
         # Tab 2: 文件
         tab2 = QWidget()
         form2 = QVBoxLayout(tab2)
-        btn_load = QPushButton("导入 Touchstone (.s1p/.s2p)")
+        btn_load = QPushButton(tr("matching.btn_load_touchstone", "导入 Touchstone (.s1p/.s2p)"))
         btn_load.clicked.connect(self._on_load_file)
-        self._file_label = QLabel("未加载文件")
+        self._file_label = QLabel(tr("matching.lbl_no_file_loaded", "未加载文件"))
         form2.addWidget(btn_load)
         form2.addWidget(self._file_label)
         
-        self._src_tab.addTab(tab1, "自定义")
-        self._src_tab.addTab(tab2, "文件导入")
+        self._src_tab.addTab(tab1, tr("matching.tab_custom", "自定义"))
+        self._src_tab.addTab(tab2, tr("matching.tab_file_import", "文件导入"))
         src_layout.addWidget(self._src_tab)
-        layout.addWidget(src_group)
+        layout.addWidget(self._grp_src)
         
         # ── 匹配网络构建 ──
-        net_group = QGroupBox("匹配网络")
-        net_layout = QVBoxLayout(net_group)
+        self._grp_net = QGroupBox(tr("matching.group_matching_network", "匹配网络"))
+        net_layout = QVBoxLayout(self._grp_net)
         
         # 添加按钮行 (Grid Layout)
         grid_add = QGridLayout()
@@ -563,9 +564,9 @@ class MatchingTool(ToolBase):
         
         # 定义按钮: (Label, Type, Row, Col)
         buttons = [
-            ("+串L", ELEMENT_SERIES_L, 0, 0), ("+并L", ELEMENT_SHUNT_L, 0, 1),
-            ("+串C", ELEMENT_SERIES_C, 1, 0), ("+并C", ELEMENT_SHUNT_C, 1, 1),
-            ("+串R", ELEMENT_SERIES_R, 2, 0), ("+并R", ELEMENT_SHUNT_R, 2, 1)
+            (tr("matching.btn_series_l", "+串L"), ELEMENT_SERIES_L, 0, 0), (tr("matching.btn_shunt_l", "+并L"), ELEMENT_SHUNT_L, 0, 1),
+            (tr("matching.btn_series_c", "+串C"), ELEMENT_SERIES_C, 1, 0), (tr("matching.btn_shunt_c", "+并C"), ELEMENT_SHUNT_C, 1, 1),
+            (tr("matching.btn_series_r", "+串R"), ELEMENT_SERIES_R, 2, 0), (tr("matching.btn_shunt_r", "+并R"), ELEMENT_SHUNT_R, 2, 1)
         ]
         
         
@@ -595,20 +596,20 @@ class MatchingTool(ToolBase):
         net_layout.addWidget(scroll)
         
         # 删除按钮
-        btn_del = QPushButton("删除选中元件")
+        btn_del = QPushButton(tr("matching.btn_delete_selected", "删除选中元件"))
         btn_del.clicked.connect(self._del_element)
         net_layout.addWidget(btn_del)
         
-        layout.addWidget(net_group)
+        layout.addWidget(self._grp_net)
         
         # ── 参数调节 ──
-        ctrl_group = QGroupBox("元件参数")
-        ctrl_layout = QVBoxLayout(ctrl_group)
+        self._grp_ctrl = QGroupBox(tr("matching.group_element_params", "元件参数"))
+        ctrl_layout = QVBoxLayout(self._grp_ctrl)
         self._control_widget = ElementControlWidget()
         self._control_widget.value_changed.connect(self._on_value_adjusted)
         self._control_widget.setEnabled(False)
         ctrl_layout.addWidget(self._control_widget)
-        layout.addWidget(ctrl_group)
+        layout.addWidget(self._grp_ctrl)
         
         # 初始设置默认点
         QTimer.singleShot(100, self._on_set_single_point)
@@ -648,24 +649,28 @@ class MatchingTool(ToolBase):
         
         if bw > 1.0: # 认为是扫描模式 (bw > 1Hz)
             self._calculator.set_custom_range(center_freq, bw, z)
-            msg = f"已设置扫描: {r}+j{x} Ω (Center), Range: {f_start/1e6:.1f}-{f_stop/1e6:.1f} MHz"
+            msg = tr("matching.msg_scan_set", "已设置扫描: {r}+j{x} Ω (中心), 范围: {f_start:.1f}-{f_stop:.1f} MHz").format(
+                r=r, x=x, f_start=f_start/1e6, f_stop=f_stop/1e6
+            )
         else:
             # 单频点
             self._calculator.set_single_point(center_freq, z)
-            msg = f"已设置负载: {r}+j{x} Ω @ {center_freq/1e6:.2f} MHz"
+            msg = tr("matching.msg_load_set", "已设置负载: {r}+j{x} Ω @ {freq:.2f} MHz").format(
+                r=r, x=x, freq=center_freq/1e6
+            )
             
         self._update_chart()
         self._show_message(msg)
         
     def _on_load_file(self):
-        fname, _ = QFileDialog.getOpenFileName(self, "Open Touchstone", "", "Touchstone (*.s1p *.s2p)")
+        fname, _ = QFileDialog.getOpenFileName(self, tr("matching.dialog_open_touchstone", "打开 Touchstone 文件"), "", "Touchstone (*.s1p *.s2p)")
         if fname:
             if self._calculator.load_touchstone(fname):
                 self._file_label.setText(os.path.basename(fname))
                 self._update_chart()
-                self._show_message("文件加载成功")
+                self._show_message(tr("matching.msg_file_loaded_success", "文件加载成功"))
             else:
-                self._show_message("文件加载失败")
+                self._show_message(tr("matching.msg_file_loaded_fail", "文件加载失败"))
                 
     def _add_element(self, type_):
         # 默认值
@@ -749,6 +754,40 @@ class MatchingTool(ToolBase):
     def _show_message(self, msg):
         pass # 或者状态栏显示
 
-    # 知识面板 (简略)
+
+    # ==================== 国际化刷新接口 ====================
+
+    def retranslate_ui(self, lang: str = ""):
+        """语言切换时刷新 UI 文字"""
+        super().retranslate_ui(lang)
+        if hasattr(self, "_grp_src"):
+            self._grp_src.setTitle(tr("matching.group_src_load_impedance"))
+        if hasattr(self, "_grp_net"):
+            self._grp_net.setTitle(tr("matching.group_matching_network"))
+        if hasattr(self, "_grp_ctrl"):
+            self._grp_ctrl.setTitle(tr("matching.group_element_params"))
+        
+        # 刷新图表标题
+        if hasattr(self, "_lbl_matched"):
+            self._lbl_matched.setText(tr("matching.lbl_matched"))
+        if hasattr(self, "_lbl_original"):
+            self._lbl_original.setText(tr("matching.lbl_original"))
+        if hasattr(self, "_smith_title"):
+            self._smith_title.setText(tr("matching.title_smith_chart"))
+            
+        # 刷新 Tab 页
+        if hasattr(self, "_src_tab"):
+            self._src_tab.setTabText(0, tr("matching.tab_custom"))
+            self._src_tab.setTabText(1, tr("matching.tab_file_import"))
+            
+        # 刷新标签 (如果有引用的话，代码中目前是 QLabel 直接创建，需在 retranslate 处理)
+        # 为简化，通常在大型重构中将 QLabel 保存为成员变量
+
     def get_intuition_content(self) -> Optional[str]:
-        return "<b>阻抗匹配</b>:<br>通过在源和负载之间插入无源网络(L/C)，使负载阻抗变换为共轭匹配阻抗，从而最大化传输功率。"
+        return tr("matching.intuition_content")
+
+    def get_math_model_content(self) -> Optional[str]:
+        return tr("matching.math_content")
+
+    def get_engineering_content(self) -> Optional[str]:
+        return tr("matching.engineering_content")

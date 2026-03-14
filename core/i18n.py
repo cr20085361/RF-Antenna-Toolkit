@@ -3,7 +3,7 @@
 射频天线工具集 - 国际化 (i18n) 核心管理模块
 RF Antenna Toolkit - Internationalization Core
 
-版本: v1.0.0
+版本: v2.0.0
 功能: 单例化加载 JSON 语言字典，提供全局翻译接口和语言切换播报注册
 """
 

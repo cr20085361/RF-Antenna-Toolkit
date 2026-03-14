@@ -3,7 +3,7 @@
 射频天线工具集 - 工具基类
 RF Antenna Toolkit - Tool Base Class
 
-版本: v1.0.0
+版本: v2.0.0
 功能: 定义所有工具的基类，提供标准接口便于扩展
 """
 

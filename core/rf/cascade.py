@@ -3,7 +3,7 @@
 射频天线工具集 - 级联驻波计算模块
 RF Antenna Toolkit - Cascaded VSWR Calculator
 
-版本: v1.0.0
+版本: v2.0.0
 功能: 计算多个射频组件级联后的总驻波比范围
 """
 

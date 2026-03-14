@@ -3,7 +3,7 @@
 射频天线工具集 - 主窗口
 RF Antenna Toolkit - Main Window
 
-版本: v1.0.0
+版本: v2.0.0
 功能: 应用程序主窗口，包含导航栏和工具工作区
 """
 
@@ -81,7 +81,7 @@ class MainWindow(QMainWindow):
     
     def _setup_window(self):
         """设置窗口属性"""
-        self.setWindowTitle("射频天线工具集 v1.0")
+        self.setWindowTitle("射频天线工具集 v2.0")
         self.setMinimumSize(1200, 800)
         self.resize(1400, 900)
         
@@ -151,7 +151,7 @@ class MainWindow(QMainWindow):
         title_layout.addWidget(self._app_title_label)
         
         # 副标题
-        subtitle = QLabel("RF Antenna Toolkit v1.0 - 专业射频与天线计算工具")
+        subtitle = QLabel("RF Antenna Toolkit v2.0 - 专业射频与天线计算工具")
         subtitle.setObjectName("AppSubtitle")
         title_layout.addWidget(subtitle)
         
@@ -227,7 +227,7 @@ class MainWindow(QMainWindow):
         company_label.setStyleSheet("color: #718096; font-size: 14px;")
         company_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
-        author_label = QLabel("作者: CR | 邮箱: 625313077@qq.com | 版本: v1.0.0")
+        author_label = QLabel("作者: CR | 邮箱: 625313077@qq.com | 版本: v2.0.0")
         author_label.setStyleSheet("color: #A0AEC0; font-size: 13px;")
         author_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
@@ -258,7 +258,7 @@ class MainWindow(QMainWindow):
     def _register_tools(self):
         """注册所有工具"""
         # ==================== 天线工具 ====================
-        self._nav_bar.add_category("天线工具", "📡", i18n_key="nav.menu_antenna")
+        self._nav_bar.add_category(tr("nav.menu_antenna", "天线工具"), "📡", i18n_key="nav.menu_antenna")
         
         # 波长计算器
         self._register_tool(
@@ -341,7 +341,7 @@ class MainWindow(QMainWindow):
         )
         
         # ==================== 射频工具 ====================
-        self._nav_bar.add_category("射频工具", "📻", i18n_key="nav.menu_rf")
+        self._nav_bar.add_category(tr("nav.menu_rf", "射频计算"), "⚡", i18n_key="nav.menu_rf")
         
         # 驻波计算器
         self._register_tool(
@@ -405,9 +405,9 @@ class MainWindow(QMainWindow):
             "射频链路级联增益、NF、P1dB 计算",
             i18n_key="nav.tool_link_budget"
         )
-
+        
         # ==================== 参考手册 ====================
-        self._nav_bar.add_category("参考手册", "📖", i18n_key="nav.menu_reference")
+        self._nav_bar.add_category(tr("nav.menu_ref", "参考资料"), "📚", i18n_key="nav.menu_ref")
         
         # 频段参考表
         self._register_tool(

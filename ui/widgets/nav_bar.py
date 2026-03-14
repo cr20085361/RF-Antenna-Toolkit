@@ -3,7 +3,7 @@
 射频天线工具集 - 导航栏组件
 RF Antenna Toolkit - Navigation Bar Widget
 
-版本: v1.0.0
+版本: v2.0.0
 功能: 左侧工具导航栏，支持分类显示和工具切换
 """
 
