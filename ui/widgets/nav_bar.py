@@ -192,3 +192,10 @@ class NavBar(QWidget):
             if button.isChecked():
                 return tool_id
         return None
+
+    def clear_selection(self):
+        """清除当前工具选中状态，用于显示菜单页等非导航页面"""
+        self._button_group.setExclusive(False)
+        for button in self._tool_buttons.values():
+            button.setChecked(False)
+        self._button_group.setExclusive(True)

@@ -66,19 +66,31 @@ class ToolBase(QWidget):
         # 滚动区域内容
         scroll_content = QWidget()
         scroll_layout = QVBoxLayout(scroll_content)
-        scroll_layout.setContentsMargins(24, 24, 24, 24)
-        scroll_layout.setSpacing(20)
+        scroll_layout.setContentsMargins(20, 18, 20, 20)
+        scroll_layout.setSpacing(16)
         
+        header_row = QWidget()
+        header_layout = QHBoxLayout(header_row)
+        header_layout.setContentsMargins(0, 0, 0, 0)
+        header_layout.setSpacing(16)
+
         # 工具标题
         title_label = QLabel(f"{self.tool_icon} {self.tool_name}")
         title_label.setObjectName("ToolCardTitle")
-        scroll_layout.addWidget(title_label)
+        header_layout.addWidget(title_label, 0, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
         
         # 工具描述
         desc_label = QLabel(self.tool_description)
-        desc_label.setObjectName("ResultDescription")
+        desc_label.setObjectName("ToolHeaderDescription")
         desc_label.setWordWrap(True)
-        scroll_layout.addWidget(desc_label)
+        desc_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+        desc_label.setSizePolicy(
+            QSizePolicy.Policy.Expanding,
+            QSizePolicy.Policy.Preferred,
+        )
+        header_layout.addWidget(desc_label, 1)
+
+        scroll_layout.addWidget(header_row)
         
         # 分隔线
         separator = QFrame()
@@ -470,8 +482,9 @@ class ToolBase(QWidget):
         import sys
         
         # 1. 如果在 PyInstaller --onedir/--onefile 下运行
-        if hasattr(sys, '_MEIPASS'):
-            base_path = sys._MEIPASS
+        bundle_dir = getattr(sys, "_MEIPASS", None)
+        if bundle_dir:
+            base_path = bundle_dir
         # 2. 如果是从源码运行
         else:
             # 当前文件位于 ui/base/tool_base.py，向上三层到达项目根目录

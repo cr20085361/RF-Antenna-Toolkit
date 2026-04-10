@@ -3,23 +3,26 @@
 
 [Setup]
 AppId={{RF-ANTENNA-TOOLKIT-1234-5678}
-AppName=射频天线工具集
-AppVersion=1.0.0
-AppPublisher=RF Antenna Team
-AppPublisherURL=https://github.com/
-AppSupportURL=https://github.com/
-AppUpdatesURL=https://github.com/
+AppName=射频天线工具集_CN_v2
+AppVersion=2.1.0
+AppPublisher=成都市安泰纳科技有限公司
+AppPublisherURL=https://github.com/cr20085361/RF-Antenna-Toolkit
+AppSupportURL=https://github.com/cr20085361/RF-Antenna-Toolkit
+AppUpdatesURL=https://github.com/cr20085361/RF-Antenna-Toolkit/releases
 DefaultDirName={autopf}\RFAntennaToolkit
 DisableProgramGroupPage=yes
 ; 最终生成的安装包输出目录
 OutputDir=Output
 ; 最终生成的安装包文件名
-OutputBaseFilename=RFAntennaToolkit_Setup_v1.0.0
+OutputBaseFilename=RFAntennaToolkit_CN_v2_Setup_v2.1.0
 ; 安装包压缩算法
 Compression=lzma
 SolidCompression=yes
 ; 采用现代安装向导样式
 WizardStyle=modern
+SetupIconFile=assets\app.ico
+UninstallDisplayIcon={app}\RFAntennaToolkit.exe
+ArchitecturesInstallIn64BitMode=x64compatible
 
 [Languages]
 Name: "chinesesimp"; MessagesFile: "compiler:Default.isl"
@@ -33,10 +36,10 @@ Source: "dist\RFAntennaToolkit\*"; DestDir: "{app}"; Flags: ignoreversion recurs
 
 [Icons]
 ; 生成开始菜单快捷方式
-Name: "{autoprograms}\射频天线工具集"; Filename: "{app}\RFAntennaToolkit.exe"
+Name: "{autoprograms}\射频天线工具集_CN_v2"; Filename: "{app}\RFAntennaToolkit.exe"
 ; 生成桌面快捷方式
-Name: "{autodesktop}\射频天线工具集"; Filename: "{app}\RFAntennaToolkit.exe"; Tasks: desktopicon
+Name: "{autodesktop}\射频天线工具集_CN_v2"; Filename: "{app}\RFAntennaToolkit.exe"; Tasks: desktopicon
 
 [Run]
 ; 安装完成后是否立即运行
-Filename: "{app}\RFAntennaToolkit.exe"; Description: "{cm:LaunchProgram,射频天线工具集}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\RFAntennaToolkit.exe"; Description: "{cm:LaunchProgram,射频天线工具集_CN_v2}"; Flags: nowait postinstall skipifsilent

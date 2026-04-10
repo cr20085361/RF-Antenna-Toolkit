@@ -3,7 +3,7 @@
 射频天线工具集 - 主程序入口
 RF Antenna Toolkit - Main Entry Point
 
-版本: v1.0.0
+版本: v2.1.0
 作者: 射频天线工具集开发团队
 功能: 应用程序启动入口
 
@@ -22,13 +22,28 @@ from PyQt6.QtWidgets import QApplication, QSplashScreen
 from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtGui import QFont, QIcon, QPixmap
 
+from core.app_metadata import APP_NAME, APP_VERSION
 from ui.main_window import MainWindow
 
 def resource_path(relative_path):
     """ 获取资源的绝对路径，兼容开发环境和 PyInstaller 打包后的环境 """
-    if hasattr(sys, '_MEIPASS'):
-        return os.path.join(sys._MEIPASS, relative_path)
-    return os.path.join(os.path.abspath("."), relative_path)
+    bundle_dir = getattr(sys, "_MEIPASS", None)
+    if bundle_dir:
+        return os.path.join(bundle_dir, relative_path)
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(base_dir, relative_path)
+
+
+def build_default_font(point_size: int = 10) -> QFont:
+    """选择当前系统可用的默认界面字体"""
+    for family in ("Microsoft YaHei UI", "Microsoft YaHei", "Segoe UI", "Arial"):
+        font = QFont(family, point_size)
+        if font.exactMatch():
+            return font
+
+    font = QFont()
+    font.setPointSize(point_size)
+    return font
 
 
 def main():
@@ -40,8 +55,8 @@ def main():
     app = QApplication(sys.argv)
     
     # 设置应用程序属性
-    app.setApplicationName("射频天线工具集")
-    app.setApplicationVersion("1.0.0")
+    app.setApplicationName(APP_NAME)
+    app.setApplicationVersion(APP_VERSION)
     app.setOrganizationName("RF Antenna Toolkit")
     
     # 设置应用全局图标 (任务栏和窗口角落图标)
@@ -50,7 +65,7 @@ def main():
         app.setWindowIcon(QIcon(app_icon_path))
     
     # 设置默认字体
-    default_font = QFont("Microsoft YaHei UI", 10)
+    default_font = build_default_font(10)
     app.setFont(default_font)
     
     # ---------------- 启动画面 (Splash Screen) ----------------

@@ -11,6 +11,7 @@ RF Antenna Toolkit - Impedance Matching Core
 """
 
 import skrf as rf
+from skrf.network import z2s
 import numpy as np
 from dataclasses import dataclass, field
 from typing import List, Optional, Tuple, Dict, Union
@@ -89,7 +90,7 @@ class MatchingCalculator:
     def set_single_point(self, freq_hz: float, z_complex: complex):
         """设置单点阻抗目标"""
         f = rf.Frequency(freq_hz, freq_hz, 1, unit='hz')
-        s = rf.z2s(np.array([[[z_complex]]]), z0=self._z0)
+        s = z2s(np.array([[[z_complex]]]), z0=self._z0)
         self._load_network = rf.Network(frequency=f, s=s, z0=self._z0)
         self._load_network.name = "SinglePoint"
 
@@ -129,7 +130,7 @@ class MatchingCalculator:
                  Xc = -1.0 / (w * C)
             Z_array = R + 1j * Xc
             
-        s = rf.z2s(Z_array.reshape(-1, 1, 1), z0=self._z0)
+        s = z2s(Z_array.reshape(-1, 1, 1), z0=self._z0)
         self._load_network = rf.Network(frequency=f_obj, s=s, z0=self._z0)
         self._load_network.name = "CustomRange"
         

@@ -41,3 +41,8 @@ Thumbs.db
 Output/
 *.exe
 *.log
+tmp_*.png
+tmp_pdf_render/
+*.7z
+*.zip
+*.msi

@@ -25,7 +25,28 @@ import matplotlib
 matplotlib.use('QtAgg')
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
+from matplotlib import font_manager
 import numpy as np
+
+
+def _pick_plot_font_family() -> str:
+    """选择 Matplotlib 中实际可用的中文/界面字体，避免启动警告"""
+    preferred = [
+        "Microsoft YaHei",
+        "SimHei",
+        "Noto Sans CJK SC",
+        "Segoe UI",
+        "Arial Unicode MS",
+        "DejaVu Sans",
+    ]
+    available = {font.name for font in font_manager.fontManager.ttflist}
+    for family in preferred:
+        if family in available:
+            return family
+    return "sans-serif"
+
+
+PLOT_FONT_FAMILY = _pick_plot_font_family()
 
 
 class ConnectorInfo:
@@ -377,14 +398,14 @@ class ConnectorTableTool(ToolBase):
         ax.axis('off')
         
         # 主提示文字
-        ax.text(0.5, 0.55, "📊 点击上方表格中的连接器",
+        ax.text(0.5, 0.55, "点击上方表格中的连接器",
                 ha='center', va='center', fontsize=13,
                 color='#718096', fontweight='bold',
-                fontfamily=['Microsoft YaHei UI', 'sans-serif'])
+            fontfamily=PLOT_FONT_FAMILY)
         ax.text(0.5, 0.42, "查看 CW 功率容量 vs 频率降额曲线",
                 ha='center', va='center', fontsize=12,
                 color='#A0AEC0',
-                fontfamily=['Microsoft YaHei UI', 'sans-serif'])
+            fontfamily=PLOT_FONT_FAMILY)
         ax.text(0.5, 0.30, "P(f) = P_ref × √(f_ref / f)",
                 ha='center', va='center', fontsize=11,
                 color='#CBD5E0', fontstyle='italic')

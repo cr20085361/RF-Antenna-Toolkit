@@ -108,7 +108,14 @@ QPushButton#ToolButton:checked {
     font-weight: 600;
     color: #1A1A1A;
     padding: 0;
-    margin: 0 0 16px 0;
+    margin: 0;
+}
+
+#ToolHeaderDescription {
+    font-size: 12px;
+    color: #718096;
+    padding: 0;
+    margin: 0;
 }
 
 /* ==================== 输入控件 ==================== */
@@ -160,7 +167,7 @@ QLabel#SuccessLabel {
     border: 1px solid #68D391;
 }
 
-QLineEdit, QSpinBox, QDoubleSpinBox {
+QLineEdit, QSpinBox, QDoubleSpinBox, QPlainTextEdit {
     padding: 10px 14px;
     border: 1px solid #E2E8F0;
     border-radius: 8px;
@@ -170,12 +177,12 @@ QLineEdit, QSpinBox, QDoubleSpinBox {
     selection-background-color: #2C7BE5;
 }
 
-QLineEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus {
+QLineEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus, QPlainTextEdit:focus {
     border-color: #2C7BE5;
     outline: none;
 }
 
-QLineEdit:hover, QSpinBox:hover, QDoubleSpinBox:hover {
+QLineEdit:hover, QSpinBox:hover, QDoubleSpinBox:hover, QPlainTextEdit:hover {
     border-color: #CBD5E0;
 }
 
@@ -662,4 +669,82 @@ QToolTip {
     font-size: 12px;
     color: #718096;
     margin-top: 4px;
+}
+
+/* ==================== 菜单栏 ==================== */
+QMenuBar {
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #E2E8F0;
+    padding: 4px 12px;
+}
+
+QMenuBar::item {
+    background-color: transparent;
+    color: #4A5568;
+    padding: 8px 12px;
+    border-radius: 6px;
+}
+
+QMenuBar::item:selected {
+    background-color: #EBF4FF;
+    color: #2C7BE5;
+}
+
+QMenu {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 6px;
+}
+
+QMenu::item {
+    padding: 8px 18px;
+    border-radius: 6px;
+}
+
+QMenu::item:selected {
+    background-color: #EBF4FF;
+    color: #2C7BE5;
+}
+
+/* ==================== 信息页面 ==================== */
+#VersionFeaturesPage {
+    background-color: #F5F6F7;
+}
+
+#InfoHeroCard,
+#InfoCard {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 16px;
+}
+
+#InfoPageTitle {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1A1A1A;
+}
+
+#InfoPageSubtitle {
+    font-size: 14px;
+    color: #718096;
+    line-height: 1.7;
+}
+
+#InfoCardMeta {
+    font-size: 12px;
+    font-weight: 600;
+    color: #2C7BE5;
+}
+
+#InfoCardTitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1A1A1A;
+}
+
+#InfoCardBody {
+    font-size: 13px;
+    color: #4A5568;
+    line-height: 1.8;
 }

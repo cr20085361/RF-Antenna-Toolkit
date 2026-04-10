@@ -27,7 +27,7 @@ from PyQt6.QtGui import QAction,  QIcon, QPainter, QPen, QColor, QFont, QPaintEv
 
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
-from matplotlib import pyplot as plt
+from core.rf.matching import MatchingElement
 
 class LadderSchematicWidget(QWidget):
     """
