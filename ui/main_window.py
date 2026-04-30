@@ -3,7 +3,7 @@
 射频天线工具集 - 主窗口
 RF Antenna Toolkit - Main Window
 
-版本: v2.1.0
+版本: v2.1
 功能: 应用程序主窗口，包含导航栏和工具工作区
 """
 
@@ -61,6 +61,7 @@ from ui.tools.reference.waveguide_table_tool import WaveguideTableTool
 from ui.tools.reference.connector_table_tool import ConnectorTableTool
 from ui.tools.reference.eseries_table_tool import ESeriesTableTool
 from ui.tools.reference.online_tools_page import OnlineToolsPage
+from ui.tools.rf.jamming_tool import JammingTool
 
 
 def resource_path(relative_path):
@@ -379,6 +380,15 @@ class MainWindow(QMainWindow):
             "远场计算器",
             "🎯",
             "天线远场测试距离计算 (IEEE 149)"
+        )
+
+        # 干扰压制计算
+        self._register_tool(
+            "jamming",
+            JammingTool,
+            "干扰压制计算器",
+            "💥",
+            "发射机对目标的电磁干扰压制效果评估"
         )
         
         # ==================== 射频工具 ====================

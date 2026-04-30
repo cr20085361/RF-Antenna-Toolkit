@@ -14,7 +14,7 @@ DisableProgramGroupPage=yes
 ; 最终生成的安装包输出目录
 OutputDir=Output
 ; 最终生成的安装包文件名
-OutputBaseFilename=RFAntennaToolkit_CN_v2_Setup_v2.1.0
+OutputBaseFilename=RFAntennaToolkit_CN_v2_Setup_v2.1
 ; 安装包压缩算法
 Compression=lzma
 SolidCompression=yes

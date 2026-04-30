@@ -20,6 +20,7 @@
 *   **传播视距评估 (Line of Sight)**：充分考量真实的地球有效曲率参数与菲涅尔区 (Fresnel Zone) 杂物遮挡现象，计算电波传播视距及基站天线架设高度门槛。
 *   **增益双向评估 (Gain Estimator)**：支持波束宽度经验法则与口径孔径效率法双向推算真实增益，并提供 dBi / dBd 单位互转。
 *   **系统灵敏度解析 (Receiver Sensitivity)**：基于底噪 KTBF 理论与系统噪声系数 (NF)，量化最小可察觉信号阈值。
+*   **干扰压制计算器 (Jamming Calculator)**：专门评估发射机对远端目标（如通信/雷达设备）的电磁干扰压制效果。支持单频点和宽频段评估模式，具备链路空间损耗反演、发射功率要求与安全距离的精准推算能力。
 *   **波长/频率对照 (Wavelength)**：真空与不同介质常数下的波段特征计算。
 *   **远场距离计算器 (Far-Field Calculator)**：遵循 IEEE 149 / 3GPP 标准，支持电大/电小天线多判据融合，完整输出反应性近场、辐射近场边界，自带相控阵扫描角修正。
 
@@ -89,10 +90,10 @@
 
 要让应用内更新真正命中安装包资产，请按以下方式发布版本：
 
-1. 在 GitHub 仓库创建语义化 tag，例如 `v2.1.0`。
+1. 在 GitHub 仓库创建语义化 tag，例如 `v2.1`。
 2. 基于该 tag 创建正式 Release，而不是仅推送 tag。
 3. 在 Release 中上传安装包、压缩包或可执行文件资产。
-4. 让资产名与应用中的匹配规则一致，例如 `RF-Antenna-Toolkit-Setup-v2.1.0.exe`。
+4. 让资产名与应用中的匹配规则一致，例如 `RF-Antenna-Toolkit-Setup-v2.1.exe`。
 5. 保持 Release tag 与应用内版本号一致，便于版本比较。
 
 私有仓库推荐使用 GitHub Fine-grained Personal Access Token：
@@ -131,7 +132,7 @@
 4. 从项目根目录外直接启动 `dist/RFAntennaToolkit/RFAntennaToolkit.exe`，确认样式、波导截面图、帮助菜单、更新设置页面均正常显示。
 5. 预检通过后，再使用 Inno Setup 打开 `installer_setup.iss` 生成安装包。
 
-当前 Inno 脚本已经同步到 `v2.1.0`，默认输出安装包名称为 `RFAntennaToolkit_CN_v2_Setup_v2.1.0.exe`。
+当前 Inno 脚本已经同步到 `v2.1`，默认输出安装包名称为 `RFAntennaToolkit_CN_v2_Setup_v2.1.exe`。
 
 ### Git 同步与忽略项
 
@@ -142,7 +143,7 @@
 3. `*.exe`、`*.msi`、`*.zip`、`*.7z` 等发布产物。
 4. `tmp_*.png`、`tmp_pdf_render/` 等临时验证文件。
 
-本次分支备注可使用：`增加双脊波导法兰信息及UI优化`。
+本次分支备注可使用：`版本 v2.1: 新增干扰压制计算器，支持宽频带多点自适应换算及UI深度优化`。
 
 ---
 

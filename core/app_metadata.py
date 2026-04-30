@@ -8,8 +8,8 @@ from typing import List
 
 
 APP_NAME = "射频天线工具集_CN_v2"
-APP_VERSION = "2.1.0"
-APP_VERSION_LABEL = "v2.1.0_CN"
+APP_VERSION = "2.1"
+APP_VERSION_LABEL = "v2.1_CN"
 APP_SUBTITLE = "RF Antenna Toolkit_CN_v2.1 - 专业射频与天线计算工具"
 
 COMPANY_NAME = "成都市安泰纳科技有限公司"
@@ -36,6 +36,24 @@ class VersionFeatureEntry:
 
 
 VERSION_FEATURES = [
+    VersionFeatureEntry(
+        version="2.1",
+        title="新增干扰压制计算器与底层优化",
+        release_date="2026-04-30",
+        highlights=[
+            "正式推出“干扰压制计算器”，针对发射机对目标的电磁干扰压制效果进行专业评估。",
+            "支持单频点与宽频段双模式评估，宽带模式下引入动态增减频点的参数输入表。",
+            "全局数值输入控件接入“智能折算”逻辑，支持 MHz/GHz, dBm/W, m/km 等核心单位的无缝切换与自动数学换算。",
+            "修复了大量极端情况下的UI排版对齐与由于滚轮误触引发的数据异常问题。"
+        ],
+        modules=[
+            "天线工具 -> 干扰压制计算器（JammingTool）",
+            "基础组件 -> 数值单位控件（ValueUnitWidget）"
+        ],
+        notes=[
+            "宽带模式下的功率单位下拉框支持对表格内的历史频点数据进行批量换算，极大减免了手动敲击计算器的繁琐度。"
+        ],
+    ),
     VersionFeatureEntry(
         version="2.1.0",
         title="双脊波导完善与私有更新",
