@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from typing import List
 
 
-APP_NAME = "射频天线工具集_CN_v2"
+APP_NAME = "射频天线工具集_CN_v2.1"
 APP_VERSION = "2.1"
 APP_VERSION_LABEL = "v2.1_CN"
 APP_SUBTITLE = "RF Antenna Toolkit_CN_v2.1 - 专业射频与天线计算工具"

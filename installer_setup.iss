@@ -3,7 +3,7 @@
 
 [Setup]
 AppId={{RF-ANTENNA-TOOLKIT-1234-5678}
-AppName=射频天线工具集_CN_v2
+AppName=射频天线工具集_CN_v2.1
 AppVersion=2.1.0
 AppPublisher=成都市安泰纳科技有限公司
 AppPublisherURL=https://github.com/cr20085361/RF-Antenna-Toolkit
@@ -36,10 +36,10 @@ Source: "dist\RFAntennaToolkit\*"; DestDir: "{app}"; Flags: ignoreversion recurs
 
 [Icons]
 ; 生成开始菜单快捷方式
-Name: "{autoprograms}\射频天线工具集_CN_v2"; Filename: "{app}\RFAntennaToolkit.exe"
+Name: "{autoprograms}\射频天线工具集_CN_v2.1"; Filename: "{app}\RFAntennaToolkit.exe"
 ; 生成桌面快捷方式
-Name: "{autodesktop}\射频天线工具集_CN_v2"; Filename: "{app}\RFAntennaToolkit.exe"; Tasks: desktopicon
+Name: "{autodesktop}\射频天线工具集_CN_v2.1"; Filename: "{app}\RFAntennaToolkit.exe"; Tasks: desktopicon
 
 [Run]
 ; 安装完成后是否立即运行
-Filename: "{app}\RFAntennaToolkit.exe"; Description: "{cm:LaunchProgram,射频天线工具集_CN_v2}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\RFAntennaToolkit.exe"; Description: "{cm:LaunchProgram,射频天线工具集_CN_v2.1}"; Flags: nowait postinstall skipifsilent

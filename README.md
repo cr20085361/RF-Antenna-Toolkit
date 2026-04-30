@@ -1,6 +1,6 @@
 <div align="center">
 
-# 📡 射频天线工具集_CN_v2 (RF Antenna Toolkit_CN_v2.1)
+# 📡 射频天线工具集_CN_v2.1 (RF Antenna Toolkit_CN_v2.1)
 
 **一款专为射频与天线工程师打造的桌面端辅助计算与可视化软件。**<br>
 基于 Python 和 PyQt6 开发，旨在集成本专业常用的繁杂计算公式与工程查表，提供直观、高效、现代化的科学计算体验。
