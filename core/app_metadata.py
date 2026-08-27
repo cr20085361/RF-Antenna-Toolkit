@@ -7,10 +7,10 @@ from dataclasses import dataclass
 from typing import List
 
 
-APP_NAME = "射频天线工具集_CN_v2.1"
-APP_VERSION = "2.1"
-APP_VERSION_LABEL = "v2.1_CN"
-APP_SUBTITLE = "RF Antenna Toolkit_CN_v2.1 - 专业射频与天线计算工具"
+APP_NAME = "射频天线工具集_CN_v2.2"
+APP_VERSION = "2.2"
+APP_VERSION_LABEL = "v2.2_CN"
+APP_SUBTITLE = "RF Antenna Toolkit_CN_v2.2 - 专业射频与天线计算工具"
 
 COMPANY_NAME = "成都市安泰纳科技有限公司"
 DEVELOPER_SIGNATURE = "Developer: CR | 625313077@qq.com"
@@ -36,6 +36,25 @@ class VersionFeatureEntry:
 
 
 VERSION_FEATURES = [
+    VersionFeatureEntry(
+        version="2.2",
+        title="全局防误触、波束角度直输与相控阵时延模型修正",
+        release_date="2026-08-28",
+        highlights=[
+            "全局禁用输入控件（SpinBox, ComboBox, Slider等）鼠标滚轮调节数值，滚轮事件智能透传至页面滚动视口，彻底消除长页面浏览时的误触改值风险。",
+            "目标波束指向（Beam Steering）扫描角 θ 与方位角 φ 增加精确数值输入框（QDoubleSpinBox），支持键盘直接键入与 0.1° 高精度滑块双向实时无缝联动。",
+            "修正相控阵通道移相与时延计算中的频率联动物理模型：工作频率改变时硬件物理阵元间距锁定不变，实现相邻阵元真时延 Δτ 严格与频率无关，自适应动态换算电长度 d/λ 与相位差 ΔΦ。",
+            "同步升级相控阵综合计算工具中的波束扫描输入组件，统一全工具集高精度角度控制体验。"
+        ],
+        modules=[
+            "全局底层 -> 全局滚轮事件过滤器 (GlobalWheelEventFilter)",
+            "天线工具 -> 相控阵移相与时延计算器 (BeamformingDelayTool)",
+            "天线工具 -> 相控阵综合计算分析 (PhasedArrayTool)"
+        ],
+        notes=[
+            "根据电磁理论，空间电磁波传播真时延 Δτ = (d·sinθ)/c 仅由硬件几何物理间距与空间扫描角决定，与电磁波工作频率无关。v2.2 彻底纠正了旧版本调频反向篡改硬件尺寸的问题。"
+        ],
+    ),
     VersionFeatureEntry(
         version="2.1",
         title="新增干扰压制计算器与底层优化",

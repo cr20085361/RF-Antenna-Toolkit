@@ -1,6 +1,6 @@
 <div align="center">
 
-# 📡 射频天线工具集_CN_v2.1 (RF Antenna Toolkit_CN_v2.1)
+# 📡 射频天线工具集_CN_v2.2 (RF Antenna Toolkit_CN_v2.2)
 
 **一款专为射频与天线工程师打造的桌面端辅助计算与可视化软件。**<br>
 基于 Python 和 PyQt6 开发，旨在集成本专业常用的繁杂计算公式与工程查表，提供直观、高效、现代化的科学计算体验。
@@ -17,6 +17,7 @@
 针对自由空间电波传播与天线辐射特性的专项计算：
 *   **收发距离反演 (Range Calculator)**：基于 Friis 传输方程，结合接收机解调信噪比 (SNR) 要求与空间衰落余量 (Fade Margin) 的极致链路预算，附带损耗截点可视化图表。
 *   **相控阵综合计算 (Phased Array)**：支持均匀直线阵 (ULA) 和均匀平面阵 (UPA) 的方向图综合计算；可动态调节波束指向角、扫描角及阵元间距，实时预警“栅瓣”出现区域。
+*   **相控阵移相与时延 (Beamforming Delay)**：面向通道级硬件波束赋形配置，计算 ULA/UPA 在指定扫描角下的相邻相位差、真时延 (TTD)，支持 4~8 bit 移相器量化与寄存器码字生成，提供全通道配置表导出与宽带波束斜视 (Beam Squint) 评估。
 *   **传播视距评估 (Line of Sight)**：充分考量真实的地球有效曲率参数与菲涅尔区 (Fresnel Zone) 杂物遮挡现象，计算电波传播视距及基站天线架设高度门槛。
 *   **增益双向评估 (Gain Estimator)**：支持波束宽度经验法则与口径孔径效率法双向推算真实增益，并提供 dBi / dBd 单位互转。
 *   **系统灵敏度解析 (Receiver Sensitivity)**：基于底噪 KTBF 理论与系统噪声系数 (NF)，量化最小可察觉信号阈值。
@@ -90,10 +91,10 @@
 
 要让应用内更新真正命中安装包资产，请按以下方式发布版本：
 
-1. 在 GitHub 仓库创建语义化 tag，例如 `v2.1`。
+1. 在 GitHub 仓库创建语义化 tag，例如 `v2.2`。
 2. 基于该 tag 创建正式 Release，而不是仅推送 tag。
 3. 在 Release 中上传安装包、压缩包或可执行文件资产。
-4. 让资产名与应用中的匹配规则一致，例如 `RF-Antenna-Toolkit-Setup-v2.1.exe`。
+4. 让资产名与应用中的匹配规则一致，例如 `RF-Antenna-Toolkit-Setup-v2.2.exe`。
 5. 保持 Release tag 与应用内版本号一致，便于版本比较。
 
 私有仓库推荐使用 GitHub Fine-grained Personal Access Token：
@@ -126,13 +127,13 @@
 
 在执行 `installer_setup.iss` 之前，建议按下面顺序完成预检：
 
-1. 先运行 `python -m unittest discover -s tests`，确认更新检查等回归逻辑通过。
+1. 先运行 `python -m pytest`，确认所有回归逻辑通过。
 2. 运行 `build_exe.py`，确认 `dist/RFAntennaToolkit/` 已生成。
 3. 核对 `dist/RFAntennaToolkit/` 内是否包含 `assets/`、`resources/`、`ui/styles/`、`ui/assets/`。
 4. 从项目根目录外直接启动 `dist/RFAntennaToolkit/RFAntennaToolkit.exe`，确认样式、波导截面图、帮助菜单、更新设置页面均正常显示。
 5. 预检通过后，再使用 Inno Setup 打开 `installer_setup.iss` 生成安装包。
 
-当前 Inno 脚本已经同步到 `v2.1`，默认输出安装包名称为 `RFAntennaToolkit_CN_v2_Setup_v2.1.exe`。
+当前 Inno 脚本已经同步到 `v2.2`，默认输出安装包名称为 `RFAntennaToolkit_CN_v2_Setup_v2.2.exe`。
 
 ### Git 同步与忽略项
 
@@ -143,7 +144,7 @@
 3. `*.exe`、`*.msi`、`*.zip`、`*.7z` 等发布产物。
 4. `tmp_*.png`、`tmp_pdf_render/` 等临时验证文件。
 
-本次分支备注可使用：`版本 v2.1: 新增干扰压制计算器，支持宽频带多点自适应换算及UI深度优化`。
+本次分支备注可使用：`版本 v2.2: 全局滚轮防误触机制、波束扫描角度数值直输与相控阵真时延模型修正`。
 
 ---
 

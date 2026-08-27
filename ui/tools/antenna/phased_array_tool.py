@@ -34,6 +34,7 @@ class PhasedArrayTool(ToolBase):
     
     def __init__(self):
         self.calculator = PhasedArrayCalculator()
+        self._is_updating = False
         super().__init__()
         # 延迟触发第一次计算
         self._update_calculation()
@@ -110,34 +111,85 @@ class PhasedArrayTool(ToolBase):
         # 电子扫描控制区 (核心交互区)
         scan_group = QGroupBox("波束电子扫描 (Beam Steering)")
         scan_layout = QVBoxLayout()
+        scan_layout.setSpacing(6)
         
-        # 组合滑块与数字标签: Theta (极角/俯仰角)
+        # 组合滑块与数值输入框: Theta (极角/俯仰角)
         theta_header = QHBoxLayout()
         theta_header.addWidget(QLabel("俯仰角 (θ Theta):"))
-        self.lbl_theta_val = QLabel("0°")
-        self.lbl_theta_val.setAlignment(Qt.AlignmentFlag.AlignRight)
-        theta_header.addWidget(self.lbl_theta_val)
+        
+        self.spin_theta = QDoubleSpinBox()
+        self.spin_theta.setRange(0.0, 90.0)
+        self.spin_theta.setDecimals(1)
+        self.spin_theta.setSingleStep(1.0)
+        self.spin_theta.setValue(0.0)
+        self.spin_theta.setSuffix("°")
+        self.spin_theta.setFixedWidth(105)
+        self.spin_theta.setAlignment(Qt.AlignmentFlag.AlignRight)
+        self.spin_theta.setStyleSheet("""
+            QDoubleSpinBox {
+                font-weight: bold;
+                color: #2B6CB0;
+                font-family: 'Consolas', 'Segoe UI', monospace;
+                font-size: 13px;
+                padding: 2px 22px 2px 6px;
+                border: 1px solid #CBD5E0;
+                border-radius: 4px;
+                background-color: #FFFFFF;
+            }
+            QDoubleSpinBox:focus {
+                border-color: #3182CE;
+                background-color: #F7FAFC;
+            }
+        """)
+        self.spin_theta.valueChanged.connect(self._on_theta_spin_changed)
+        theta_header.addStretch()
+        theta_header.addWidget(self.spin_theta)
         
         self.slider_theta = QSlider(Qt.Orientation.Horizontal)
-        self.slider_theta.setRange(0, 90) # 通常扫描 0 到 90 度
+        self.slider_theta.setRange(0, 900)  # 0.1° 分辨率
         self.slider_theta.setValue(0)
         self.slider_theta.setTickPosition(QSlider.TickPosition.TicksBelow)
-        self.slider_theta.setTickInterval(15)
-        self.slider_theta.valueChanged.connect(self._on_slider_changed)
+        self.slider_theta.setTickInterval(150)
+        self.slider_theta.valueChanged.connect(self._on_theta_slider_changed)
         
-        # 组合滑块与数字标签: Phi (方位角)
+        # 组合滑块与数值输入框: Phi (方位角)
         phi_header = QHBoxLayout()
         phi_header.addWidget(QLabel("方位角 (φ Phi):"))
-        self.lbl_phi_val = QLabel("0°")
-        self.lbl_phi_val.setAlignment(Qt.AlignmentFlag.AlignRight)
-        phi_header.addWidget(self.lbl_phi_val)
+        
+        self.spin_phi = QDoubleSpinBox()
+        self.spin_phi.setRange(0.0, 360.0)
+        self.spin_phi.setDecimals(1)
+        self.spin_phi.setSingleStep(1.0)
+        self.spin_phi.setValue(0.0)
+        self.spin_phi.setSuffix("°")
+        self.spin_phi.setFixedWidth(105)
+        self.spin_phi.setAlignment(Qt.AlignmentFlag.AlignRight)
+        self.spin_phi.setStyleSheet("""
+            QDoubleSpinBox {
+                font-weight: bold;
+                color: #2B6CB0;
+                font-family: 'Consolas', 'Segoe UI', monospace;
+                font-size: 13px;
+                padding: 2px 22px 2px 6px;
+                border: 1px solid #CBD5E0;
+                border-radius: 4px;
+                background-color: #FFFFFF;
+            }
+            QDoubleSpinBox:focus {
+                border-color: #3182CE;
+                background-color: #F7FAFC;
+            }
+        """)
+        self.spin_phi.valueChanged.connect(self._on_phi_spin_changed)
+        phi_header.addStretch()
+        phi_header.addWidget(self.spin_phi)
         
         self.slider_phi = QSlider(Qt.Orientation.Horizontal)
-        self.slider_phi.setRange(0, 360)
+        self.slider_phi.setRange(0, 3600)  # 0.1° 分辨率
         self.slider_phi.setValue(0)
         self.slider_phi.setTickPosition(QSlider.TickPosition.TicksBelow)
-        self.slider_phi.setTickInterval(45)
-        self.slider_phi.valueChanged.connect(self._on_slider_changed)
+        self.slider_phi.setTickInterval(450)
+        self.slider_phi.valueChanged.connect(self._on_phi_slider_changed)
         
         scan_layout.addLayout(theta_header)
         scan_layout.addWidget(self.slider_theta)
@@ -246,18 +298,61 @@ class PhasedArrayTool(ToolBase):
 
     def _apply_preset(self, n: int):
         """应用快速预设参数"""
-        self.spin_nx.setValue(n)
-        self.spin_ny.setValue(n)
-        self.combo_window.setCurrentText("Uniform")
-        self.slider_theta.setValue(0)
-        self.slider_phi.setValue(0)
+        self._is_updating = True
+        try:
+            self.spin_nx.setValue(n)
+            self.spin_ny.setValue(n)
+            self.combo_window.setCurrentText("Uniform")
+            self.spin_theta.setValue(0.0)
+            self.slider_theta.setValue(0)
+            self.spin_phi.setValue(0.0)
+            self.slider_phi.setValue(0)
+        finally:
+            self._is_updating = False
+        self._update_calculation()
 
-    def _on_slider_changed(self):
-        """滑块值变更时，实时更新数字并触发计算"""
-        t_val = self.slider_theta.value()
-        p_val = self.slider_phi.value()
-        self.lbl_theta_val.setText(f"{t_val}°")
-        self.lbl_phi_val.setText(f"{p_val}°")
+    def _on_theta_slider_changed(self, val: int):
+        """Theta 滑块拖动 -> 联动更新 SpinBox"""
+        if self._is_updating:
+            return
+        self._is_updating = True
+        try:
+            self.spin_theta.setValue(val / 10.0)
+        finally:
+            self._is_updating = False
+        self._update_calculation()
+
+    def _on_theta_spin_changed(self, val: float):
+        """Theta 数值框直接输入 -> 联动更新滑块"""
+        if self._is_updating:
+            return
+        self._is_updating = True
+        try:
+            self.slider_theta.setValue(int(round(val * 10.0)))
+        finally:
+            self._is_updating = False
+        self._update_calculation()
+
+    def _on_phi_slider_changed(self, val: int):
+        """Phi 滑块拖动 -> 联动更新 SpinBox"""
+        if self._is_updating:
+            return
+        self._is_updating = True
+        try:
+            self.spin_phi.setValue(val / 10.0)
+        finally:
+            self._is_updating = False
+        self._update_calculation()
+
+    def _on_phi_spin_changed(self, val: float):
+        """Phi 数值框直接输入 -> 联动更新滑块"""
+        if self._is_updating:
+            return
+        self._is_updating = True
+        try:
+            self.slider_phi.setValue(int(round(val * 10.0)))
+        finally:
+            self._is_updating = False
         self._update_calculation()
 
     def _update_calculation(self):
@@ -269,8 +364,8 @@ class PhasedArrayTool(ToolBase):
                 num_y=self.spin_ny.value(),
                 spacing_x=self.spin_dx.value(),
                 spacing_y=self.spin_dy.value(),
-                scan_theta=self.slider_theta.value(),
-                scan_phi=self.slider_phi.value(),
+                scan_theta=self.spin_theta.value(),
+                scan_phi=self.spin_phi.value(),
                 window_type=self.combo_window.currentText()
             )
             

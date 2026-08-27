@@ -4,3 +4,4 @@
 """
 
 from .nav_bar import NavBar
+from .wheel_filter import GlobalWheelEventFilter

@@ -574,16 +574,16 @@ QScrollBar::sub-line:vertical {
 }
 
 QScrollBar:horizontal {
-    background-color: #F5F6F7;
-    height: 8px;
-    border-radius: 4px;
+    background-color: #EDF2F7;
+    height: 10px;
+    border-radius: 5px;
     margin: 0;
 }
 
 QScrollBar::handle:horizontal {
     background-color: #CBD5E0;
-    border-radius: 4px;
-    min-width: 30px;
+    border-radius: 5px;
+    min-width: 35px;
 }
 
 QScrollBar::handle:horizontal:hover {

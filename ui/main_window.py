@@ -3,8 +3,8 @@
 射频天线工具集 - 主窗口
 RF Antenna Toolkit - Main Window
 
-版本: v2.1
-功能: 应用程序主窗口，包含导航栏和工具工作区
+# 版本: v2.2
+# 功能: 应用程序主窗口，包含导航栏和工具工作区
 """
 
 import os
@@ -48,6 +48,7 @@ from ui.tools.antenna.gain_tool import GainTool
 from ui.tools.antenna.los_tool import LOSTool
 from ui.tools.antenna.sensitivity_tool import SensitivityTool
 from ui.tools.antenna.phased_array_tool import PhasedArrayTool
+from ui.tools.antenna.beamforming_delay_tool import BeamformingDelayTool
 from ui.tools.antenna.range_tool import RangeTool
 from ui.tools.antenna.farfield_tool import FarFieldTool
 from ui.tools.rf.vswr_tool import VSWRTool
@@ -362,6 +363,15 @@ class MainWindow(QMainWindow):
             "相控阵计算",
             "🎯",
             "阵列天线扫描与方向图剖析"
+        )
+        
+        # 相控阵移相与时延
+        self._register_tool(
+            "beamforming_delay",
+            BeamformingDelayTool,
+            "相控阵移相与时延",
+            "🧭",
+            "通道移相与时延配置及量化分析"
         )
         
         # 收发距离计算

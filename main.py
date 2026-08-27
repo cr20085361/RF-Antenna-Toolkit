@@ -3,7 +3,7 @@
 射频天线工具集 - 主程序入口
 RF Antenna Toolkit - Main Entry Point
 
-版本: v2.1
+版本: v2.2
 作者: 射频天线工具集开发团队
 功能: 应用程序启动入口
 
@@ -24,6 +24,7 @@ from PyQt6.QtGui import QFont, QIcon, QPixmap
 
 from core.app_metadata import APP_NAME, APP_VERSION
 from ui.main_window import MainWindow
+from ui.widgets.wheel_filter import GlobalWheelEventFilter
 
 def resource_path(relative_path):
     """ 获取资源的绝对路径，兼容开发环境和 PyInstaller 打包后的环境 """
@@ -53,6 +54,10 @@ def main():
     
     # 创建应用程序
     app = QApplication(sys.argv)
+
+    # 全局禁用输入控件滚轮误触修改数值
+    wheel_filter = GlobalWheelEventFilter(app)
+    app.installEventFilter(wheel_filter)
     
     # 设置应用程序属性
     app.setApplicationName(APP_NAME)
