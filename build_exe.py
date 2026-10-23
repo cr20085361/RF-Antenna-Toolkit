@@ -1,4 +1,6 @@
 import os
+import sys
+from contextlib import contextmanager
 from importlib import import_module
 from pathlib import Path
 
@@ -9,6 +11,33 @@ PROJECT_DIR = Path(__file__).resolve().parent
 DIST_DIR = PROJECT_DIR / "dist"
 BUILD_DIR = PROJECT_DIR / "build"
 APP_EXE_NAME = "RFAntennaToolkit"
+
+
+@contextmanager
+def isolated_build_environment():
+    """隔离外部工具的动态库路径，避免把不兼容的同名系统库打入安装包。
+
+    Windows 上 Qt 使用系统提供的国际化接口；若构建环境的搜索路径中
+    带有其他工具的同名动态库，依赖扫描可能误收集它。仅在编译期间
+    使用系统和当前解释器路径，退出时完整恢复调用环境。
+    """
+    keys = ("PATH", "QT_PLUGIN_PATH", "QT_QPA_PLATFORM_PLUGIN_PATH")
+    original = {key: os.environ.get(key) for key in keys}
+    try:
+        if sys.platform == "win32":
+            windows_dir = Path(os.environ.get("SystemRoot", r"C:\Windows"))
+            paths = [windows_dir / "System32", windows_dir,
+                     Path(sys.prefix) / "Scripts", Path(sys.base_prefix)]
+            os.environ["PATH"] = os.pathsep.join(str(path) for path in paths)
+            for key in keys[1:]:
+                os.environ.pop(key, None)
+        yield
+    finally:
+        for key, value in original.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
 
 
 def _add_data_args() -> list[str]:
@@ -49,7 +78,7 @@ def _hidden_import_args() -> list[str]:
     return [f"--hidden-import={module_name}" for module_name in sorted(hidden_imports)]
 
 
-def build_executable():
+def _build_executable():
     pyinstaller_main = import_module("PyInstaller.__main__")
     pyinstaller_args = [
         str(PROJECT_DIR / "main.py"),
@@ -71,6 +100,12 @@ def build_executable():
     pyinstaller_main.run(pyinstaller_args)
     print(f"编译完成，输出目录：{DIST_DIR / APP_EXE_NAME}")
     print(f"当前应用版本：{APP_VERSION}")
+
+
+def build_executable():
+    """在隔离路径中发现依赖并编译，防止外部工具污染发行包。"""
+    with isolated_build_environment():
+        _build_executable()
 
 
 if __name__ == "__main__":

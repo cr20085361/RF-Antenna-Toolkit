@@ -6,6 +6,7 @@
 from .wavelength import WavelengthCalculator
 from .bandwidth import BandwidthCalculator, BandwidthResult
 from .gain import GainCalculator, GainResult
+from .fh_capture import CaptureCalculator, CaptureParams, CaptureResult
 from .los import LOSCalculator, HorizonResult, ElevationResult, TwoStationResult
 from .beamforming_delay import (
     BeamformingDelayCalculator,

@@ -7,10 +7,10 @@ from dataclasses import dataclass
 from typing import List
 
 
-APP_NAME = "射频天线工具集_CN_v2.2"
-APP_VERSION = "2.2"
-APP_VERSION_LABEL = "v2.2_CN"
-APP_SUBTITLE = "RF Antenna Toolkit_CN_v2.2 - 专业射频与天线计算工具"
+APP_NAME = "射频天线工具集_CN_v2.3"
+APP_VERSION = "2.3"
+APP_VERSION_LABEL = "v2.3_CN"
+APP_SUBTITLE = "RF Antenna Toolkit_CN_v2.3 - 专业射频与天线计算工具"
 
 COMPANY_NAME = "成都市安泰纳科技有限公司"
 DEVELOPER_SIGNATURE = "Developer: CR | 625313077@qq.com"
@@ -36,6 +36,22 @@ class VersionFeatureEntry:
 
 
 VERSION_FEATURES = [
+    VersionFeatureEntry(
+        version="2.3",
+        title="跳频测向捕获时间预算",
+        release_date="2026-10-24",
+        highlights=[
+            "新增固定参考通道的跳频测向捕获评估，区分采集组数、切换次数与首组就绪状态。",
+            "计算单跳整阵采集耗时、实际与设计余量、跳速上限和最迟启动时间。",
+            "支持时间单位换算、采样点数换算、逐组时间轴和跳速余量曲线。",
+            "提供跳频与调频、连续有效窗口、相干参考和工程边界的中文知识说明。",
+        ],
+        modules=["天线工具 -> 跳频测向捕获评估"],
+        notes=[
+            "本工具只评估同一跳内的时序可行性，不预测实际捕获概率、测向精度或连续处理吞吐能力。",
+            "默认九元双通道、500 ns切换、每组5 μs采集是教学示例，不能替代设备实测参数。",
+        ],
+    ),
     VersionFeatureEntry(
         version="2.2",
         title="全局防误触、波束角度直输与相控阵时延模型修正",

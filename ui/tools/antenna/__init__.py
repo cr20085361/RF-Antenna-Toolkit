@@ -8,4 +8,5 @@ from .bandwidth_tool import BandwidthTool
 from .gain_tool import GainTool
 from .los_tool import LOSTool
 from .beamforming_delay_tool import BeamformingDelayTool
+from .fh_capture_tool import FHCaptureTool
 

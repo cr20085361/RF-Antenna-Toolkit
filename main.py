@@ -72,6 +72,15 @@ def main():
     # 设置默认字体
     default_font = build_default_font(10)
     app.setFont(default_font)
+
+    # 安装验收模式在隐藏窗口中验证真正发行包，不依赖项目源码或外部解释器。
+    if "--verify-installation" in sys.argv:
+        import argparse
+        from ui.help.installation_check import verify_installation
+        parser = argparse.ArgumentParser(description="验证离线安装后的资源与核心功能")
+        parser.add_argument("--verify-installation", required=True, metavar="REPORT_JSON")
+        arguments = parser.parse_args()
+        sys.exit(verify_installation(app, arguments.verify_installation))
     
     # ---------------- 启动画面 (Splash Screen) ----------------
     splash_pixmap_path = resource_path(os.path.join("assets", "splash.png"))

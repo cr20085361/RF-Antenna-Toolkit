@@ -49,6 +49,7 @@ from ui.tools.antenna.los_tool import LOSTool
 from ui.tools.antenna.sensitivity_tool import SensitivityTool
 from ui.tools.antenna.phased_array_tool import PhasedArrayTool
 from ui.tools.antenna.beamforming_delay_tool import BeamformingDelayTool
+from ui.tools.antenna.fh_capture_tool import FHCaptureTool
 from ui.tools.antenna.range_tool import RangeTool
 from ui.tools.antenna.farfield_tool import FarFieldTool
 from ui.tools.rf.vswr_tool import VSWRTool
@@ -374,6 +375,15 @@ class MainWindow(QMainWindow):
             "通道移相与时延配置及量化分析"
         )
         
+        # 跳频测向捕获评估：只核算单跳整阵采集的时间预算。
+        self._register_tool(
+            "fh_capture",
+            FHCaptureTool,
+            "跳频测向捕获评估",
+            "⏱",
+            "固定参考阵列的切换、采样与单跳时间预算"
+        )
+
         # 收发距离计算
         self._register_tool(
             "range",
